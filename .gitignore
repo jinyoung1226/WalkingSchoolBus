@@ -64,6 +64,7 @@ yarn-error.log
 
 # testing
 /coverage
+config.js
 
 # Yarn
 .yarn/*
