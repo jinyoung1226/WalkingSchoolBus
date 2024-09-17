@@ -22,7 +22,7 @@ const RecruitTab = ({route}) => {
 
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Recruit" component={RecruitMain} />
+      <Stack.Screen name="RecruitMain" component={RecruitMain} />
     </Stack.Navigator>
   );
 };
