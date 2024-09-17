@@ -3,7 +3,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import HomeMain from '../Screens/Home/HomeMain';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import useTabBarStore from '../../store/tabBarStore';
-
+import HomeDetail from '../Screens/Home/HomeDetail';
 const Stack = createStackNavigator();
 
 const HomeTab = ({route}) => {
@@ -22,7 +22,8 @@ const HomeTab = ({route}) => {
 
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Home" component={HomeMain} />
+      <Stack.Screen name="HomeMain" component={HomeMain} />
+      <Stack.Screen name="HomeDetail" component={HomeDetail} />
     </Stack.Navigator>
   );
 };

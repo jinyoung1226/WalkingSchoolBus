@@ -3,7 +3,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import ShuttleMain from '../Screens/Shuttle/ShuttleMain';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import useTabBarStore from '../../store/tabBarStore';
-
+import ShuttleDetail from '../Screens/Shuttle/ShuttleDetail';
 const Stack = createStackNavigator();
 
 const ShuttleTab = ({route}) => {
@@ -13,7 +13,8 @@ const ShuttleTab = ({route}) => {
   // Stack이 쌓이기 전에 Main 이외의 화면은 Tab이 안 보이게 설정
   useLayoutEffect(() => {
     const routeName = getFocusedRouteNameFromRoute(route);
-    if (routeName === 'ShuttleMain' || routeName === undefined) {
+    console.log(routeName);
+    if (routeName === 'ShuttleMain') {
       showTabBar();
     } else {
       hideTabBar();
@@ -22,7 +23,8 @@ const ShuttleTab = ({route}) => {
 
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Shuttle" component={ShuttleMain} />
+      <Stack.Screen name="ShuttleMain" component={ShuttleMain} />
+      <Stack.Screen name="ShuttleDetail" component={ShuttleDetail} />
     </Stack.Navigator>
   );
 };

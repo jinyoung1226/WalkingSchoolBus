@@ -22,7 +22,7 @@ const MypageTab = ({route}) => {
 
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Mypage" component={MypageMain} />
+      <Stack.Screen name="MypageMain" component={MypageMain} />
     </Stack.Navigator>
   );
 };

@@ -23,7 +23,7 @@ const MainNavigator = () => {
           headerShown: false,
           title: '홈',
           tabBarIcon: ({focused}) => (
-            <HomeIcon color={focused ? '#5168F6' : '#ACACAD'} />
+            <HomeIcon color={focused ? '#23E79F' : '#8A8A8A'} />
           ),
         }}
       />
@@ -34,7 +34,7 @@ const MainNavigator = () => {
           headerShown: false,
           title: '운행',
           tabBarIcon: ({focused}) => (
-            <ShuttleIcon color={focused ? '#5168F6' : '#ACACAD'} />
+            <ShuttleIcon color={focused ? '#23E79F' : '#8A8A8A'} />
           ),
         }}
       />
@@ -45,7 +45,7 @@ const MainNavigator = () => {
           headerShown: false,
           title: '모집글',
           tabBarIcon: ({focused}) => (
-            <RecruitIcon color={focused ? '#5168F6' : '#ACACAD'} />
+            <RecruitIcon color={focused ? '#23E79F' : '#8A8A8A'} />
           ),
         }}
       />
@@ -56,7 +56,7 @@ const MainNavigator = () => {
           headerShown: false,
           title: '마이',
           tabBarIcon: ({focused}) => (
-            <MypageIcon color={focused ? '#5168F6' : '#ACACAD'} />
+            <MypageIcon color={focused ? '#23E79F' : '#8A8A8A'} />
           ),
         }}
       />
