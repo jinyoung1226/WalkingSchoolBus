@@ -6,9 +6,19 @@ const useAuthStore = create(set => ({
   isAuthenticated: false,
   accessToken: null,
   userType: null,
-  isLoading: false,
-  isAutoLoginLoading: false,
+  isAutoLoginLoading: true,
   userId: null,
+
+  // 자동로그인 상태 설정
+  setAutoLogin: (
+    isAuthenticated,
+    isAutoLoginLoading,
+    accessToken,
+    userType,
+    userId,
+  ) => {
+    set({isAuthenticated, isAutoLoginLoading, accessToken, userType, userId});
+  },
 
   // 로그인 상태 설정
   setLogin: (isAuthenticated, accessToken, userType, userId) => {

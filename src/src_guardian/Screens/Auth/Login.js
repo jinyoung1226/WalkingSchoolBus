@@ -32,7 +32,7 @@ const Login = ({navigation}) => {
         setLogin(true, accessToken, 'GUARDIAN', userId);
       }
     } catch (error) {
-      console.log(error);
+      console.log(error.response);
       if (error.response) {
         console.log(error.response.status);
         Alert.alert('로그인이 필요합니다');
