@@ -8,6 +8,7 @@ import {
 // import colors from '../styles/colors';
 // import {textStyles} from '../styles/textStyles';
 import useTabBarStore from '../store/tabBarStore';
+import { colors, textStyles } from '../styles/globalStyle';
 
 const CustomTabBar = ({ state, descriptors, navigation }) => {
   
@@ -77,14 +78,13 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
             {options.tabBarIcon &&
               options.tabBarIcon({
                 focused: isFocused,
-                color: isFocused ? '#000' : '#A1A1A1',
                 size: 24,
               })}
             <View style={{height: 3}} />
             <Text
-            //   style={[
-            //     textStyles.B5,
-            //             { color: isFocused ? colors.Blue : colors.Gray05 }]}
+              style={[
+                textStyles.M5,
+                        { color: isFocused ? colors.Main_Green : colors.Gray06 }]}
             >
               {label}
             </Text>

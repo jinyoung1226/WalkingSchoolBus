@@ -9,13 +9,10 @@ import {authApi} from '../api/api';
 const RootNavigator = () => {
   const {
     userType,
-    isAuthenticated,
     isAutoLoginLoading,
     setUserType,
     setAutoLogin,
   } = useAuthStore();
-  console.log(userType, 'root');
-  console.log(isAuthenticated, 'isAuthenticated');
 
   useEffect(() => {
     checkAuth();
@@ -40,7 +37,7 @@ const RootNavigator = () => {
           Alert.alert('로그인이 필요합니다');
           setAutoLogin(false, false, null, null, null);
         } else {
-          Alert.alert('서버 접속 오류');
+          console.log(error);
           setAutoLogin(false, false, null, null, null);
         }
       }

@@ -8,6 +8,7 @@ import RecruitIcon from '../../assets/tabBarIcon/RecruitIcon.svg';
 import ShuttleIcon from '../../assets/tabBarIcon/ShuttleIcon.svg';
 import MypageIcon from '../../assets/tabBarIcon/MypageIcon.svg';
 import CustomTabBar from '../../components/CustomTabBar';
+import { colors } from '../../styles/globalStyle';
 
 const Tab = createBottomTabNavigator();
 
@@ -23,7 +24,7 @@ const MainNavigator = () => {
           headerShown: false,
           title: '홈',
           tabBarIcon: ({focused}) => (
-            <HomeIcon color={focused ? '#23E79F' : '#8A8A8A'} />
+            <HomeIcon color={focused ? colors.Main_Green : colors.Gray06} />
           ),
         }}
       />
@@ -34,7 +35,7 @@ const MainNavigator = () => {
           headerShown: false,
           title: '운행',
           tabBarIcon: ({focused}) => (
-            <ShuttleIcon color={focused ? '#23E79F' : '#8A8A8A'} />
+            <ShuttleIcon color={focused ? colors.Main_Green : colors.Gray06} />
           ),
         }}
       />
@@ -45,7 +46,7 @@ const MainNavigator = () => {
           headerShown: false,
           title: '모집글',
           tabBarIcon: ({focused}) => (
-            <RecruitIcon color={focused ? '#23E79F' : '#8A8A8A'} />
+            <RecruitIcon color={focused ? colors.Main_Green : colors.Gray06} />
           ),
         }}
       />
@@ -56,7 +57,7 @@ const MainNavigator = () => {
           headerShown: false,
           title: '마이',
           tabBarIcon: ({focused}) => (
-            <MypageIcon color={focused ? '#23E79F' : '#8A8A8A'} />
+            <MypageIcon color={focused ? colors.Main_Green : colors.Gray06} />
           ),
         }}
       />
