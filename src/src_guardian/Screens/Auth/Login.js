@@ -18,7 +18,7 @@ const Login = ({navigation}) => {
   const [password, setPassword] = useState('');
 
   // Zustand setLogin, setUserType 액션 가져오기
-  const {setLogin, setUserType} = useAuthStore();
+  const {setLogin, setUserType, userType} = useAuthStore();
 
   // 로그인 API 호출
   const login = async () => {
@@ -36,10 +36,10 @@ const Login = ({navigation}) => {
       if (error.response) {
         console.log(error.response.status);
         Alert.alert('로그인이 필요합니다');
-        setLogin(false, null, null, null);
+        setLogin(false, null, userType, null);
       } else {
         Alert.alert('서버 접속 오류');
-        setLogin(false, null, null, null);
+        setLogin(false, null, userType, null);
       }
     }
   };
