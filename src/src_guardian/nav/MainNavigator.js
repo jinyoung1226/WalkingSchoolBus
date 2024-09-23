@@ -18,17 +18,6 @@ const MainNavigator = () => {
       initialRouteName="HomeTab"
       tabBar={props => <CustomTabBar {...props} />}>
       <Tab.Screen
-        name="HomeTab"
-        component={HomeTab}
-        options={{
-          headerShown: false,
-          title: '홈',
-          tabBarIcon: ({focused}) => (
-            <HomeIcon color={focused ? colors.Main_Green : colors.Gray06} />
-          ),
-        }}
-      />
-      <Tab.Screen
         name="ShuttleTab"
         component={ShuttleTab}
         options={{
@@ -40,6 +29,17 @@ const MainNavigator = () => {
         }}
       />
       <Tab.Screen
+        name="HomeTab"
+        component={HomeTab}
+        options={{
+          headerShown: false,
+          title: '홈',
+          tabBarIcon: ({focused}) => (
+            <HomeIcon color={focused ? colors.Main_Green : colors.Gray06} />
+          ),
+        }}
+      />
+      {/* <Tab.Screen
         name="RecruitTab"
         component={RecruitTab}
         options={{
@@ -49,7 +49,7 @@ const MainNavigator = () => {
             <RecruitIcon color={focused ? colors.Main_Green : colors.Gray06} />
           ),
         }}
-      />
+      /> */}
       <Tab.Screen
         name="MypageTab"
         component={MypageTab}
