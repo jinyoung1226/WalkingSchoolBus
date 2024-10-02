@@ -1,14 +1,12 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeTab from '../BottomTab/HomeTab';
-import RecruitTab from '../BottomTab/RecruitTab';
 import ShuttleTab from '../BottomTab/ShuttleTab';
 import MypageTab from '../BottomTab/MypageTab';
 import HomeIcon from '../../assets/tabBarIcon/HomeIcon.svg';
-import RecruitIcon from '../../assets/tabBarIcon/RecruitIcon.svg';
 import ShuttleIcon from '../../assets/tabBarIcon/ShuttleIcon.svg';
 import MypageIcon from '../../assets/tabBarIcon/MypageIcon.svg';
 import CustomTabBar from '../../components/CustomTabBar';
-import { colors } from '../../styles/globalStyle';
+import {colors} from '../../styles/globalStyle';
 
 const Tab = createBottomTabNavigator();
 
@@ -39,17 +37,6 @@ const MainNavigator = () => {
           ),
         }}
       />
-      {/* <Tab.Screen
-        name="RecruitTab"
-        component={RecruitTab}
-        options={{
-          headerShown: false,
-          title: '모집글',
-          tabBarIcon: ({focused}) => (
-            <RecruitIcon color={focused ? colors.Main_Green : colors.Gray06} />
-          ),
-        }}
-      /> */}
       <Tab.Screen
         name="MypageTab"
         component={MypageTab}
