@@ -8,6 +8,7 @@ import {colors, textStyles} from '../../styles/globalStyle';
 import {Text, TouchableOpacity, View} from 'react-native';
 import BackIcon from '../../assets/icons/BackIcon.svg';
 import MapIcon from '../../assets/icons/MapIcon.svg';
+import ShuttleMap from '../Screens/Shuttle/ShuttleMap'
 
 const Stack = createStackNavigator();
 
@@ -43,7 +44,7 @@ const ShuttleTab = ({route, navigation}) => {
                   <Text style={[textStyles.B1, { color: colors.Black }]}> 아주초등학교 </Text>
                   <Text style={[textStyles.B2, { color: colors.Black }]}> 네모 그룹 </Text>
                 </View>
-                <TouchableOpacity onPress={() => navigation.goBack()}>
+                <TouchableOpacity onPress={() =>  navigation.navigate('ShuttleMap')}>
                   <MapIcon />
                 </TouchableOpacity>
               </View>
@@ -51,7 +52,22 @@ const ShuttleTab = ({route, navigation}) => {
           ),
         }}
       />
-      
+      <Stack.Screen
+        name="ShuttleMap"
+        component={ShuttleMap}
+        options={{
+          headerTitle: () => (
+            <View style={{ alignItems: 'center' }}>
+              <Text style={[textStyles.B1, { color: colors.Black }]}>운행</Text>
+            </View>
+          ),
+          headerLeft: () => (
+            <TouchableOpacity style={{ paddingLeft: 16 }} onPress={() => { navigation.navigate("ShuttleDetail") }}>
+              <BackIcon color={colors.Black} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
     </Stack.Navigator>
   );
 };
