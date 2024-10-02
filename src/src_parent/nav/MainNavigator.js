@@ -1,19 +1,18 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
-import HomeTab from "../BottomTab/HomeTab"
-import GroupTab from "../BottomTab/GroupTab"
-import ShuttleTab from "../BottomTab/ShuttleTab"
-import MypageTab from "../BottomTab/MypageTab"
-import HomeIcon from "../../assets/tabBarIcon/HomeIcon.svg"
-import GroupIcon from "../../assets/tabBarIcon/GroupIcon.svg";
-import ShuttleIcon from "../../assets/tabBarIcon/ShuttleIcon.svg";
-import MypageIcon from "../../assets/tabBarIcon/MypageIcon.svg";
-import CustomTabBar from "../../components/CustomTabBar";
-import { colors } from "../../styles/globalStyle"
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import HomeTab from '../BottomTab/HomeTab';
+import GroupTab from '../BottomTab/GroupTab';
+import ShuttleTab from '../BottomTab/ShuttleTab';
+import MypageTab from '../BottomTab/MypageTab';
+import HomeIcon from '../../assets/tabBarIcon/HomeIcon.svg';
+import GroupIcon from '../../assets/tabBarIcon/GroupIcon.svg';
+import ShuttleIcon from '../../assets/tabBarIcon/ShuttleIcon.svg';
+import MypageIcon from '../../assets/tabBarIcon/MypageIcon.svg';
+import CustomTabBar from '../../components/CustomTabBar';
+import {colors} from '../../styles/globalStyle';
 
 const Tab = createBottomTabNavigator();
 
 const MainNavigator = () => {
-
   return (
     <Tab.Navigator
       initialRouteName="HomeTab"

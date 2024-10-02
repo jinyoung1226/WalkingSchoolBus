@@ -1,11 +1,13 @@
-import { Text, View } from "react-native";
+import {Text, View} from 'react-native';
+import useWebsocketStore from '../../../store/websocketStore';
 
 const Homemain = () => {
-    return (
-        <View>
-            <Text>Home Main</Text>
-        </View>
-    );
-}
+  const {isConnected} = useWebsocketStore;
+  return (
+    <View>
+      <Text>{isConnected}</Text>
+    </View>
+  );
+};
 
 export default Homemain;
