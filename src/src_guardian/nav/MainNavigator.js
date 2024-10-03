@@ -1,10 +1,12 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeTab from '../BottomTab/HomeTab';
 import ShuttleTab from '../BottomTab/ShuttleTab';
+import NotificationTab from '../BottomTab/NotificationTab';
 import MypageTab from '../BottomTab/MypageTab';
 import HomeIcon from '../../assets/tabBarIcon/HomeIcon.svg';
 import ShuttleIcon from '../../assets/tabBarIcon/ShuttleIcon.svg';
 import MypageIcon from '../../assets/tabBarIcon/MypageIcon.svg';
+import NotiIcon from '../../assets/tabBarIcon/NotiIcon.svg';
 import CustomTabBar from '../../components/CustomTabBar';
 import {colors} from '../../styles/globalStyle';
 
@@ -15,6 +17,17 @@ const MainNavigator = () => {
     <Tab.Navigator
       initialRouteName="HomeTab"
       tabBar={props => <CustomTabBar {...props} />}>
+      <Tab.Screen
+        name="HomeTab"
+        component={HomeTab}
+        options={{
+          headerShown: false,
+          title: '홈',
+          tabBarIcon: ({focused}) => (
+            <HomeIcon color={focused ? colors.Main_Green : colors.Gray06} />
+          ),
+        }}
+      />
       <Tab.Screen
         name="ShuttleTab"
         component={ShuttleTab}
@@ -27,13 +40,13 @@ const MainNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="HomeTab"
-        component={HomeTab}
+        name="NotificationTab"
+        component={NotificationTab}
         options={{
           headerShown: false,
-          title: '홈',
+          title: '알림',
           tabBarIcon: ({focused}) => (
-            <HomeIcon color={focused ? colors.Main_Green : colors.Gray06} />
+            <NotiIcon color={focused ? colors.Main_Green : colors.Gray06} />
           ),
         }}
       />

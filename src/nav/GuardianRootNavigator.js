@@ -12,7 +12,7 @@ const GuardianRootNavigator = () => {
   // WebSocket 연결/해제 useEffect hook
   useEffect(() => {
     if (isAuthenticated) {
-      connectWebSocket();
+      // connectWebSocket();
     }
 
     return () => {

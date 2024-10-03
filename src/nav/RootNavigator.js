@@ -5,6 +5,7 @@ import GuardianRootNavigator from './GuardianRootNavigator';
 import useAuthStore from '../store/authStore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {authApi} from '../api/api';
+import SplashScreen from '../components/SplashScreen';
 
 const RootNavigator = () => {
   const {
@@ -49,9 +50,7 @@ const RootNavigator = () => {
   // 자동로그인 시, 보여줄 화면
   if (isAutoLoginLoading) {
     return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
+      <SplashScreen />
     );
   }
 

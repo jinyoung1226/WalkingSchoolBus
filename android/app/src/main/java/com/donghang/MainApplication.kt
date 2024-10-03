@@ -1,4 +1,4 @@
-package com.walkingschoolbus
+package com.donghang
 
 import android.app.Application
 import com.facebook.react.PackageList
