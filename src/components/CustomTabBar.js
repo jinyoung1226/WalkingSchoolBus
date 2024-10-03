@@ -75,6 +75,14 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
               alignItems: 'center',
               justifyContent: 'center',
             }}>
+            <View
+            style={{
+              borderRadius: 100,
+              padding:4,
+              aspectRatio: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
             {options.tabBarIcon &&
               options.tabBarIcon({
                 focused: isFocused,
@@ -88,6 +96,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
             >
               {label}
             </Text>
+            </View>
             <View style={{height: Platform.OS === 'ios' ? 21 : 0}} />
           </TouchableOpacity>
         );

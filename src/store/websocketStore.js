@@ -60,7 +60,7 @@ const client = token => {
     forceBinaryWSFrames: true,
     appendMissingNULLonIncoming: true,
     connectHeaders: {accessToken: token},
-    reconnectDelay: 1000,
+    reconnectDelay: 5000,
     debug: function (str) {
       console.log(str, '웹소캣 연결 로그');
     },

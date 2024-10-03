@@ -21,6 +21,8 @@
 		95C22085293D41D099811A17 /* TTLaundryGothicB.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2E2774FCE2A64D3285A21733 /* TTLaundryGothicB.ttf */; };
 		B36A7AD58AFF4E7384245BC2 /* Pretendard-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8404BE40B599437183E5E4FC /* Pretendard-SemiBold.ttf */; };
 		BB366F642F8D4F98A908EBD0 /* Pretendard-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 049E86281DA744B3A8D7DBD0 /* Pretendard-Medium.ttf */; };
+		CAE041B337D34063ACDA618D /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84E580554CDB4AB9997FBE7E /* BootSplash.storyboard */; };
+		BEBC1DD495DF493A9118F20E /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 12EFA1DB65D148C1962422F5 /* Colors.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +61,8 @@
 		A6F0DE08315454512744811F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = WalkingSchoolBus/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		ED0D8D306E8145D19FA0DC8A /* Pretendard-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Pretendard-Bold.ttf"; path = "../src/assets/fonts/Pretendard-Bold.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		84E580554CDB4AB9997FBE7E /* BootSplash.storyboard */ = {isa = PBXFileReference; name = "BootSplash.storyboard"; path = "WalkingSchoolBus/BootSplash.storyboard"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		12EFA1DB65D148C1962422F5 /* Colors.xcassets */ = {isa = PBXFileReference; name = "Colors.xcassets"; path = "WalkingSchoolBus/Colors.xcassets"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = folder.assetcatalog; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +113,8 @@
 				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 				A6F0DE08315454512744811F /* PrivacyInfo.xcprivacy */,
+				84E580554CDB4AB9997FBE7E /* BootSplash.storyboard */,
+				12EFA1DB65D148C1962422F5 /* Colors.xcassets */,
 			);
 			name = WalkingSchoolBus;
 			sourceTree = "<group>";
@@ -282,6 +288,8 @@
 				B36A7AD58AFF4E7384245BC2 /* Pretendard-SemiBold.ttf in Resources */,
 				95C22085293D41D099811A17 /* TTLaundryGothicB.ttf in Resources */,
 				5866B116E2A04E7798C1E64D /* TTLaundryGothicR.ttf in Resources */,
+				CAE041B337D34063ACDA618D /* BootSplash.storyboard in Resources */,
+				BEBC1DD495DF493A9118F20E /* Colors.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
