@@ -50,12 +50,14 @@ const Login = ({navigation}) => {
   };
 
   // 학부모 로그인 화면으로 전환
-  const navigateToParentLogin = () => {
+  const navigateToParentLogin = async() => {
     setUserType('PARENT');
+    await AsyncStorage.setItem('userType', 'PARENT');
   };
 
   return (
     <View style={{flex: 1, justifyContent: 'center', padding: 16}}>
+      <Text style={{fontSize: 16, marginBottom: 8}}>인솔자 로그인</Text>
       <Text style={{fontSize: 16, marginBottom: 8}}>이메일</Text>
       <TextInput
         style={{

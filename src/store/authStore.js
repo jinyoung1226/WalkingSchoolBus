@@ -6,6 +6,7 @@ const useAuthStore = create(set => ({
   isAuthenticated: false,
   accessToken: null,
   userType: null,
+  isUserTypeLoading: true,
   isAutoLoginLoading: true,
   userId: null,
 
@@ -26,8 +27,8 @@ const useAuthStore = create(set => ({
   },
 
   // 유저 타입 상태 설정
-  setUserType: userType => {
-    set({userType});
+  setUserType: (userType, isUserTypeLoading) => {
+    set({userType, isUserTypeLoading});
   },
 
   // 로그아웃 상태 설정
