@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "930628704402",
+    "project_id": "donghang-c8fca",
+    "storage_bucket": "donghang-c8fca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:930628704402:android:6d6b0f9b575ae99f0e2e4b",
+        "android_client_info": {
+          "package_name": "com.donghang"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmsUjIySlNXAWEIXuT2RCPBUQfDZ3X2WY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {View, Button, Alert, ActivityIndicator} from 'react-native';
 import ParentRootNavigator from './ParentRootNavigator';
 import GuardianRootNavigator from './GuardianRootNavigator';
@@ -6,11 +6,13 @@ import useAuthStore from '../store/authStore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {authApi} from '../api/api';
 import SplashScreen from '../components/SplashScreen';
+import { NavigationContainer } from '@react-navigation/native';
 
 const RootNavigator = () => {
   const {
     userType,
     isAutoLoginLoading,
+    isUserTypeLoading,
     setUserType,
     setAutoLogin,
   } = useAuthStore();
@@ -18,6 +20,11 @@ const RootNavigator = () => {
   useEffect(() => {
     checkAuth();
   }, []);
+
+  const handleSetUserType = async (userType) => {
+    await AsyncStorage.setItem('userType', userType);
+    setUserType(userType);
+  };
 
   // 자동로그인 API 호출
   const checkAuth = async () => {
@@ -48,7 +55,7 @@ const RootNavigator = () => {
   };
 
   // 자동로그인 시, 보여줄 화면
-  if (isAutoLoginLoading) {
+  if (isUserTypeLoading || isAutoLoginLoading) {
     return (
       <SplashScreen />
     );
@@ -58,17 +65,18 @@ const RootNavigator = () => {
   if (userType === null) {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Button title="학부모용" onPress={() => setUserType('PARENT')} />
-        <Button title="인솔자용" onPress={() => setUserType('GUARDIAN')} />
+        <Button title="학부모용" onPress={() => handleSetUserType('PARENT')} />
+        <Button title="인솔자용" onPress={() => handleSetUserType('GUARDIAN')} />
       </View>
     );
   }
 
-  // userType이 PARENT일 때 ParentRootNavigator, GUARDIAN일 때 GuardianRootNavigator
-  if (userType === 'PARENT') {
-    return <ParentRootNavigator />;
-  } else if (userType === 'GUARDIAN') {
-    return <GuardianRootNavigator />;
+  if (userType) {
+    return (
+      <NavigationContainer>
+        {userType === 'PARENT' ? <ParentRootNavigator /> : <GuardianRootNavigator />}
+      </NavigationContainer>
+    );
   }
 };
 

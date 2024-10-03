@@ -48,12 +48,14 @@ const Login = ({navigation}) => {
     navigation.navigate('Register');
   };
   // 인솔자 로그인 화면으로 전환
-  const navigateToGuardianLogin = () => {
+  const navigateToGuardianLogin = async() => {
     setUserType('GUARDIAN');
+    await AsyncStorage.setItem('userType', 'GUARDIAN');
   };
 
   return (
     <View style={{flex: 1, justifyContent: 'center', padding: 16}}>
+      <Text style={{fontSize: 16, marginBottom: 8}}>학부모 로그인</Text>
       <Text style={{fontSize: 16, marginBottom: 8}}>이메일</Text>
       <TextInput
         style={{
