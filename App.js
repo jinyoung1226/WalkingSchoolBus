@@ -24,6 +24,8 @@ const App = () => {
     if (userType) {
       console.log('userType:', userType);
       setUserType(userType, false);
+    } else {
+      setUserType(null, false);
     }
   };
   useEffect(() => {
