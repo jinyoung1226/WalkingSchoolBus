@@ -76,7 +76,6 @@ export const colors = {
   Gray06: '#8A8A8A',
   Gray07: '#626262',
   Black: '#000000',
-  Green: '#5168F6',
   White_Green: '#FEFFFF',
   Light_Green: '#4DEDB4',
   Main_Green: '#23E7A0',
@@ -84,7 +83,7 @@ export const colors = {
   Button_Green: '#2EE8A5',
   Pressed_Green: '#28D597',
   white: '#FFFFFF',
-  Red: '#8A8A8A',
+  Red: '#FF6972',
   Blue: "#0099FF",
   Orange: '#FF8000',
 };

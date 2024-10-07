@@ -22,7 +22,7 @@ const CustomTabBar = ({ state, descriptors, navigation }) => {
   return (
     <View
       style={{
-        // backgroundColor: colors.white,
+        backgroundColor: colors.white,
         height: Platform.OS === 'ios' ? 93 : 72,
         flexDirection: 'row',
         shadowColor: '#000',

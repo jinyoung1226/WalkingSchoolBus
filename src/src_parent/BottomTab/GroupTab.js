@@ -3,6 +3,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import GroupMain from '../Screens/Group/GroupMain';
 import useTabBarStore from '../../store/tabBarStore';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
+import BackIcon from '../../assets/icons/BackIcon.svg';
 
 const Stack = createStackNavigator();
 
@@ -21,7 +22,12 @@ const GroupTab = ({route}) => {
   }, [route]);
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerBackImage: () => (
+          <BackIcon width={24} height={24} /> // 사용자 정의 아이콘
+        ),
+      }}>
       <Stack.Screen name="Group" component={GroupMain} />
     </Stack.Navigator>
   );
