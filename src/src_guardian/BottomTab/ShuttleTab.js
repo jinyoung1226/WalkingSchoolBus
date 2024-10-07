@@ -4,10 +4,7 @@ import ShuttleMain from '../Screens/Shuttle/ShuttleMain';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import useTabBarStore from '../../store/tabBarStore';
 import ShuttleDetail from '../Screens/Shuttle/ShuttleDetail';
-import {colors, textStyles} from '../../styles/globalStyle';
-import {Text, TouchableOpacity, View} from 'react-native';
 import BackIcon from '../../assets/icons/BackIcon.svg';
-import MapIcon from '../../assets/icons/MapIcon.svg';
 import ShuttleMap from '../Screens/Shuttle/ShuttleMap'
 
 const Stack = createStackNavigator();
@@ -28,45 +25,20 @@ const ShuttleTab = ({route, navigation}) => {
   }, [route]);
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerBackImage: () => (
+          <BackIcon width={24} height={24} /> // 사용자 정의 아이콘
+        ),
+      }}>
       <Stack.Screen name="ShuttleMain" component={ShuttleMain} />
       <Stack.Screen
         name="ShuttleDetail"
         component={ShuttleDetail}
-        options={{
-          header: () => (
-            <View style={{ paddingHorizontal: 16, height: 116, backgroundColor: 'white'}}>
-              <View style={{ flex:1, flexDirection: 'row', alignItems:'flex-start', justifyContent:'space-between', paddingTop:60 }}>
-                <TouchableOpacity onPress={() => navigation.navigate('ShuttleMain')}>
-                  <BackIcon />
-                </TouchableOpacity>
-                <View style={{ alignItems: 'center' , gap: 4 }}>
-                  <Text style={[textStyles.B1, { color: colors.Black }]}> 아주초등학교 </Text>
-                  <Text style={[textStyles.B2, { color: colors.Black }]}> 네모 그룹 </Text>
-                </View>
-                <TouchableOpacity onPress={() =>  navigation.navigate('ShuttleMap')}>
-                  <MapIcon />
-                </TouchableOpacity>
-              </View>
-            </View>
-          ),
-        }}
       />
       <Stack.Screen
         name="ShuttleMap"
         component={ShuttleMap}
-        options={{
-          headerTitle: () => (
-            <View style={{ alignItems: 'center' }}>
-              <Text style={[textStyles.B1, { color: colors.Black }]}>운행</Text>
-            </View>
-          ),
-          headerLeft: () => (
-            <TouchableOpacity style={{ paddingLeft: 16 }} onPress={() => { navigation.navigate("ShuttleDetail") }}>
-              <BackIcon color={colors.Black} />
-            </TouchableOpacity>
-          ),
-        }}
       />
     </Stack.Navigator>
   );

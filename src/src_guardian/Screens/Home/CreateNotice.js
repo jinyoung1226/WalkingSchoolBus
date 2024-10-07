@@ -1,11 +1,11 @@
 import { Text, View } from "react-native";
 
-const HomeDetail = () => {
+const CreateNotice = () => {
     return (
         <View>
-            <Text>HomeDetail</Text>
+            <Text>CreateNotice</Text>
         </View>
     );
 }
 
-export default HomeDetail;
+export default CreateNotice;

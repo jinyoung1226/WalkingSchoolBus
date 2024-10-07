@@ -3,7 +3,11 @@ import {createStackNavigator} from '@react-navigation/stack';
 import HomeMain from '../Screens/Home/HomeMain';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import useTabBarStore from '../../store/tabBarStore';
-import HomeDetail from '../Screens/Home/HomeDetail';
+import HomeSchedule from '../Screens/Home/HomeSchedule';
+import GroupNotice from '../Screens/Home/GroupNotice';
+import BackIcon from '../../assets/icons/BackIcon.svg';
+import CreateNotice from '../Screens/Home/CreateNotice';
+import { colors, textStyles } from '../../styles/globalStyle';
 const Stack = createStackNavigator();
 
 const HomeTab = ({route}) => {
@@ -21,9 +25,18 @@ const HomeTab = ({route}) => {
   }, [route]);
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerTitleAlign:'center', 
+        headerTitleStyle: [textStyles.B1, {color:colors.Black}],
+        headerBackImage: () => (
+          <BackIcon width={24} height={24} /> // 사용자 정의 아이콘
+        ),
+      }}>
       <Stack.Screen name="HomeMain" component={HomeMain} />
-      <Stack.Screen name="HomeDetail" component={HomeDetail} />
+      <Stack.Screen name="HomeSchedule" component={HomeSchedule} options={{title: '스케줄'}}/>
+      <Stack.Screen name="GroupNotice" component={GroupNotice} options={{title: '그룹 공지'}}/>
+      <Stack.Screen name="CreateNotice" component={CreateNotice} options={{title: '공지글 쓰기'}}/>
     </Stack.Navigator>
   );
 };

@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {authApi} from '../api/api';
 import SplashScreen from '../components/SplashScreen';
 import { NavigationContainer } from '@react-navigation/native';
+import { linking } from '../config/deepLinkConfig';
 
 const RootNavigator = () => {
   const {
@@ -73,7 +74,7 @@ const RootNavigator = () => {
 
   if (userType) {
     return (
-      <NavigationContainer>
+      <NavigationContainer linking={linking}>
         {userType === 'PARENT' ? <ParentRootNavigator /> : <GuardianRootNavigator />}
       </NavigationContainer>
     );

@@ -25,8 +25,12 @@ const ParentRootNavigator = () => {
   useEffect(() => {
     console.log('isConnected 상태 변경:', isConnected);
   }, [isConnected]);
-
-  return <>{isAuthenticated ? <MainNavigator /> : <AuthNavigator />}</>;
+  
+  return (isAuthenticated ? 
+    <MainNavigator /> 
+    : 
+    <AuthNavigator />
+  );
 };
 
 export default ParentRootNavigator;

@@ -4,15 +4,12 @@ import ShuttleMain from '../Screens/Shuttle/ShuttleMain';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import useTabBarStore from '../../store/tabBarStore';
 import ShuttleDetail from '../Screens/Shuttle/ShuttleDetail';
-import {colors, textStyles} from '../../styles/globalStyle';
-import {Text, TouchableOpacity, View} from 'react-native';
 import BackIcon from '../../assets/icons/BackIcon.svg';
-import MapIcon from '../../assets/icons/MapIcon.svg';
 import ShuttleMap from '../Screens/Shuttle/ShuttleMap'
 
 const Stack = createStackNavigator();
 
-const NotificationTab = ({route, navigation}) => {
+const NotificationTab = ({route}) => {
   // Zustand 스토어에서 showTabBar, hideTabBar 함수 가져오기
   const {showTabBar, hideTabBar} = useTabBarStore();
 
@@ -28,7 +25,12 @@ const NotificationTab = ({route, navigation}) => {
   }, [route]);
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerBackImage: () => (
+          <BackIcon width={24} height={24} /> // 사용자 정의 아이콘
+        ),
+      }}>
       <Stack.Screen name="ShuttleMain" component={ShuttleMain} />
       <Stack.Screen
         name="ShuttleDetail"

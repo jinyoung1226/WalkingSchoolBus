@@ -21,7 +21,12 @@ const MypageTab = ({route}) => {
   }, [route]);
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerBackImage: () => (
+          <BackIcon width={24} height={24} /> // 사용자 정의 아이콘
+        ),
+      }}>
       <Stack.Screen name="MypageMain" component={MypageMain} />
     </Stack.Navigator>
   );
