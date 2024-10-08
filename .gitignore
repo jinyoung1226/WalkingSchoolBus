@@ -66,6 +66,7 @@ yarn-error.log
 /coverage
 config.js
 google-services.json
+GoogleService-Info.plist
 
 # Yarn
 .yarn/*
