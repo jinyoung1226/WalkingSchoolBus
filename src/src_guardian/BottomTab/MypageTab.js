@@ -3,6 +3,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import MypageMain from '../Screens/Mypage/MypageMain';
 import useTabBarStore from '../../store/tabBarStore';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
+import BackIcon from '../../assets/icons/BackIcon.svg';
 
 const Stack = createStackNavigator();
 
