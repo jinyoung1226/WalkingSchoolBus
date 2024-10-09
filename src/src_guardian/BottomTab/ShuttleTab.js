@@ -8,7 +8,8 @@ import {colors, textStyles} from '../../styles/globalStyle';
 import {Text, TouchableOpacity, View} from 'react-native';
 import BackIcon from '../../assets/icons/BackIcon.svg';
 import MapIcon from '../../assets/icons/MapIcon.svg';
-import ShuttleMap from '../Screens/Shuttle/ShuttleMap'
+import ShuttleMap from '../Screens/Shuttle/ShuttleMap';
+import ShuttleStudentsList from '../Screens/Shuttle/ShuttleStudentsList';
 
 const Stack = createStackNavigator();
 
@@ -37,6 +38,10 @@ const ShuttleTab = ({route}) => {
       <Stack.Screen name="ShuttleMain" component={ShuttleMain} />
       <Stack.Screen name="ShuttleDetail" component={ShuttleDetail} />
       <Stack.Screen name="ShuttleMap" component={ShuttleMap} />
+      <Stack.Screen
+        name="ShuttleStudentsList"
+        component={ShuttleStudentsList}
+      />
     </Stack.Navigator>
   );
 };
