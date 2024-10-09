@@ -133,7 +133,6 @@ const ShuttleDetail = ({navigation}) => {
         </TouchableOpacity>
       </View>
       <FlatList
-        scrollEnabled={false}
         ListHeaderComponent={<View style={{height: 24}} />}
         data={waypoints}
         keyExtractor={(item) => item.waypointId}
