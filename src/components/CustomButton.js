@@ -27,7 +27,7 @@ const CustomButton = ({title, onPress, disabled = false, style, textStyle}) => {
       {({pressed}) => (
         <Text
           style={[
-            textStyles.M4,
+            textStyles.SB1,
             {color: disabled ? colors.Gray06 : colors.white},
             textStyle,
           ]}>
