@@ -25,6 +25,11 @@ export const textStyles = StyleSheet.create({
     fontFamily: 'Pretendard-Medium',
     fontSize: 14,
   },
+  SB5: {
+    fontFamily: 'Pretendard-Medium',
+    fontSize: 10,
+  },
+
   M1: {
     fontFamily: 'Pretendard-Medium',
     fontSize: 20,

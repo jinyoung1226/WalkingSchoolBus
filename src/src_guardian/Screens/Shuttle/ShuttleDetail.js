@@ -4,36 +4,22 @@ import {colors, textStyles} from '../../../styles/globalStyle';
 import BackIcon from '../../../assets/icons/BackIcon.svg';
 import MapIcon from '../../../assets/icons/MapIcon.svg';
 import {formatDate} from '../../../utils/formatDate';
-import NotSelectedBeforeSchool from '../../../assets/icons/NotSelectedBeforeSchool.svg';
-import SelectedAfterSchool from '../../../assets/icons/SelectedAfterSchool.svg';
-import SelectedBeforeSchool from '../../../assets/icons/SelectedBeforeSchool.svg';
-import NotSelectedAfterSchool from '../../../assets/icons/NotSelectedAfterSchool.svg';
 import {authApi} from '../../../api/api';
-import {ScrollView} from 'react-native-gesture-handler';
+import {FlatList, ScrollView} from 'react-native-gesture-handler';
 import WaypointCard from '../../../components/WaypointCard';
 import useShuttleStore from '../../../store/useShuttleStore';
-import WaypointIndicatorIcon from '../../../assets/icons/WaypointIndicatorIcon.svg';
+import SchoolTimeComponent from '../../../components/SchoolTimeComponent';
+import CustomButton from '../../../components/CustomButton';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ShuttleDetail = ({navigation}) => {
   const {waypoints, setWaypoints} = useShuttleStore();
-  const [beforeSchoolStatus, setBeforeSchoolStatus] = useState(true);
-  const [afterSchoolStatus, setAfterSchoolStatus] = useState(false);
+  const [isBeforeSchool, setIsBeforeSchool] = useState(true);
   const [groupInfo, setGroupInfo] = useState(null);
-
+  const [listHeight, setListHeight] = useState([]);
   // today 날짜
   const formattedDate = formatDate();
-
-  // 등하교 버튼 상태 관리
-  const handleBeforeSchoolPress = () => {
-    setBeforeSchoolStatus(true);
-    setAfterSchoolStatus(false); // 등교 비활성화
-  };
-
-  const handleAfterSchoolPress = () => {
-    setBeforeSchoolStatus(false);
-    setAfterSchoolStatus(true); // 하교 비활성화
-  };
-
+  const insets = useSafeAreaInsets();
   // 인솔자가 배정된 그룹 정보 불러오기
   useEffect(() => {
     const getGroupForGuardian = async () => {
@@ -78,12 +64,14 @@ const ShuttleDetail = ({navigation}) => {
       }
     };
     getWaypoints();
+    console.log(insets, '아이폰 인셋')
   }, []);
 
   // 상단 헤더 적용
   useLayoutEffect(() => {
     if (groupInfo) {
       navigation.setOptions({
+        headerTitleAlign: 'center',
         headerTitle: () => (
           <View style={{alignItems: 'center', gap: 4}}>
             <Text style={[textStyles.B1, {color: colors.Black}]}>
@@ -124,7 +112,8 @@ const ShuttleDetail = ({navigation}) => {
   }, [navigation, groupInfo]);
 
   return (
-    <View style={{backgroundColor: 'white', flex: 1}}>
+    <View 
+    style={{backgroundColor: colors.White_Green, flex:1, paddingBottom: insets.bottom}}>
       <View style={{height: 16}} />
       <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
         <Text
@@ -135,47 +124,38 @@ const ShuttleDetail = ({navigation}) => {
           {formattedDate}
         </Text>
         {/* 등교 버튼 */}
-        <TouchableOpacity onPress={handleBeforeSchoolPress}>
-          {beforeSchoolStatus ? (
-            <SelectedBeforeSchool />
-          ) : (
-            <NotSelectedBeforeSchool />
-          )}
+        <TouchableOpacity onPress={() => setIsBeforeSchool(true)}>
+            <SchoolTimeComponent type={'before'} isSelected={isBeforeSchool} title={'등교'}/>
         </TouchableOpacity>
         {/* 하교 버튼 */}
-        <TouchableOpacity onPress={handleAfterSchoolPress}>
-          {afterSchoolStatus ? (
-            <SelectedAfterSchool />
-          ) : (
-            <NotSelectedAfterSchool />
-          )}
+        <TouchableOpacity onPress={() => setIsBeforeSchool(false)}>
+          <SchoolTimeComponent type={'after'} isSelected={!isBeforeSchool} title={'하교'}/>
         </TouchableOpacity>
       </View>
-      <View style={{height: 24}} />
-      <ScrollView contentContainerStyle={{paddingLeft: 32, paddingRight: 37}}>
-        {waypoints.map((waypoint, index) => {
-          const isLastItem = index === waypoints.length - 1;
-          return (
-            <View style={{flexDirection: 'row', gap: 16}}>
-              <View style={{backgroundColor: 'red'}}>
-                {!isLastItem && <WaypointIndicatorIcon />}
-              </View>
-              <WaypointCard
-                key={waypoint.waypointId}
-                number={waypoint.waypointOrder}
-                title={waypoint.waypointName}
-                subtitle={`출결 ${2}/${waypoint.studentCount}`}
-                onPress={() =>
-                  navigation.navigate('ShuttleStudentsList', {
-                    waypointId: waypoint.waypointId,
-                  })
-                }
-                isLastItem={isLastItem}
-              />
-            </View>
-          );
-        })}
-      </ScrollView>
+      <FlatList
+        scrollEnabled={false}
+        ListHeaderComponent={<View style={{height: 24}} />}
+        data={waypoints}
+        keyExtractor={(item) => item.waypointId}
+        renderItem={({item}) => (
+          <WaypointCard
+            number={item.waypointOrder}
+            title={item.waypointName}
+            subtitle={`출결 ${2}/${item.studentCount}`}
+            onPress={() =>
+              navigation.navigate('ShuttleStudentsList', {
+                waypointId: item.waypointId,
+              })
+            }
+            isFirstItem={item.waypointOrder === 1}
+            isLastItem={item.waypointOrder === waypoints.length}
+
+          />
+        )}
+      />
+      <View style={{padding:16}}>
+      <CustomButton title={'출근 하기'} onPress={() => navigation.navigate('ShuttleAttendance')}/>
+      </View>
     </View>
   );
 };
