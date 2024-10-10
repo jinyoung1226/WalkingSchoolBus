@@ -1,11 +1,9 @@
 import React, {useLayoutEffect} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import ShuttleMain from '../Screens/Shuttle/ShuttleMain';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import useTabBarStore from '../../store/tabBarStore';
-import ShuttleDetail from '../Screens/Shuttle/ShuttleDetail';
 import BackIcon from '../../assets/icons/BackIcon.svg';
-import ShuttleMap from '../Screens/Shuttle/ShuttleMap'
+import NotiMain from '../Screens/Noitfication/NotiMain';
 
 const Stack = createStackNavigator();
 
@@ -17,7 +15,7 @@ const NotificationTab = ({route}) => {
   useLayoutEffect(() => {
     const routeName = getFocusedRouteNameFromRoute(route);
     console.log(routeName);
-    if (routeName === 'ShuttleMain') {
+    if (routeName === 'NotiMain') {
       showTabBar();
     } else {
       hideTabBar();
@@ -31,15 +29,7 @@ const NotificationTab = ({route}) => {
           <BackIcon width={24} height={24} /> // 사용자 정의 아이콘
         ),
       }}>
-      <Stack.Screen name="ShuttleMain" component={ShuttleMain} />
-      <Stack.Screen
-        name="ShuttleDetail"
-        component={ShuttleDetail}
-      />
-      <Stack.Screen
-        name="ShuttleMap"
-        component={ShuttleMap}
-      />
+      <Stack.Screen name="NotiMain" component={NotiMain} />
     </Stack.Navigator>
   );
 };

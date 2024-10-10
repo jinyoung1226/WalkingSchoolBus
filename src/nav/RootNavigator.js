@@ -8,6 +8,7 @@ import {authApi} from '../api/api';
 import SplashScreen from '../components/SplashScreen';
 import { NavigationContainer } from '@react-navigation/native';
 import { linking } from '../config/deepLinkConfig';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const RootNavigator = () => {
   const {
@@ -26,7 +27,7 @@ const RootNavigator = () => {
     await AsyncStorage.setItem('userType', userType);
     setUserType(userType);
   };
-
+  const queryClient = new QueryClient();
   // 자동로그인 API 호출
   const checkAuth = async () => {
     const accessToken = await AsyncStorage.getItem('accessToken');
@@ -74,9 +75,11 @@ const RootNavigator = () => {
 
   if (userType) {
     return (
-      <NavigationContainer linking={linking}>
-        {userType === 'PARENT' ? <ParentRootNavigator /> : <GuardianRootNavigator />}
-      </NavigationContainer>
+      <QueryClientProvider client={queryClient}>
+        <NavigationContainer linking={linking}>
+          {userType === 'PARENT' ? <ParentRootNavigator /> : <GuardianRootNavigator />}
+        </NavigationContainer>
+      </QueryClientProvider>
     );
   }
 };

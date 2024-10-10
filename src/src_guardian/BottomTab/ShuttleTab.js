@@ -36,12 +36,9 @@ const ShuttleTab = ({route}) => {
         ),
       }}>
       <Stack.Screen name="ShuttleMain" component={ShuttleMain} />
-      <Stack.Screen name="ShuttleDetail" component={ShuttleDetail} />
+      <Stack.Screen name="ShuttleDetail" component={ShuttleDetail} options={{headerShown:false}}/>
       <Stack.Screen name="ShuttleMap" component={ShuttleMap} />
-      <Stack.Screen
-        name="ShuttleStudentsList"
-        component={ShuttleStudentsList}
-      />
+      <Stack.Screen name="ShuttleStudentsList" component={ShuttleStudentsList} options={{headerShown:false}}/>
     </Stack.Navigator>
   );
 };

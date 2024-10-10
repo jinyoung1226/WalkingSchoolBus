@@ -11,7 +11,7 @@ const SplashScreen = () => {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: colors.white,
+        backgroundColor: colors.White,
       }}>
       <View style={{flex: 1}}/>
       <MainLogo />
