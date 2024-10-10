@@ -54,7 +54,7 @@ const useWebsocketStore = create(set => ({
     }
   },
 
-  subscribeToChannel: async (channel, callback) => {
+  subscribeToChannel: async ({channel, callback}) => {
     if (webSocketClient && webSocketClient.connected) {
       try {
         console.log('구독 성공');
@@ -80,7 +80,7 @@ const useWebsocketStore = create(set => ({
       console.log('구독 중인 채널이 없습니다.');
     }
   },
-  
+
 }));
 
 // Stomp 프로토콜 기반 웹소캣 클라이언트 생성 함수
