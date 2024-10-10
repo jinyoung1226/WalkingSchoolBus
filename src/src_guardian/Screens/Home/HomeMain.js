@@ -1,5 +1,5 @@
-import { Children, useLayoutEffect } from "react";
-import { Button, Linking, Text, TouchableOpacity, View } from "react-native";
+import { useLayoutEffect } from "react";
+import { Linking, Text, View } from "react-native";
 import TextLogo from "../../../assets/icons/TextLogo.svg";
 import { colors, textStyles } from "../../../styles/globalStyle";
 import { ScrollView } from "react-native-gesture-handler";

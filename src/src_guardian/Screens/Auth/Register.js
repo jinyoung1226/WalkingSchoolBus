@@ -1,4 +1,5 @@
-const {View, Text} = require('react-native');
+import React from 'react';
+import {View, Text} from 'react-native';
 
 const Register = () => {
   return (
