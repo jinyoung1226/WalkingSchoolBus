@@ -4,15 +4,23 @@ import { colors, textStyles } from "../../../styles/globalStyle";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 import BackIcon from "../../../assets/icons/BackIcon.svg";
 import { ScrollView } from "react-native-gesture-handler";
+import { getDailySchedule } from "../../../api/scheduleApi";
+import { useQuery } from "@tanstack/react-query";
 
 const HomeSchedule = ({ navigation }) => {
   const [selected, setSelected] = useState('');
   const [markedDates, setMarkedDates] = useState({});
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
-  
+
+
+  const todayString = new Date().toISOString().split('T')[0];
   // 달력 언어 설정
-  
+  const {data} = useQuery({
+    queryKey: ['dailySchedule'], 
+    queryFn: () => getDailySchedule(todayString)
+  });
+
   LocaleConfig.locales['kr'] = {
     monthNames: [
       '1월','2월','3월','4월','5월','6월',
@@ -35,8 +43,7 @@ const HomeSchedule = ({ navigation }) => {
   useEffect(() => {
     const generateMarkedDates = () => {
       let dates = {};
-
-      // 현재 날짜를 기준으로 초기 month와 year 설정
+      
       const today = new Date();
       setMonth(today.getMonth() + 1);
       setYear(today.getFullYear());
@@ -47,6 +54,7 @@ const HomeSchedule = ({ navigation }) => {
       oneYearLater.setFullYear(today.getFullYear() + 1);
 
       const todayString = today.toISOString().split('T')[0];
+      // 현재 날짜를 기준으로 초기 month와 year 설정
 
       for (
         let d = new Date(oneYearAgo);
@@ -249,15 +257,9 @@ const HomeSchedule = ({ navigation }) => {
             },
             backgroundColor: colors.White_Green,
             calendarBackground: colors.White_Green,
-            textSectionTitleColor: colors.Gray06,
-            textSectionTitleDisabledColor: '#d9e1e8',
-            selectedDayBackgroundColor: colors.Main_Green,
-            selectedDayTextColor: colors.white,
             todayTextColor: colors.Main_Green,
             dayTextColor: colors.Gray07,
             textDisabledColor: '#d9e1e8',
-            dotColor: colors.Button_Green,
-            selectedDotColor: colors.white,
             arrowColor: colors.Black,
             disabledArrowColor: '#d9e1e8',
             monthTextColor: colors.Black,

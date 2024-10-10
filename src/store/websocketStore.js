@@ -7,6 +7,8 @@ import * as StompJs from '@stomp/stompjs';
 
 let webSocketClient = null;
 
+let groupSubscription = null;
+
 // 웹소캣 상태 관리 store
 const useWebsocketStore = create(set => ({
   isConnected: false,
@@ -51,6 +53,34 @@ const useWebsocketStore = create(set => ({
       set({isConnected: false});
     }
   },
+
+  subscribeToChannel: async (channel, callback) => {
+    if (webSocketClient && webSocketClient.connected) {
+      try {
+        console.log('구독 성공');
+        groupSubscription = webSocketClient.subscribe(channel, callback);
+      } catch (error) {
+        console.error('구독 실패', error);
+      }
+    } else {
+      console.error('웹소켓이 연결되지 않았습니다.');
+    }
+  },
+
+  unsubscribeToChannel: async () => {
+    if (groupSubscription) {
+      try {
+        groupSubscription.unsubscribe();
+        console.log('구독 해제 성공');
+        groupSubscription = null;
+      } catch (error) {
+        console.error('구독 해제 실패', error);
+      }
+    } else {
+      console.log('구독 중인 채널이 없습니다.');
+    }
+  },
+  
 }));
 
 // Stomp 프로토콜 기반 웹소캣 클라이언트 생성 함수
