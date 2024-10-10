@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import { Text, TouchableOpacity, View} from 'react-native';
 import {colors, textStyles} from '../../../styles/globalStyle';
 import {formatDate} from '../../../utils/formatDate';
@@ -10,10 +10,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getGroupForGuardian, getWaypoints } from '../../../api/shuttleApi';
 import { useQuery } from '@tanstack/react-query';
 import ShuttleHeader from '../../../components/ShuttleHeader';
+import useWebsocketStore from '../../../store/websocketStore';
 
 const ShuttleDetail = ({navigation}) => {
   const [isBeforeSchool, setIsBeforeSchool] = useState(true);
 
+  const {subscribeToChannel, unsubscribeToChannel} = useWebsocketStore();
   // today 날짜
   const formattedDate = formatDate();
   const insets = useSafeAreaInsets();
@@ -28,6 +30,17 @@ const ShuttleDetail = ({navigation}) => {
     queryFn: getWaypoints
   });
 
+  useEffect(() => {
+    subscribeToChannel({
+      channel:`sub/group/${2}`, 
+      callback: message => {
+        console.log(message, '@@@@@');
+      }
+    });
+    return () => {
+      unsubscribeToChannel()
+    }
+  }, []);
   return (
     <View 
       style={{backgroundColor: colors.White_Green, flex:1, paddingBottom: insets.bottom, paddingTop: insets.top}}>
