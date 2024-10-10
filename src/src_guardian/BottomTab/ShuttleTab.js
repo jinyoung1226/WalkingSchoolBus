@@ -21,7 +21,7 @@ const ShuttleTab = ({route}) => {
   useLayoutEffect(() => {
     const routeName = getFocusedRouteNameFromRoute(route);
     console.log(routeName);
-    if (routeName === 'ShuttleMain') {
+    if (routeName === 'ShuttleMain' || routeName === undefined) {
       showTabBar();
     } else {
       hideTabBar();

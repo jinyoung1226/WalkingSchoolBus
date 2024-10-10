@@ -15,7 +15,7 @@ const NotificationTab = ({route}) => {
   useLayoutEffect(() => {
     const routeName = getFocusedRouteNameFromRoute(route);
     console.log(routeName);
-    if (routeName === 'NotiMain') {
+    if (routeName === 'NotiMain' || routeName === undefined) {
       showTabBar();
     } else {
       hideTabBar();
