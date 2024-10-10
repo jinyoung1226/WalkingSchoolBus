@@ -32,7 +32,7 @@ const HomeButton = ({title, onPress, disabled = false, style, textStyle}) => {
       <Text
         style={[
           textStyles.M4,
-          {color: disabled ? colors.Gray06 : colors.white},
+          {color: disabled ? colors.Gray06 : colors.White},
           textStyle,
         ]}>
         {title}

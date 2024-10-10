@@ -1,105 +1,106 @@
-import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {View, Text, Image, TouchableOpacity, ScrollView} from 'react-native';
+import React, {useState} from 'react';
+import {View, Text} from 'react-native';
 import {colors, textStyles} from '../../../styles/globalStyle';
-import BackIcon from '../../../assets/icons/BackIcon.svg';
-import MapIcon from '../../../assets/icons/MapIcon.svg';
 import {authApi} from '../../../api/api';
+import { FlatList } from 'react-native-gesture-handler';
+import StudentCard from '../../../components/StudentCard';
+import ConfirmModal from '../../../components/ConfirmModal';
+import ShuttleHeader from '../../../components/ShuttleHeader';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { getStudentsByWaypoint } from '../../../api/shuttleApi';
+import { useQuery } from '@tanstack/react-query';
+import CustomButton from '../../../components/CustomButton';
 
 const ShuttleStudentsList = ({navigation, route}) => {
-  const {waypointId} = route.params;
-  const [groupInfo, setGroupInfo] = useState(null);
-  const [studentsInfo, setStudentInfo] = useState([]);
+  const {waypointId, waypointName, groupName} = route.params;
+  // const [studentsInfo, setStudentInfo] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const insets = useSafeAreaInsets();
+
 
   // 각 경유지에 배정된 학생 불러오기
-  useEffect(() => {
-    const getStudentsByWaypoint = async () => {
-      try {
-        const response = await authApi.get(`waypoints/${waypointId}/students`);
-        if (response.status === 200) {
-          console.log(response.data, '경유지에 배정된 학생 불러오기');
-          setStudentInfo(response.data);
-        }
-      } catch (error) {
-        if (error.response) {
-          if (error.response.status === 400) {
-            Alert.alert('경유지에 있는 학생 정보를 불러올 수 없습니다');
-          }
-        } else {
-          console.log(error);
-          Alert.alert('서버와의 통신 실패');
-        }
-      }
-    };
-    getStudentsByWaypoint();
-  }, []);
+  const { data: studentsInfo, isPending: studentsInfoIsPending, error: studentsInfoError } = useQuery({
+    queryKey: ['studentsInfo'], 
+    queryFn: () => getStudentsByWaypoint(waypointId)
+  });
 
-  // 인솔자가 배정된 그룹 정보 불러오기
-  useEffect(() => {
-    const getGroupForGuardian = async () => {
-      try {
-        const response = await authApi.get('guardian/group');
-        if (response.status === 200) {
-          console.log(response.data, '그룹 정보 불러오기');
-          setGroupInfo(response.data);
-        }
-      } catch (error) {
-        if (error.response) {
-          if (error.response.status === 400) {
-            Alert.alert('그룹 정보를 불러올 수 없습니다');
-          }
-        } else {
-          console.log(error);
-          Alert.alert('서버와의 통신 실패');
-        }
-      }
-    };
-    getGroupForGuardian();
-  }, []);
+  if (studentsInfoIsPending) {
+    return <View />;
+  }
 
-  // 상단 헤더 적용
-  useLayoutEffect(() => {
-    if (groupInfo) {
-      navigation.setOptions({
-        headerTitle: () => (
-          <View style={{alignItems: 'center', gap: 4}}>
-            <Text style={[textStyles.B1, {color: colors.Black}]}>
-              {' '}
-              {groupInfo.schoolName}{' '}
-            </Text>
-            <Text style={[textStyles.B2, {color: colors.Black}]}>
-              {' '}
-              {groupInfo.groupName}{' '}
-            </Text>
-          </View>
-        ),
-        headerLeft: () => (
-          <TouchableOpacity
-            onPress={() => {
-              navigation.goBack();
-            }}
-            style={{paddingLeft: 16}}>
-            <BackIcon />
-          </TouchableOpacity>
-        ),
-        headerRight: () => (
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('ShuttleMap');
-            }}
-            style={{paddingRight: 16}}>
-            <MapIcon />
-          </TouchableOpacity>
-        ),
-        headerStyle: {
-          elevation: 0, // Android에서의 그림자 제거
-          shadowOpacity: 0, // iOS에서의 그림자 제거
-          height: 80,
-        },
-      });
+  const onAttendanceButtonPress = async ({studentId, attendanceStatus}) => {
+    if (attendanceStatus === 'PRESENT') {
+      setModalVisible(true);
     }
-  }, [navigation, groupInfo]);
+    if (attendanceStatus === 'UNCONFIRMED') {
+      console.log(studentId, attendanceStatus);
+      try {
+        const response = await authApi.post('attendance/update', {
+        studentId: studentId,
+        attendanceStatus: "PRESENT"
+        });
+        if (response.status === 200) {
+          //웹소켓 퍼블리싱
+          console.log(response.data);
+        }
+      } catch (error) {
+        console.log(error.response.data);
+      }
+    }
+  }
 
-  return <View style={{backgroundColor: 'white', flex: 1}}></View>;
+  return (
+    <View style={{backgroundColor: 'white', flex: 1, paddingBottom: insets.bottom, paddingTop: insets.top}}>
+      <ConfirmModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        title={'출석을 취소하시겠어요?'}
+        subTitle={'출석을 취소하면 미인증 상태로 변경됩니다'}
+        cancelTitle={'아니요'}
+        confirmTitle={'네, 취소할래요'}
+        onConfirm={() => {
+          setModalVisible(false);
+        }}
+        onCancel={() => {
+          setModalVisible(false);
+        }}
+      />
+      <ShuttleHeader title={waypointName} subTitle={groupName} />
+      <View style={{height: 16}} />
+      <View style={{paddingHorizontal:32}}>
+        <Text style={[textStyles.M2, {color: colors.Black}]}>
+          {`📌 현재 출결`}
+          <Text style={[textStyles.SB2, {color: colors.Red}]}>
+            {` ${studentsInfo.filter((student) => student.attendanceStatus === 'PRESENT').length}/${studentsInfo.length}`}
+          </Text>
+          {`명 완료`}
+        </Text>
+      </View>
+      <FlatList
+        ListHeaderComponent={() => <View style={{height: 16}} />}
+        data={studentsInfo}
+        keyExtractor={(item) => item.studentId}
+        renderItem={({item}) => (
+          <StudentCard
+            initialStatus={item.attendanceStatus}
+            studentId={item.studentId}
+            name={item.name}
+            imagePath={item.imagePath}
+            onAttendanceButtonPress={() => {
+              onAttendanceButtonPress({studentId: item.studentId, attendanceStatus: item.attendanceStatus});
+            }}
+            goStudentDetail={() => {
+              navigation.navigate('StudentDetail', {studentId: item.studentId});
+            }}/>
+        )}
+        ItemSeparatorComponent={() => <View style={{height: 16}} />}
+      />
+      <View style={{padding:16}}>
+        <CustomButton title={'출석완료'} onPress={() => {}}/>
+      </View>
+    </View>
+  );
 };
 
 export default ShuttleStudentsList;

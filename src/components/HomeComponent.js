@@ -18,7 +18,7 @@ const HomeComponent = ({title, children, onPress}) => {
             {'전체보기'}
           </Text>
           <View style={{width: 8}}/>
-          <ArrowIcon/>
+          <ArrowIcon width={16} height={16} color={colors.Gray06}/>
         </TouchableOpacity>
       </View>
       {children}

@@ -18,15 +18,15 @@ export const textStyles = StyleSheet.create({
     fontSize: 18,
   },
   SB3: {
-    fontFamily: 'Pretendard-Medium',
+    fontFamily: 'Pretendard-SemiBold',
     fontSize: 16,
   },
   SB4: {
-    fontFamily: 'Pretendard-Medium',
+    fontFamily: 'Pretendard-SemiBold',
     fontSize: 14,
   },
   SB5: {
-    fontFamily: 'Pretendard-Medium',
+    fontFamily: 'Pretendard-SemiBold',
     fontSize: 10,
   },
 
@@ -87,10 +87,11 @@ export const colors = {
   Dark_Green: '#00DD8E',
   Button_Green: '#2EE8A5',
   Pressed_Green: '#28D597',
-  white: '#FFFFFF',
+  White: '#FFFFFF',
   Red: '#FF6972',
   Blue: "#0099FF",
   Orange: '#FF8000',
+  BG_Green: '#E4FCF5',
 };
 
 

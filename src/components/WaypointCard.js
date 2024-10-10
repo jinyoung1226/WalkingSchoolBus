@@ -5,7 +5,7 @@ import {colors, textStyles} from '../styles/globalStyle';
 import SchoolIcon from '../assets/icons/SchoolIcon.svg';
 
 const WaypointCard = ({ number, title, subtitle, onPress, isFirstItem, isLastItem }) => {
-  const [cardHeight, setCardHeight] = React.useState(0);
+
   return (
     <View style={{flexDirection:'row', alignItems:'center', paddingHorizontal: 16}}>
       <View style={{alignItems:'center'}}>
@@ -21,10 +21,7 @@ const WaypointCard = ({ number, title, subtitle, onPress, isFirstItem, isLastIte
       <View style={{width: 16}} />
       <View style={{flex:1}}>
         <TouchableOpacity
-          onLayout={(e) => {
-            setCardHeight(e.nativeEvent.layout.height);
-            console.log(e.nativeEvent.layout.height);
-          }}
+          disabled={isLastItem}
           onPress={onPress}
           style={{
             flex: 1,
@@ -47,7 +44,7 @@ const WaypointCard = ({ number, title, subtitle, onPress, isFirstItem, isLastIte
                   alignItems: 'center',
                   margin: 3.5
                 }}>
-                <Text style={[textStyles.B1, {color: colors.white}]}>{number}</Text>
+                <Text style={[textStyles.B1, {color: colors.White}]}>{number}</Text>
               </View>
             ) : (
                 <SchoolIcon />
@@ -62,7 +59,7 @@ const WaypointCard = ({ number, title, subtitle, onPress, isFirstItem, isLastIte
               )}
             </View>
             <View style={{width: 16}} />
-          {!isLastItem && <ArrowIcon />}
+          {!isLastItem && <ArrowIcon width={20} height={20} color={colors.Gray07}/>}
         </TouchableOpacity>
         <View style={{height: 32}} />
       </View>

@@ -5,22 +5,44 @@ import {
 } from 'react-native';
 import { colors, textStyles } from '../styles/globalStyle';
 
-const CustomButton = ({title, onPress, disabled = false, style, textStyle}) => {
+const CustomButton = ({title, onPress, disabled = false, style, textStyle, type = 'confirm'}) => {
+  
+  const buttonContainerStyle = ({pressed, disabled}) => {
+    switch (type) {
+      case 'confirm':
+        return {
+          backgroundColor: disabled ? colors.Gray02 : pressed ? colors.Pressed_Green : colors.Button_Green,
+        };
+      case 'cancel':
+        return {
+          backgroundColor: pressed? colors.Gray03 : colors.Gray02,
+        };
+    }
+  };
+
+  const buttonTextStyle = ({disabled}) => {
+    switch (type) {
+      case 'confirm':
+        return {
+          color: disabled ? colors.Gray06 : colors.White,
+        };
+      case 'cancel':
+        return {
+          color: colors.Gray07,
+        };
+    }
+  }
   return (
     <Pressable
       style={({pressed}) => [
         {
           height: 50,
-          backgroundColor: disabled
-            ? colors.Gray02
-            : pressed
-            ? colors.Pressed_Green
-            : colors.Button_Green,
           justifyContent: 'center',
           alignItems: 'center',
           borderRadius: 10,
         },
-        style,
+        buttonContainerStyle({pressed, disabled}),
+        style
       ]}
       disabled={disabled}
       onPress={onPress}>
@@ -28,7 +50,7 @@ const CustomButton = ({title, onPress, disabled = false, style, textStyle}) => {
         <Text
           style={[
             textStyles.SB1,
-            {color: disabled ? colors.Gray06 : colors.white},
+            buttonTextStyle({disabled}),
             textStyle,
           ]}>
           {title}
