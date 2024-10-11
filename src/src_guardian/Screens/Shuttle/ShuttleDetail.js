@@ -34,7 +34,8 @@ const ShuttleDetail = ({navigation}) => {
     subscribeToChannel({
       channel:`sub/group/${2}`, 
       callback: message => {
-        console.log(message, '@@@@@');
+        const newMessage = JSON.parse(message.body);
+        console.log(newMessage);
       }
     });
     return () => {

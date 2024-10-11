@@ -10,6 +10,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getStudentsByWaypoint } from '../../../api/shuttleApi';
 import { useQuery } from '@tanstack/react-query';
 import CustomButton from '../../../components/CustomButton';
+import useWebsocketStore from '../../../store/websocketStore';
 
 const ShuttleStudentsList = ({navigation, route}) => {
   const {waypointId, waypointName, groupName} = route.params;
@@ -17,7 +18,7 @@ const ShuttleStudentsList = ({navigation, route}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const insets = useSafeAreaInsets();
-
+  const { publish } = useWebsocketStore();
 
   // 각 경유지에 배정된 학생 불러오기
   const { data: studentsInfo, isPending: studentsInfoIsPending, error: studentsInfoError } = useQuery({
@@ -29,24 +30,18 @@ const ShuttleStudentsList = ({navigation, route}) => {
     return <View />;
   }
 
-  const onAttendanceButtonPress = async ({studentId, attendanceStatus}) => {
-    if (attendanceStatus === 'PRESENT') {
+  const onAttendanceButtonPress = async ({studentId, status}) => {
+    if (status === 'PRESENT') {
       setModalVisible(true);
     }
-    if (attendanceStatus === 'UNCONFIRMED') {
-      console.log(studentId, attendanceStatus);
-      try {
-        const response = await authApi.post('attendance/update', {
+    if (status === 'UNCONFIRMED') {
+      console.log(studentId, status);
+      publish({
+        channel: `/pub/group/2`,
+        header: 'application/json',
         studentId: studentId,
-        attendanceStatus: "PRESENT"
-        });
-        if (response.status === 200) {
-          //웹소켓 퍼블리싱
-          console.log(response.data);
-        }
-      } catch (error) {
-        console.log(error.response.data);
-      }
+        attendanceStatus: 'PRESENT',
+      });
     }
   }
 
@@ -88,7 +83,7 @@ const ShuttleStudentsList = ({navigation, route}) => {
             name={item.name}
             imagePath={item.imagePath}
             onAttendanceButtonPress={() => {
-              onAttendanceButtonPress({studentId: item.studentId, attendanceStatus: item.attendanceStatus});
+              onAttendanceButtonPress({studentId: item.studentId, status: item.attendanceStatus});
             }}
             goStudentDetail={() => {
               navigation.navigate('StudentDetail', {studentId: item.studentId});

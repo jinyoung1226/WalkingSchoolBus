@@ -81,6 +81,26 @@ const useWebsocketStore = create(set => ({
     }
   },
 
+  publish: async ({destination, header, studentId, attendanceStatus}) => {
+    if (webSocketClient) {
+      try {
+        console.log(destination, header, '메시지 전송');
+        webSocketClient.publish({
+          destination: destination,
+          Headers: header,
+          body: JSON.stringify({
+            studentId: studentId,
+            attendanceStatus: attendanceStatus,
+          }),
+        });
+      } catch (error) {
+        console.error('메시지 전송 실패', error);
+      }
+    } else {
+      console.error('WebSocket is not connected.');
+    }
+  }
+
 }));
 
 // Stomp 프로토콜 기반 웹소캣 클라이언트 생성 함수
