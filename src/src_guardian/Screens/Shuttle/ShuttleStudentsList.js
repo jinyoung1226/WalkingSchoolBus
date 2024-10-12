@@ -8,7 +8,7 @@ import ConfirmModal from '../../../components/ConfirmModal';
 import ShuttleHeader from '../../../components/ShuttleHeader';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getStudentsByWaypoint } from '../../../api/shuttleApi';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient  } from '@tanstack/react-query';
 import CustomButton from '../../../components/CustomButton';
 import useWebsocketStore from '../../../store/websocketStore';
 
@@ -16,13 +16,14 @@ const ShuttleStudentsList = ({navigation, route}) => {
   const {waypointId, waypointName, groupName} = route.params;
   // const [studentsInfo, setStudentInfo] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [selectedStudentId, setSelectedStudentId] = useState(null);
   const insets = useSafeAreaInsets();
   const { publish } = useWebsocketStore();
+  const queryClient = useQueryClient();
 
   // 각 경유지에 배정된 학생 불러오기
   const { data: studentsInfo, isPending: studentsInfoIsPending, error: studentsInfoError } = useQuery({
-    queryKey: ['studentsInfo'], 
+    queryKey: ['studentsInfo', waypointId], 
     queryFn: () => getStudentsByWaypoint(waypointId)
   });
 
@@ -32,12 +33,13 @@ const ShuttleStudentsList = ({navigation, route}) => {
 
   const onAttendanceButtonPress = async ({studentId, status}) => {
     if (status === 'PRESENT') {
+      setSelectedStudentId(studentId);
       setModalVisible(true);
     }
     if (status === 'UNCONFIRMED') {
       console.log(studentId, status);
       publish({
-        channel: `/pub/group/2`,
+        destination: `/pub/group/2`,
         header: 'application/json',
         studentId: studentId,
         attendanceStatus: 'PRESENT',
@@ -55,6 +57,12 @@ const ShuttleStudentsList = ({navigation, route}) => {
         cancelTitle={'아니요'}
         confirmTitle={'네, 취소할래요'}
         onConfirm={() => {
+          publish({
+            destination: `/pub/group/2`,
+            header: 'application/json',
+            studentId: selectedStudentId,
+            attendanceStatus: 'UNCONFIRMED',
+          });
           setModalVisible(false);
         }}
         onCancel={() => {

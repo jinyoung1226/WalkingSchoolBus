@@ -7,7 +7,7 @@ import SchoolIcon from '../assets/icons/SchoolIcon.svg';
 const WaypointCard = ({ number, title, subtitle, onPress, isFirstItem, isLastItem }) => {
 
   return (
-    <View style={{flexDirection:'row', alignItems:'center', paddingHorizontal: 16}}>
+    <View style={{flexDirection:'row', alignItems:'center', paddingHorizontal: 32}}>
       <View style={{alignItems:'center'}}>
         <View style={{width:2, backgroundColor: isFirstItem ? null :colors.Main_Green, flex:1}} />
         {/* 이전 경유지가 출석되었을 경우에 실선 처리  */}
@@ -63,7 +63,7 @@ const WaypointCard = ({ number, title, subtitle, onPress, isFirstItem, isLastIte
         </TouchableOpacity>
         <View style={{height: 32}} />
       </View>
-      <View style={{width: 16}} />
+      
     </View>
   );
 };

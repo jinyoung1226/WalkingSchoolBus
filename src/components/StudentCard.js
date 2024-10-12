@@ -7,7 +7,7 @@ import { authApi } from '../api/api';
 
 const StudentCard = ({ name, goStudentDetail, imagePath, initialStatus, onAttendanceButtonPress }) => {
 
-  const [attendanceStatus, setAttendanceStatus] = useState(initialStatus);
+  // const [initialStatus, setinitialStatus] = useState(initialStatus);
 
   const attendanceButtonColor = (status) => {
     if (status === 'UNCONFIRMED') {
@@ -103,14 +103,14 @@ const StudentCard = ({ name, goStudentDetail, imagePath, initialStatus, onAttend
                 width: 81,
                 paddingVertical: 8,
                 borderRadius: 7,
-                backgroundColor: attendanceButtonColor(attendanceStatus),
+                backgroundColor: attendanceButtonColor(initialStatus),
                 justifyContent: 'center',
                 alignItems: 'center',
                 borderWidth: 1,
-                borderColor: attendanceStatus === 'UNCONFIRMED' ? colors.Main_Green : 'transparent',
+                borderColor: initialStatus === 'UNCONFIRMED' ? colors.Main_Green : 'transparent',
               }}>
-              <Text style={[textStyles.SB4, {color: attendanceButtonTextColor(attendanceStatus)}]}>
-                {attendanceButtonText(attendanceStatus)}
+              <Text style={[textStyles.SB4, {color: attendanceButtonTextColor(initialStatus)}]}>
+                {attendanceButtonText(initialStatus)}
               </Text>
             </TouchableOpacity>
         </View>

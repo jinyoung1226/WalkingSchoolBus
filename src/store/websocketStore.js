@@ -18,15 +18,43 @@ const useWebsocketStore = create(set => ({
     const accessToken = await AsyncStorage.getItem('accessToken');
     if (accessToken) {
       try {
+        const client = token => 
+          new StompJs.Client({
+            brokerURL: `${config.WEBSOCKET_URL}/ws`,
+            forceBinaryWSFrames: true,
+            appendMissingNULLonIncoming: true,
+            connectHeaders: {accessToken: token},
+            reconnectDelay: 5000,
+            debug: function (str) {
+              console.log(str, '웹소캣 연결 로그');
+            },
+            onStompError: async function (str) {
+              console.log('웹소캣 연결 에러 발생: ', str);
+              const response = await refreshApi.post('/token/re-issue');
+              if (response.status === 200) {
+                console.log('토큰 재발급 성공');
+        
+                await AsyncStorage.setItem('accessToken', response.data.accessToken);
+                await EncryptedStorage.setItem(
+                  'refreshToken',
+                  response.data.refreshToken,
+                );
+        
+                webSocketClient = client(response.data.accessToken);
+                webSocketClient.activate();
+              } else {
+                console.error('토큰 재발급 실패');
+              }
+            },
+          });
         webSocketClient = client(accessToken);
-
+        webSocketClient.activate();
         // WebSocket 연결 성공 시 호출
         webSocketClient.onConnect = () => {
           console.log('WebSocket 연결 성공');
           set({isConnected: true});
         };
-
-        webSocketClient.activate();
+        // webSocketClient.activate();
       } catch (error) {
         console.error('웹소캣 연결 실패', error);
         set({isConnected: false});
@@ -59,6 +87,7 @@ const useWebsocketStore = create(set => ({
       try {
         console.log('구독 성공');
         groupSubscription = webSocketClient.subscribe(channel, callback);
+        console.log(groupSubscription)
       } catch (error) {
         console.error('구독 실패', error);
       }
@@ -102,37 +131,5 @@ const useWebsocketStore = create(set => ({
   }
 
 }));
-
-// Stomp 프로토콜 기반 웹소캣 클라이언트 생성 함수
-const client = token => {
-  return new StompJs.Client({
-    brokerURL: `${config.WEBSOCKET_URL}/ws`,
-    forceBinaryWSFrames: true,
-    appendMissingNULLonIncoming: true,
-    connectHeaders: {accessToken: token},
-    reconnectDelay: 5000,
-    debug: function (str) {
-      console.log(str, '웹소캣 연결 로그');
-    },
-    onStompError: async function (str) {
-      console.log('웹소캣 연결 에러 발생: ', str);
-      const response = await refreshApi.post('/token/re-issue');
-      if (response.status === 200) {
-        console.log('토큰 재발급 성공');
-
-        await AsyncStorage.setItem('accessToken', response.data.accessToken);
-        await EncryptedStorage.setItem(
-          'refreshToken',
-          response.data.refreshToken,
-        );
-
-        const newClient = client(response.data.accessToken);
-        newClient.activate();
-      } else {
-        console.error('토큰 재발급 실패');
-      }
-    },
-  });
-};
 
 export default useWebsocketStore;
