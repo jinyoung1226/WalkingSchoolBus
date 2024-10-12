@@ -11,14 +11,16 @@ import { getGroupForGuardian, getWaypoints } from '../../../api/shuttleApi';
 import { useQuery } from '@tanstack/react-query';
 import ShuttleHeader from '../../../components/ShuttleHeader';
 import useWebsocketStore from '../../../store/websocketStore';
+import { useQueryClient } from '@tanstack/react-query';
 
 const ShuttleDetail = ({navigation}) => {
   const [isBeforeSchool, setIsBeforeSchool] = useState(true);
 
-  const {subscribeToChannel, unsubscribeToChannel} = useWebsocketStore();
+  const {subscribeToChannel, unsubscribeToChannel, publish} = useWebsocketStore();
   // today 날짜
   const formattedDate = formatDate();
   const insets = useSafeAreaInsets();
+  const queryClient = useQueryClient();
 
   const { data: groupInfo, isPending: groupInfoIsPending, error: groupInfoError } = useQuery({
     queryKey: ['groupInfo'], 
@@ -32,22 +34,57 @@ const ShuttleDetail = ({navigation}) => {
 
   useEffect(() => {
     subscribeToChannel({
-      channel:`sub/group/${2}`, 
+      channel:'/sub/group/2', 
       callback: message => {
         const newMessage = JSON.parse(message.body);
         console.log(newMessage);
+        const { studentId, attendanceStatus, waypointId } = newMessage;
+
+        // React Query 캐시 업데이트
+        queryClient.setQueryData(['studentsInfo', waypointId], (oldData) => {
+          if (!oldData) return;
+          return oldData.map((student) => {
+            if (student.studentId === studentId) {
+              console.log('Updating student:', student.name);
+              return { ...student, attendanceStatus };
+            }
+            return student;
+          });
+        });
       }
     });
     return () => {
       unsubscribeToChannel()
     }
   }, []);
+
+  const onAttendanceButtonPress = async ({studentId, status}) => {
+    if (status === 'PRESENT') {
+      // setModalVisible(true);
+      publish({
+        destination: `/pub/group/2`,
+        header: 'application/json',
+        studentId: studentId,
+        attendanceStatus: 'UNCONFIRMED',
+      });
+    }
+    if (status === 'UNCONFIRMED') {
+      console.log(studentId, status);
+      publish({
+        destination: `/pub/group/2`,
+        header: 'application/json',
+        studentId: studentId,
+        attendanceStatus: 'PRESENT',
+      });
+    }
+  }
+
   return (
     <View 
       style={{backgroundColor: colors.White_Green, flex:1, paddingBottom: insets.bottom, paddingTop: insets.top}}>
       {groupInfo && <ShuttleHeader title={groupInfo.schoolName} subTitle={groupInfo.groupName} />}
       <View style={{height: 16}} />
-      <View style={{flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal:16}}>
+      <View style={{flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal:32}}>
         <Text
           style={[
             textStyles.M2,
@@ -84,7 +121,7 @@ const ShuttleDetail = ({navigation}) => {
         )}
       />
       <View style={{padding:16}}>
-        <CustomButton title={'출근 하기'} onPress={() => navigation.navigate('ShuttleAttendance')}/>
+        <CustomButton title={'출근 하기'} onPress={() => onAttendanceButtonPress({studentId:23, status:'PRESENT'})}/>
       </View>
     </View>
   );
