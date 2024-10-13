@@ -1,13 +1,9 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {View, Text, TouchableOpacity, Image} from 'react-native';
 import ArrowIcon from '../assets/icons/ArrowIcon.svg';
 import {colors, textStyles} from '../styles/globalStyle';
-import SchoolIcon from '../assets/icons/SchoolIcon.svg';
-import { authApi } from '../api/api';
 
 const StudentCard = ({ name, goStudentDetail, imagePath, initialStatus, onAttendanceButtonPress }) => {
-
-  // const [initialStatus, setinitialStatus] = useState(initialStatus);
 
   const attendanceButtonColor = (status) => {
     if (status === 'UNCONFIRMED') {

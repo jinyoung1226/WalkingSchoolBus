@@ -14,7 +14,7 @@ import useWebsocketStore from '../../../store/websocketStore';
 import MapIcon from '../../../assets/icons/MapIcon.svg';
 
 const ShuttleStudentsList = ({navigation, route}) => {
-  const {waypointId, waypointName, groupName} = route.params;
+  const {waypointId, waypointName, groupInfo} = route.params;
   // const [studentsInfo, setStudentInfo] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedStudentId, setSelectedStudentId] = useState(null);
@@ -39,7 +39,7 @@ const ShuttleStudentsList = ({navigation, route}) => {
     if (status === 'UNCONFIRMED') {
       console.log(studentId, status);
       publish({
-        destination: `/pub/group/2`,
+        destination: `/pub/group/${groupInfo.id}`,
         header: 'application/json',
         studentId: studentId,
         attendanceStatus: 'PRESENT',
@@ -58,7 +58,7 @@ const ShuttleStudentsList = ({navigation, route}) => {
         confirmTitle={'네, 취소할래요'}
         onConfirm={() => {
           publish({
-            destination: `/pub/group/2`,
+            destination: `/pub/group/${groupInfo.id}`,
             header: 'application/json',
             studentId: selectedStudentId,
             attendanceStatus: 'UNCONFIRMED',
@@ -71,7 +71,7 @@ const ShuttleStudentsList = ({navigation, route}) => {
       />
       <CustomHeader 
         title={waypointName} 
-        subtitle={groupName}
+        subtitle={groupInfo.groupName}
         subtitleVisible={true} 
         headerRight={<MapIcon/>} 
         onPressRightButton={() => navigation.navigate('ShuttleMap')} 
