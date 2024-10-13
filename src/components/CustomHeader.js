@@ -5,7 +5,12 @@ import BackIcon from '../assets/icons/BackIcon.svg';
 import MapIcon from '../assets/icons/MapIcon.svg';
 import { useNavigation } from '@react-navigation/native';
 
-const ShuttleHeader = ({title, subTitle}) => {
+const CustomHeader = ({
+  title, 
+  subtitle, 
+  onPressRightButton,
+  headerRight
+}) => {
 
   const navigation = useNavigation();
 
@@ -18,24 +23,23 @@ const ShuttleHeader = ({title, subTitle}) => {
         style={{padding:16}}>
         <BackIcon />
       </TouchableOpacity>
-      <View style={{alignItems: 'center', paddingVertical:8, flex:1}}>
+      <View style={{alignItems: 'center', paddingVertical:8, gap:4, flex:1}}>
         <Text style={[textStyles.B1, {color: colors.Black, textAlign:'center'}]}>
           {title}
         </Text>
-        <View style={{height: 4}} />
-        <Text style={[textStyles.B2, {color: colors.Black}]}>
-          {subTitle}
-        </Text>
+        {subtitle &&
+          <Text style={[textStyles.B2, {color: colors.Black}]}>
+            {subtitle}
+          </Text>
+        }
       </View>
       <TouchableOpacity
-        onPress={() => {
-          navigation.navigate('ShuttleMap');
-        }}
+        onPress={onPressRightButton}
         style={{padding:16}}>
-        <MapIcon />
+        {headerRight}
       </TouchableOpacity>
     </View>
   );
 };
 
-export default ShuttleHeader;
+export default CustomHeader;
