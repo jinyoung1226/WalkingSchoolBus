@@ -8,11 +8,10 @@ import SchoolTimeComponent from '../../../components/SchoolTimeComponent';
 import CustomButton from '../../../components/CustomButton';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getGroupForGuardian, getWaypoints } from '../../../api/shuttleApi';
-import { useQuery } from '@tanstack/react-query';
-import ShuttleHeader from '../../../components/ShuttleHeader';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import CustomHeader from '../../../components/CustomHeader';
 import useWebsocketStore from '../../../store/websocketStore';
-import { useQueryClient } from '@tanstack/react-query';
-
+import MapIcon from '../../../assets/icons/MapIcon.svg';
 const ShuttleDetail = ({navigation}) => {
   const [isBeforeSchool, setIsBeforeSchool] = useState(true);
 
@@ -58,31 +57,16 @@ const ShuttleDetail = ({navigation}) => {
     }
   }, []);
 
-  const onAttendanceButtonPress = async ({studentId, status}) => {
-    if (status === 'PRESENT') {
-      // setModalVisible(true);
-      publish({
-        destination: `/pub/group/2`,
-        header: 'application/json',
-        studentId: studentId,
-        attendanceStatus: 'UNCONFIRMED',
-      });
-    }
-    if (status === 'UNCONFIRMED') {
-      console.log(studentId, status);
-      publish({
-        destination: `/pub/group/2`,
-        header: 'application/json',
-        studentId: studentId,
-        attendanceStatus: 'PRESENT',
-      });
-    }
-  }
-
   return (
     <View 
       style={{backgroundColor: colors.White_Green, flex:1, paddingBottom: insets.bottom, paddingTop: insets.top}}>
-      {groupInfo && <ShuttleHeader title={groupInfo.schoolName} subTitle={groupInfo.groupName} />}
+      {groupInfo && 
+      <CustomHeader 
+        title={groupInfo.schoolName} 
+        subtitle={groupInfo.groupName}
+        headerRight={<MapIcon/>} 
+        onPressRightButton={() => navigation.navigate('ShuttleMap')}
+      />}
       <View style={{height: 16}} />
       <View style={{flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal:32}}>
         <Text
@@ -105,23 +89,25 @@ const ShuttleDetail = ({navigation}) => {
         ListHeaderComponent={<View style={{height: 24}} />}
         data={waypoints}
         keyExtractor={(item) => item.waypointId}
-        renderItem={({item}) => (
-          <WaypointCard
-            number={item.waypointOrder}
-            title={item.waypointName}
-            subtitle={`출결 ${2}/${item.studentCount}`}
-            onPress={() =>
-              navigation.navigate('ShuttleStudentsList', {
-                waypointId: item.waypointId, waypointName: item.waypointName, groupName: groupInfo.groupName
-              })
-            }
-            isFirstItem={item.waypointOrder === 1}
-            isLastItem={item.waypointOrder === waypoints.length}
-          />
-        )}
+        renderItem={({item}) => {
+          return (
+            <WaypointCard
+              number={item.waypointOrder}
+              title={item.waypointName}
+              subtitle={`출석 ${item.studentCount}/${item.studentCount}`}
+              onPress={() =>
+                navigation.navigate('ShuttleStudentsList', {
+                  waypointId: item.waypointId, waypointName: item.waypointName, groupName: groupInfo.groupName
+                })
+              }
+              isFirstItem={item.waypointOrder === 1}
+              isLastItem={item.waypointOrder === waypoints.length}
+            />
+          )
+        }}
       />
       <View style={{padding:16}}>
-        <CustomButton title={'출근 하기'} onPress={() => onAttendanceButtonPress({studentId:23, status:'PRESENT'})}/>
+        <CustomButton title={'출근 하기'} onPress={() => {}}/>
       </View>
     </View>
   );

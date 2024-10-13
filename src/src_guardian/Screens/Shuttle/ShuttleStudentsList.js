@@ -5,12 +5,13 @@ import {authApi} from '../../../api/api';
 import { FlatList } from 'react-native-gesture-handler';
 import StudentCard from '../../../components/StudentCard';
 import ConfirmModal from '../../../components/ConfirmModal';
-import ShuttleHeader from '../../../components/ShuttleHeader';
+import CustomHeader from '../../../components/CustomHeader';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getStudentsByWaypoint } from '../../../api/shuttleApi';
-import { useQuery, useQueryClient  } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import CustomButton from '../../../components/CustomButton';
 import useWebsocketStore from '../../../store/websocketStore';
+import MapIcon from '../../../assets/icons/MapIcon.svg';
 
 const ShuttleStudentsList = ({navigation, route}) => {
   const {waypointId, waypointName, groupName} = route.params;
@@ -19,7 +20,6 @@ const ShuttleStudentsList = ({navigation, route}) => {
   const [selectedStudentId, setSelectedStudentId] = useState(null);
   const insets = useSafeAreaInsets();
   const { publish } = useWebsocketStore();
-  const queryClient = useQueryClient();
 
   // 각 경유지에 배정된 학생 불러오기
   const { data: studentsInfo, isPending: studentsInfoIsPending, error: studentsInfoError } = useQuery({
@@ -53,7 +53,7 @@ const ShuttleStudentsList = ({navigation, route}) => {
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
         title={'출석을 취소하시겠어요?'}
-        subTitle={'출석을 취소하면 미인증 상태로 변경됩니다'}
+        subtitle={'출석을 취소하면 미인증 상태로 변경됩니다'}
         cancelTitle={'아니요'}
         confirmTitle={'네, 취소할래요'}
         onConfirm={() => {
@@ -69,7 +69,13 @@ const ShuttleStudentsList = ({navigation, route}) => {
           setModalVisible(false);
         }}
       />
-      <ShuttleHeader title={waypointName} subTitle={groupName} />
+      <CustomHeader 
+        title={waypointName} 
+        subtitle={groupName}
+        subtitleVisible={true} 
+        headerRight={<MapIcon/>} 
+        onPressRightButton={() => navigation.navigate('ShuttleMap')} 
+      />
       <View style={{height: 16}} />
       <View style={{paddingHorizontal:32}}>
         <Text style={[textStyles.M2, {color: colors.Black}]}>

@@ -7,7 +7,7 @@ const ConfirmModal = ({
   setModalVisible,
   modalVisible,
   title,
-  subTitle,
+  subtitle,
   cancelTitle,
   confirmTitle,
   onCancel,
@@ -60,7 +60,7 @@ const ConfirmModal = ({
                 textStyles.R1,
                 {color: colors.Gray06, textAlign: 'center'},
               ]}>
-              {subTitle}
+              {subtitle}
             </Text>
             <View style={{height: 24}} />
             <View style={{flexDirection: 'row'}}>
