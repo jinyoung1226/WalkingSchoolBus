@@ -15,7 +15,7 @@ import MapIcon from '../../../assets/icons/MapIcon.svg';
 const ShuttleDetail = ({navigation}) => {
   const [isBeforeSchool, setIsBeforeSchool] = useState(true);
 
-  const {subscribeToChannel, unsubscribeToChannel, publish} = useWebsocketStore();
+  const {subscribeToChannel, unsubscribeToChannel} = useWebsocketStore();
   // today 날짜
   const formattedDate = formatDate();
   const insets = useSafeAreaInsets();
@@ -32,30 +32,41 @@ const ShuttleDetail = ({navigation}) => {
   });
 
   useEffect(() => {
-    subscribeToChannel({
-      channel:'/sub/group/2', 
-      callback: message => {
-        const newMessage = JSON.parse(message.body);
-        console.log(newMessage);
-        const { studentId, attendanceStatus, waypointId } = newMessage;
-
-        // React Query 캐시 업데이트
-        queryClient.setQueryData(['studentsInfo', waypointId], (oldData) => {
-          if (!oldData) return;
-          return oldData.map((student) => {
-            if (student.studentId === studentId) {
-              console.log('Updating student:', student.name);
-              return { ...student, attendanceStatus };
-            }
-            return student;
+    if (groupInfo) {
+      subscribeToChannel({
+        channel:`/sub/group/${groupInfo.id}`, 
+        callback: message => {
+          const newMessage = JSON.parse(message.body);
+          console.log(newMessage);
+          const { studentId, attendanceStatus, waypointId } = newMessage;
+          queryClient.setQueryData(['waypoints'], (oldData) => {
+            if (!oldData) return;
+            return oldData.map((waypoint) => {
+              if (waypoint.waypointId === waypointId) {
+                console.log('Updating waypoint:', waypoint.waypointName);
+                return { ...waypoint, currentCount: attendanceStatus === 'PRESENT' ? waypoint.currentCount + 1 : waypoint.currentCount - 1 };
+              }
+              return waypoint;
+            });
           });
-        });
-      }
-    });
+          // React Query 캐시 업데이트
+          queryClient.setQueryData(['studentsInfo', waypointId], (oldData) => {
+            if (!oldData) return;
+            return oldData.map((student) => {
+              if (student.studentId === studentId) {
+                console.log('Updating student:', student.name);
+                return { ...student, attendanceStatus };
+              }
+              return student;
+            });
+          });
+        }
+      });
+    }
     return () => {
       unsubscribeToChannel()
     }
-  }, []);
+  }, [groupInfo]);
 
   return (
     <View 
@@ -92,12 +103,14 @@ const ShuttleDetail = ({navigation}) => {
         renderItem={({item}) => {
           return (
             <WaypointCard
+              previousAttendanceComplete={waypoints[item.waypointOrder - 2]?.attendanceComplete}
+              isAttendanceComplete={item.attendanceComplete}
               number={item.waypointOrder}
               title={item.waypointName}
-              subtitle={`출석 ${item.studentCount}/${item.studentCount}`}
+              subtitle={`출석 ${item.currentCount}/${item.studentCount}`}
               onPress={() =>
                 navigation.navigate('ShuttleStudentsList', {
-                  waypointId: item.waypointId, waypointName: item.waypointName, groupName: groupInfo.groupName
+                  waypointId: item.waypointId, waypointName: item.waypointName, groupInfo: groupInfo
                 })
               }
               isFirstItem={item.waypointOrder === 1}
@@ -107,7 +120,7 @@ const ShuttleDetail = ({navigation}) => {
         }}
       />
       <View style={{padding:16}}>
-        <CustomButton title={'출근 하기'} onPress={() => {}}/>
+        <CustomButton title={'출근하기'} onPress={() => {}}/>
       </View>
     </View>
   );

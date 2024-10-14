@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, Alert} from 'react-native';
 import {colors, textStyles} from '../../../styles/globalStyle';
 import {authApi} from '../../../api/api';
 import { FlatList } from 'react-native-gesture-handler';
@@ -7,25 +7,36 @@ import StudentCard from '../../../components/StudentCard';
 import ConfirmModal from '../../../components/ConfirmModal';
 import CustomHeader from '../../../components/CustomHeader';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { getStudentsByWaypoint } from '../../../api/shuttleApi';
-import { useQuery } from '@tanstack/react-query';
+import { completeAttendance, getStudentsByWaypoint } from '../../../api/shuttleApi';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import CustomButton from '../../../components/CustomButton';
 import useWebsocketStore from '../../../store/websocketStore';
 import MapIcon from '../../../assets/icons/MapIcon.svg';
 
 const ShuttleStudentsList = ({navigation, route}) => {
-  const {waypointId, waypointName, groupName} = route.params;
+  const {waypointId, waypointName, groupInfo} = route.params;
   // const [studentsInfo, setStudentInfo] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedStudentId, setSelectedStudentId] = useState(null);
   const insets = useSafeAreaInsets();
   const { publish } = useWebsocketStore();
+  const queryClient = useQueryClient();
 
   // 각 경유지에 배정된 학생 불러오기
   const { data: studentsInfo, isPending: studentsInfoIsPending, error: studentsInfoError } = useQuery({
     queryKey: ['studentsInfo', waypointId], 
     queryFn: () => getStudentsByWaypoint(waypointId)
   });
+
+  const mutaion = useMutation({
+    mutationFn: () => completeAttendance(waypointId),
+    onSuccess: (response) => {
+      Alert.alert('출석 완료', response.message);
+      // navigation.goBack();
+      queryClient.invalidateQueries(['studentsInfo', waypointId]);
+      queryClient.invalidateQueries(['waypoints']);
+    }
+  })
 
   if (studentsInfoIsPending) {
     return <View />;
@@ -39,7 +50,7 @@ const ShuttleStudentsList = ({navigation, route}) => {
     if (status === 'UNCONFIRMED') {
       console.log(studentId, status);
       publish({
-        destination: `/pub/group/2`,
+        destination: `/pub/group/${groupInfo.id}`,
         header: 'application/json',
         studentId: studentId,
         attendanceStatus: 'PRESENT',
@@ -58,7 +69,7 @@ const ShuttleStudentsList = ({navigation, route}) => {
         confirmTitle={'네, 취소할래요'}
         onConfirm={() => {
           publish({
-            destination: `/pub/group/2`,
+            destination: `/pub/group/${groupInfo.id}`,
             header: 'application/json',
             studentId: selectedStudentId,
             attendanceStatus: 'UNCONFIRMED',
@@ -71,7 +82,7 @@ const ShuttleStudentsList = ({navigation, route}) => {
       />
       <CustomHeader 
         title={waypointName} 
-        subtitle={groupName}
+        subtitle={groupInfo.groupName}
         subtitleVisible={true} 
         headerRight={<MapIcon/>} 
         onPressRightButton={() => navigation.navigate('ShuttleMap')} 
@@ -106,7 +117,7 @@ const ShuttleStudentsList = ({navigation, route}) => {
         ItemSeparatorComponent={() => <View style={{height: 16}} />}
       />
       <View style={{padding:16}}>
-        <CustomButton title={'출석완료'} onPress={() => {}}/>
+        <CustomButton title={'출석완료'} onPress={() => {mutaion.mutate()}}/>
       </View>
     </View>
   );
