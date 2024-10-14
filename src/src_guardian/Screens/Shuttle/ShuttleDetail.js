@@ -39,7 +39,16 @@ const ShuttleDetail = ({navigation}) => {
           const newMessage = JSON.parse(message.body);
           console.log(newMessage);
           const { studentId, attendanceStatus, waypointId } = newMessage;
-  
+          queryClient.setQueryData(['waypoints'], (oldData) => {
+            if (!oldData) return;
+            return oldData.map((waypoint) => {
+              if (waypoint.waypointId === waypointId) {
+                console.log('Updating waypoint:', waypoint.waypointName);
+                return { ...waypoint, currentCount: attendanceStatus === 'PRESENT' ? waypoint.currentCount + 1 : waypoint.currentCount - 1 };
+              }
+              return waypoint;
+            });
+          });
           // React Query 캐시 업데이트
           queryClient.setQueryData(['studentsInfo', waypointId], (oldData) => {
             if (!oldData) return;
@@ -57,7 +66,7 @@ const ShuttleDetail = ({navigation}) => {
     return () => {
       unsubscribeToChannel()
     }
-  }, []);
+  }, [groupInfo]);
 
   return (
     <View 
@@ -94,6 +103,8 @@ const ShuttleDetail = ({navigation}) => {
         renderItem={({item}) => {
           return (
             <WaypointCard
+              previousAttendanceComplete={waypoints[item.waypointOrder - 2]?.attendanceComplete}
+              isAttendanceComplete={item.attendanceComplete}
               number={item.waypointOrder}
               title={item.waypointName}
               subtitle={`출석 ${item.currentCount}/${item.studentCount}`}
