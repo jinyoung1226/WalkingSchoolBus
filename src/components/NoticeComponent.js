@@ -1,3 +1,4 @@
+// ../../../components/NoticeComponent.js
 import React, { useRef } from 'react';
 import { 
   View, 
@@ -6,14 +7,44 @@ import {
   TouchableOpacity, 
   Image, 
   FlatList, 
-  Dimensions 
+  Dimensions, 
+  ActivityIndicator 
 } from 'react-native';
 import UnHeart from '../assets/icons/UnHeart.svg';
 import Heart from '../assets/icons/Heart.svg';
 import useNoticeStore from '../store/noticeStore';
+import { formatDistanceToNow, parseISO, differenceInDays } from 'date-fns';
+import { ko } from 'date-fns/locale';
 
 // 화면의 너비를 가져옵니다.
 const { width } = Dimensions.get('window');
+
+// 날짜를 포맷팅하는 헬퍼 함수
+const formatDate = (createdAt) => {
+  try {
+    // ISO 8601 형식으로 파싱
+    const createdDate = parseISO(createdAt);
+    const now = new Date();
+    
+    const daysDifference = differenceInDays(now, createdDate);
+    
+    if (daysDifference < 1) {
+      // 1일 미만: "x분 전", "x시간 전" 등
+      return formatDistanceToNow(createdDate, { addSuffix: true, locale: ko });
+    } else if (daysDifference === 1) {
+      // 어제
+      return '어제';
+    } else {
+      // 그 외: "MM/dd"
+      const month = createdDate.getMonth() + 1; // 월은 0부터 시작
+      const day = createdDate.getDate();
+      return `${month}/${day}`;
+    }
+  } catch (error) {
+    console.error('Invalid date format:', createdAt);
+    return '';
+  }
+};
 
 const NoticeItem = ({ notice }) => {
   // Zustand에서 toggleLike 함수 가져오기
@@ -23,7 +54,7 @@ const NoticeItem = ({ notice }) => {
   const flatListRef = useRef(null);
 
   // createdAt을 날짜로 변환
-  const formattedDate = new Date(notice.createdAt).toLocaleDateString();
+  const formattedDate = formatDate(notice.createdAt);
 
   // 이미지 슬라이드 이동을 위한 함수들
   const scrollToNext = () => {
@@ -40,6 +71,11 @@ const NoticeItem = ({ notice }) => {
 
   // 현재 슬라이드 인덱스를 추적하기 위한 상태
   const [currentIndex, setCurrentIndex] = React.useState(0);
+
+  const handleLikePress = () => {
+    console.log(`Like button pressed for notice ID: ${notice.id}`);
+    toggleLike(notice.id);
+  };
 
   return (
     <View style={styles.noticeContainer}>
@@ -92,6 +128,7 @@ const NoticeItem = ({ notice }) => {
                 style={styles.navButton} 
                 onPress={scrollToPrev}
                 disabled={currentIndex === 0}
+                accessibilityLabel="이전 이미지"
               >
                 <Text style={[styles.navButtonText, currentIndex === 0 && styles.disabledButtonText]}>‹</Text>
               </TouchableOpacity>
@@ -99,6 +136,7 @@ const NoticeItem = ({ notice }) => {
                 style={styles.navButton} 
                 onPress={scrollToNext}
                 disabled={currentIndex === notice.photos.length - 1}
+                accessibilityLabel="다음 이미지"
               >
                 <Text style={[styles.navButtonText, currentIndex === notice.photos.length - 1 && styles.disabledButtonText]}>›</Text>
               </TouchableOpacity>
@@ -126,7 +164,10 @@ const NoticeItem = ({ notice }) => {
       <View style={styles.noticeFooter}>
         <TouchableOpacity
           style={styles.iconTextContainer}
-          onPress={() => toggleLike(notice.id)}
+          onPress={handleLikePress}
+          disabled={notice.isLiking} // 좋아요 처리 중이면 버튼 비활성화
+          accessibilityLabel={notice.isLiked ? "좋아요 취소" : "좋아요 추가"}
+          accessibilityHint="공지사항에 좋아요를 표시하거나 취소합니다."
         >
           <View style={styles.iconContainer}>
             {/* isLiked에 따라 하트 또는 언하트 SVG 적용 */}
@@ -137,6 +178,10 @@ const NoticeItem = ({ notice }) => {
             )}
           </View>
           <Text style={styles.likeText}>좋아요 {notice.likes}개</Text>
+          {/* 좋아요 처리 중이면 로딩 인디케이터 표시 */}
+          {notice.isLiking && (
+            <ActivityIndicator size="small" color="#2ee8a5" style={{ marginLeft: 8 }} />
+          )}
         </TouchableOpacity>
       </View>
 
@@ -152,11 +197,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     backgroundColor: '#fff',
     borderRadius: 10,
-    shadowColor: '#000', // 그림자 추가 (iOS)
+
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 2, // 그림자 추가 (Android)
+    elevation: 2, // Android 그림자
   },
   authorContainer: {
     flexDirection: 'row',

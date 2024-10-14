@@ -1,81 +1,54 @@
-import React, { useEffect } from 'react';
-import { Button, View, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import React, {useEffect} from 'react';
+import {
+  Button,
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  Text,
+} from 'react-native';
 import NoticeItem from '../../../components/NoticeComponent';
 import useNoticeStore from '../../../store/noticeStore';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CustomHeader from '../../../components/CustomHeader';
+import Pencil from '../../../assets/icons/Pencil.svg';
 
-const GroupNotice = ({ navigation }) => {
+const GroupNotice = ({navigation}) => {
   // Zustand에서 상태와 설정 함수 가져오기
-  const { notices, setNotices } = useNoticeStore();
+  const {notices, setNotices, fetchNotices, error, hasNextPage} =
+    useNoticeStore();
 
-  // 로딩 및 에러 상태 관리
+  // 로딩 및 페이징 상태 관리
   const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState(null);
+  const [page, setPage] = React.useState(0); // 페이지 번호 상태
+  const [isFetchingNextPage, setIsFetchingNextPage] = React.useState(false); // 다음 페이지 로딩 상태
 
-  // 실제 데이터를 가져오는 useEffect
+  // 실제 데이터를 가져오는 함수
+  const loadNotices = async (pageToLoad = 0) => {
+    setLoading(pageToLoad === 0); // Only set loading true for initial load
+    setIsFetchingNextPage(pageToLoad > 0);
+    await fetchNotices(pageToLoad);
+    setLoading(false);
+    setIsFetchingNextPage(false);
+  };
+
+  // 처음 데이터 가져오기
   useEffect(() => {
-    const fetchNotices = async () => {
-      try {
-        const token = await AsyncStorage.getItem('accessToken');
-        console.log('Retrieved access token:', token);
+    loadNotices();
+  }, []);
 
-        if (!token) {
-          console.error('Access token is missing');
-          Alert.alert('Error', '로그인이 필요합니다.');
-          navigation.navigate('Login'); // 로그인 화면으로 이동
-          return;
-        }
+  // 다음 페이지 불러오기
+  const loadMoreNotices = () => {
+    if (hasNextPage && !isFetchingNextPage && !loading) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      loadNotices(nextPage);
+    }
+  };
 
-        // Authorization 헤더 확인
-        const authHeader = `Bearer ${token}`;
-        console.log('Authorization header:', authHeader);
-
-        // GET 요청 보내기
-        const response = await axios.get('https://walkingschoolbus.store/group-notices?page=5&size=9', {
-          headers: {
-            Accept: 'application/json',
-            Authorization: authHeader,
-          },
-        });
-
-        console.log('Response status:', response.status);
-        console.log('Response data:', response.data);
-
-        if (response.status === 200) {
-          // 서버에서 받아온 데이터를 NoticeItem에서 사용하기 편하도록 변환
-          const transformedNotices = response.data.content.map((notice) => ({
-            id: notice.groupNoticeId,
-            content: notice.content,
-            photos: notice.photos, // photos는 배열입니다.
-            likes: notice.likes,
-            createdAt: notice.createdAt,
-            authorName: notice.guardian.name || '작성자', // guardian에서 이름 가져오기
-            authorImage: notice.guardian.imagePath, // 프로필 이미지
-            isLiked: false, // 서버 응답에 isLiked가 없으므로 기본값 설정
-          }));
-
-          console.log('Transformed Notices:', transformedNotices);
-
-          // 상태에 실제 데이터를 설정
-          setNotices(transformedNotices);
-          setLoading(false);
-        } else {
-          console.error('Failed to fetch notices, status code:', response.status);
-          setError(`Failed to fetch notices, status code: ${response.status}`);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error('Error fetching notices:', error);
-        setError('공지사항을 불러오는 중 오류가 발생했습니다.');
-        setLoading(false);
-      }
-    };
-
-    fetchNotices();
-  }, [setNotices, navigation]);
-
-  if (loading) {
+  if (loading && page === 0) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#2ee8a5" />
@@ -87,29 +60,40 @@ const GroupNotice = ({ navigation }) => {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorText}>{error}</Text>
-        <Button title="다시 시도" onPress={() => {
-          setLoading(true);
-          setError(null);
-          // 다시 fetchNotices 함수를 호출하기 위해 navigation.replace 사용
-          navigation.replace('GroupNotice');
-        }} />
+        <Button
+          title="다시 시도"
+          onPress={() => {
+            setPage(0);
+            loadNotices(0);
+          }}
+        />
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <Button 
-        title="공지글 쓰기" 
-        onPress={() => navigation.navigate('CreateNotice')} 
+      <CustomHeader
+        title="그룹 공지"
+        headerRight={<Pencil />}
+        onPressRightButton={() => navigation.navigate('CreateNotice')}
       />
 
-      {/* 공지 아이템 목록 표시 */}
-      {notices.map((notice) => (
-        <View key={notice.id}>
-          <NoticeItem notice={notice} />
-        </View>
-      ))}
+      <FlatList
+        data={notices}
+        renderItem={({item}) => (item ? <NoticeItem notice={item} /> : null)}
+        keyExtractor={item => item.id.toString()}
+        onEndReached={loadMoreNotices}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <ActivityIndicator size="small" color="#2ee8a5" />
+          ) : null
+        }
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        windowSize={21}
+      />
     </View>
   );
 };
@@ -127,9 +111,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   errorContainer: {
-    flex:1,
-    justifyContent:'center',
-    alignItems:'center',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: 16,
   },
   errorText: {

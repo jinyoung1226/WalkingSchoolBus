@@ -35,7 +35,7 @@ const HomeTab = ({route}) => {
       }}>
       <Stack.Screen name="HomeMain" component={HomeMain} />
       <Stack.Screen name="HomeSchedule" component={HomeSchedule} options={{title: '스케줄'}}/>
-      <Stack.Screen name="GroupNotice" component={GroupNotice} options={{title: '그룹 공지'}}/>
+      <Stack.Screen name="GroupNotice" component={GroupNotice} options={{headerShown: false}}/>
       <Stack.Screen name="CreateNotice" component={CreateNotice} options={{title: '공지글 쓰기'}}/>
     </Stack.Navigator>
   );
