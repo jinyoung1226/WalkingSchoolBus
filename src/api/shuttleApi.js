@@ -17,3 +17,9 @@ export const getStudentsByWaypoint = async (waypointId) => {
   console.log(response.data, '경유지에 배정된 학생 불러오기');
   return response.data;
 };
+
+export const completeAttendance = async (waypointId) => {
+  const response = await authApi.post(`/attendance/${waypointId}/complete`);
+  console.log(response.data, '출석 완료');
+  return response.data;
+};
