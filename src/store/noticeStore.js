@@ -118,7 +118,6 @@ const useNoticeStore = create((set, get) => ({
 
   // 특정 공지의 좋아요 토글 함수
   toggleLike: async (id) => {
-    console.log(`toggleLike called for notice ID: ${id}`);
     try {
       const token = await AsyncStorage.getItem('accessToken');
       if (!token) {
@@ -165,16 +164,13 @@ const useNoticeStore = create((set, get) => ({
             },
           }
         );
-        console.log('Like response:', response.data);
       } else {
-        // Unlike the notice
         const response = await axios.delete(endpoint, {
           headers: {
             Accept: 'application/json',
             Authorization: authHeader,
           },
         });
-        console.log('Unlike response:', response.data);
       }
     } catch (error) {
       console.error('Error toggling like:', error);
