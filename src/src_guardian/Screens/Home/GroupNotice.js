@@ -4,21 +4,17 @@ import {
   View,
   StyleSheet,
   ActivityIndicator,
-  Alert,
   FlatList,
   Text,
 } from 'react-native';
-import NoticeItem from '../../../components/NoticeComponent';
+import NoticeItem from '../../../components/NoticeItem';
 import useNoticeStore from '../../../store/noticeStore';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomHeader from '../../../components/CustomHeader';
 import Pencil from '../../../assets/icons/Pencil.svg';
 
 const GroupNotice = ({navigation}) => {
   // Zustand에서 상태와 설정 함수 가져오기
-  const {notices, setNotices, fetchNotices, error, hasNextPage} =
-    useNoticeStore();
+  const {notices, fetchNotices, error, hasNextPage} = useNoticeStore();
 
   // 로딩 및 페이징 상태 관리
   const [loading, setLoading] = React.useState(true);
@@ -78,7 +74,6 @@ const GroupNotice = ({navigation}) => {
         headerRight={<Pencil />}
         onPressRightButton={() => navigation.navigate('CreateNotice')}
       />
-
       <FlatList
         data={notices}
         renderItem={({item}) => (item ? <NoticeItem notice={item} /> : null)}
@@ -93,6 +88,8 @@ const GroupNotice = ({navigation}) => {
         initialNumToRender={10}
         maxToRenderPerBatch={10}
         windowSize={21}
+        // 구분선을 아이템 사이에 추가
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
     </View>
   );
@@ -102,7 +99,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 16, // 헤더와 16px 거리
-    paddingHorizontal: 16,
     backgroundColor: '#feffff',
   },
   loadingContainer: {
@@ -121,6 +117,11 @@ const styles = StyleSheet.create({
     color: '#ff0000',
     marginBottom: 16,
     textAlign: 'center',
+  },
+  separator: {
+    height: 5,
+    backgroundColor: '#e9e9e9', // 구분선 색상
+    marginBottom: 16,
   },
 });
 

@@ -1,4 +1,3 @@
-// ../../../components/NoticeComponent.js
 import React, {useRef} from 'react';
 import {
   View,
@@ -14,23 +13,19 @@ import UnHeart from '../assets/icons/UnHeart.svg';
 import Heart from '../assets/icons/Heart.svg';
 import useNoticeStore from '../store/noticeStore';
 
-// 화면의 너비를 가져옵니다.
 const {width} = Dimensions.get('window');
 
-// 날짜를 포맷팅하는 헬퍼 함수
 const formatDate = createdAt => {
   try {
     // ISO 8601 형식으로 파싱
     const createdDate = new Date(createdAt); // parseISO 대신 Date 사용
     const now = new Date();
 
-    // 두 날짜 사이의 일 수 차이 계산
     const daysDifference = Math.floor(
       (now - createdDate) / (1000 * 60 * 60 * 24),
     );
 
     if (daysDifference < 1) {
-      // 1일 미만: "x분 전", "x시간 전" 등
       const minutesDifference = Math.floor((now - createdDate) / (1000 * 60));
       if (minutesDifference < 60) {
         return `${minutesDifference}분 전`;
@@ -38,11 +33,9 @@ const formatDate = createdAt => {
       const hoursDifference = Math.floor(minutesDifference / 60);
       return `${hoursDifference}시간 전`;
     } else if (daysDifference === 1) {
-      // 어제
       return '어제';
     } else {
-      // 그 외: "MM/dd"
-      const month = createdDate.getMonth() + 1; // 월은 0부터 시작
+      const month = createdDate.getMonth() + 1;
       const day = createdDate.getDate();
       return `${month}/${day}`;
     }
@@ -53,16 +46,11 @@ const formatDate = createdAt => {
 };
 
 const NoticeItem = ({notice}) => {
-  // Zustand에서 toggleLike 함수 가져오기
+  // Zustand에서 함수 가져오기
   const toggleLike = useNoticeStore(state => state.toggleLike);
-
-  // FlatList의 참조를 생성합니다 (필요한 경우 사용)
   const flatListRef = useRef(null);
 
-  // createdAt을 날짜로 변환
   const formattedDate = formatDate(notice.createdAt);
-
-  // 이미지 슬라이드 이동을 위한 함수들
   const scrollToNext = () => {
     if (currentIndex < notice.photos.length - 1) {
       flatListRef.current.scrollToIndex({index: currentIndex + 1});
@@ -75,7 +63,6 @@ const NoticeItem = ({notice}) => {
     }
   };
 
-  // 현재 슬라이드 인덱스를 추적하기 위한 상태
   const [currentIndex, setCurrentIndex] = React.useState(0);
 
   const handleLikePress = () => {
@@ -85,9 +72,7 @@ const NoticeItem = ({notice}) => {
 
   return (
     <View style={styles.noticeContainer}>
-      {/* 작성자 정보 */}
       <View style={styles.authorContainer}>
-        {/* 작성자의 프로필 이미지 표시 */}
         {notice.authorImage ? (
           <Image
             source={{uri: notice.authorImage}}
@@ -104,7 +89,6 @@ const NoticeItem = ({notice}) => {
         </View>
       </View>
 
-      {/* 공지 이미지 캐러셀 */}
       {notice.photos && notice.photos.length > 0 && (
         <View style={styles.carouselContainer}>
           <FlatList
@@ -129,39 +113,9 @@ const NoticeItem = ({notice}) => {
             }}
             scrollEventThrottle={16}
           />
-          {/* 좌우 버튼 */}
           {notice.photos.length > 1 && (
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={styles.navButton}
-                onPress={scrollToPrev}
-                disabled={currentIndex === 0}
-                accessibilityLabel="이전 이미지">
-                <Text
-                  style={[
-                    styles.navButtonText,
-                    currentIndex === 0 && styles.disabledButtonText,
-                  ]}>
-                  ‹
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.navButton}
-                onPress={scrollToNext}
-                disabled={currentIndex === notice.photos.length - 1}
-                accessibilityLabel="다음 이미지">
-                <Text
-                  style={[
-                    styles.navButtonText,
-                    currentIndex === notice.photos.length - 1 &&
-                      styles.disabledButtonText,
-                  ]}>
-                  ›
-                </Text>
-              </TouchableOpacity>
-            </View>
+            <View style={styles.buttonContainer}></View>
           )}
-          {/* 페이지 인디케이터 */}
           <View style={styles.indicatorContainer}>
             {notice.photos.map((_, index) => (
               <View
@@ -178,26 +132,27 @@ const NoticeItem = ({notice}) => {
         </View>
       )}
 
-      {/* 공지 내용 */}
       <Text style={styles.content}>{notice.content}</Text>
 
-      {/* 좋아요 및 댓글 */}
       <View style={styles.noticeFooter}>
         <TouchableOpacity
           style={styles.iconTextContainer}
           onPress={handleLikePress}
-          disabled={notice.isLiking} // 좋아요 처리 중이면 버튼 비활성화
+          disabled={notice.isLiking}
           accessibilityLabel={notice.isLiked ? '좋아요 취소' : '좋아요 추가'}
           accessibilityHint="공지사항에 좋아요를 표시하거나 취소합니다.">
           <View style={styles.iconContainer}>
-            {/* isLiked에 따라 하트 또는 언하트 SVG 적용 */}
             {notice.isLiked ? (
               <Heart width={20} height={20} style={styles.likeIcon} />
             ) : (
               <UnHeart width={20} height={20} style={styles.likeIcon} />
             )}
           </View>
-          <Text style={styles.likeText}>좋아요 {notice.likes}개</Text>
+          {notice.isLiked ? (
+            <Text style={styles.addLikeText}>좋아요 {notice.likes}개</Text>
+          ) : (
+            <Text style={styles.likeText}>좋아요 {notice.likes}개</Text>
+          )}
           {/* 좋아요 처리 중이면 로딩 인디케이터 표시 */}
           {notice.isLiking && (
             <ActivityIndicator
@@ -208,9 +163,6 @@ const NoticeItem = ({notice}) => {
           )}
         </TouchableOpacity>
       </View>
-
-      {/* 구분선 */}
-      <View style={styles.separator} />
     </View>
   );
 };
@@ -219,13 +171,6 @@ const styles = StyleSheet.create({
   noticeContainer: {
     marginBottom: 16,
     paddingHorizontal: 16,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2, // Android 그림자
   },
   authorContainer: {
     flexDirection: 'row',
@@ -310,7 +255,6 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    marginHorizontal: 4,
   },
   activeIndicator: {
     backgroundColor: '#2ee8a5',
@@ -336,19 +280,18 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   iconContainer: {
-    marginRight: 4, // 아이콘과 텍스트 사이에 여백 추가
+    marginRight: 4,
   },
   likeIcon: {
     marginRight: 4,
   },
   likeText: {
     fontSize: 12,
-    color: '#ff6972',
+    color: '#000',
   },
-  separator: {
-    marginTop: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e9e9e9',
+  addLikeText: {
+    fontSize: 12,
+    color: '#ff6972',
   },
 });
 

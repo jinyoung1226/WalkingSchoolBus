@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  Image,
+  FlatList,
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {useNavigation} from '@react-navigation/native';
@@ -70,7 +72,7 @@ const CreateNotice = () => {
     formData.append('content', noticeContent);
 
     // 선택한 모든 이미지를 formData에 추가 (필드명은 'photos')
-    images.forEach((image) => {
+    images.forEach(image => {
       const imageUri = image.uri.startsWith('file://')
         ? image.uri
         : `file://${image.uri}`;
@@ -121,6 +123,20 @@ const CreateNotice = () => {
           <CameraIcon width={30} height={30} />
           <Text style={styles.cameraText}>{`${images.length}/10`}</Text>
         </TouchableOpacity>
+
+        {/* 이미지 미리보기 섹션 */}
+        <FlatList
+          horizontal
+          data={images}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({item}) => (
+            <Image
+              source={{uri: item.uri}}
+              style={styles.previewImage}
+            />
+          )}
+          contentContainerStyle={styles.imagePreviewContainer}
+        />
       </View>
 
       {/* 글 작성 섹션 */}
@@ -170,7 +186,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   cameraContainer: {
-    alignItems: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: 20,
   },
   cameraBox: {
@@ -181,12 +198,25 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     borderWidth: 1,
     borderColor: '#d9d9d9',
+    marginRight: 10, // 아이콘과 이미지 사이에 공간 추가
   },
   cameraText: {
     fontSize: 14,
     fontWeight: '500',
     color: '#bdbdbd',
     marginTop: 8,
+  },
+  imagePreviewContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  previewImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 7,
+    marginRight: 10, // 각 이미지 사이에 공간 추가
+    borderWidth: 1,
+    borderColor: '#d9d9d9',
   },
   contentContainer: {
     marginTop: 16,
