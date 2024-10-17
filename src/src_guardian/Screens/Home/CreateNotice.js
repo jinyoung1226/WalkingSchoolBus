@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import {
   Text,
   View,
-  StyleSheet,
   TouchableOpacity,
   TextInput,
   Alert,
@@ -14,6 +13,7 @@ import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CameraIcon from '../../../assets/icons/Camera.svg';
+import NoticeXCircle from '../../../assets/icons/NoticeXCircle.svg'; // X 아이콘 추가
 
 const CreateNotice = () => {
   const [images, setImages] = useState([]);
@@ -36,28 +36,25 @@ const CreateNotice = () => {
         console.error('Error fetching access token:', error);
       }
     };
-
     fetchAccessToken();
   }, [navigation]);
 
   // 이미지 선택 함수
   const selectImages = () => {
-    launchImageLibrary(
-      {
-        mediaType: 'photo',
-        selectionLimit: 10, // 최대 10장 선택 가능
-      },
-      response => {
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-        } else if (response.errorMessage) {
-          Alert.alert('Error', response.errorMessage);
-        } else {
-          const selectedImages = response.assets || [];
-          setImages(selectedImages); // 선택한 이미지를 상태에 저장
-        }
-      },
-    );
+    launchImageLibrary({mediaType: 'photo', selectionLimit: 10}, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorMessage) {
+        Alert.alert('Error', response.errorMessage);
+      } else {
+        setImages(response.assets || []); // 선택한 이미지를 상태에 저장
+      }
+    });
+  };
+
+  // 사진 삭제 함수
+  const photoDelete = index => {
+    setImages(prevImages => prevImages.filter((_, i) => i !== index));
   };
 
   // 공지 작성 완료 함수
@@ -70,39 +67,31 @@ const CreateNotice = () => {
     // FormData 생성
     const formData = new FormData();
     formData.append('content', noticeContent);
-
-    // 선택한 모든 이미지를 formData에 추가 (필드명은 'photos')
     images.forEach(image => {
-      const imageUri = image.uri.startsWith('file://')
-        ? image.uri
-        : `file://${image.uri}`;
       formData.append('photos', {
-        uri: imageUri,
-        name: image.fileName || `photo.${image.type.split('/')[1]}`, // 파일 이름 지정
+        uri: image.uri.startsWith('file://')
+          ? image.uri
+          : `file://${image.uri}`,
+        name: image.fileName || `photo.${image.type.split('/')[1]}`,
         type: image.type,
       });
     });
 
     try {
-      // POST 요청 보내기 (axios 사용)
       const response = await axios.post(
         'https://walkingschoolbus.store/group-notices',
         formData,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-            Accept: 'application/json',
             Authorization: `Bearer ${accessToken}`,
           },
         },
       );
 
-      // 서버 응답이 성공적일 경우
       if (response.status === 200 || response.status === 201) {
-        const responseData = response.data;
-        console.log('서버 응답 데이터:', responseData); // 서버 응답 로그
-        Alert.alert('공지가 등록되었습니다.');
-        navigation.navigate('GroupNotice');
+        Alert.alert('Success', '공지가 등록되었습니다.');
+        navigation.goBack(); // 이전 화면으로 돌아갑니다.
       } else {
         Alert.alert(
           'Error',
@@ -116,37 +105,125 @@ const CreateNotice = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={{flex: 1, backgroundColor: '#feffff', paddingHorizontal: 16}}>
       {/* Camera Icon Section */}
-      <View style={styles.cameraContainer}>
-        <TouchableOpacity style={styles.cameraBox} onPress={selectImages}>
+      <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 20}}>
+        <TouchableOpacity
+          style={{
+            width: 80,
+            height: 80,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 7,
+            borderWidth: 1,
+            borderColor: '#d9d9d9',
+            marginRight: 10,
+          }}
+          onPress={selectImages}>
           <CameraIcon width={30} height={30} />
-          <Text style={styles.cameraText}>{`${images.length}/10`}</Text>
+          <Text
+            style={{
+              fontSize: 14,
+              fontWeight: '500',
+              color: '#bdbdbd',
+              marginTop: 8,
+            }}>
+            {`${images.length}/10`}
+          </Text>
         </TouchableOpacity>
 
         {/* 이미지 미리보기 섹션 */}
         <FlatList
           horizontal
           data={images}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({item}) => (
-            <Image
-              source={{uri: item.uri}}
-              style={styles.previewImage}
-            />
+          keyExtractor={(_, index) => index.toString()}
+          renderItem={({item, index}) => (
+            <View style={{position: 'relative', marginRight: 10, zIndex: 1}}>
+              <Image
+                source={{uri: item.uri}}
+                style={{
+                  marginTop: 3,
+                  width: 80,
+                  height: 80,
+                  borderRadius: 7,
+                  borderWidth: 1,
+                  borderColor: '#d9d9d9',
+                }}
+              />
+
+              {/* 첫 번째 이미지에만 요소를 덮음 */}
+              {index === 0 && (
+                <View
+                  style={{
+                    position: 'absolute',
+                    bottom: 0, // 이미지 하단에 고정
+                    width: 80,
+                    height: 22,
+                    borderBottomLeftRadius: 7,
+                    borderBottomRightRadius: 7,
+                    backgroundColor: '#000', // background -> backgroundColor로 변경
+                    justifyContent: 'center', // 텍스트 수직 중앙 정렬
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      fontWeight: '500', // fontWeight는 문자열로 설정
+                      textAlign: 'center',
+                      color: '#fff',
+                    }}>
+                    대표 사진
+                  </Text>
+                </View>
+              )}
+
+              {/* 사진 삭제 아이콘 */}
+              <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  top: -2,
+                  right: -5,
+                  backgroundColor: 'transparent',
+                  zIndex: 9999,
+                }}
+                onPress={() => photoDelete(index)}>
+                <NoticeXCircle width={20} height={20} />
+              </TouchableOpacity>
+            </View>
           )}
-          contentContainerStyle={styles.imagePreviewContainer}
+          contentContainerStyle={{flexDirection: 'row', alignItems: 'center'}}
         />
       </View>
 
       {/* 글 작성 섹션 */}
-      <View style={styles.contentContainer}>
-        <Text style={styles.titleText}>글 작성</Text>
-        <View style={styles.textBox}>
+      <View style={{marginTop: 16}}>
+        <Text
+          style={{
+            fontSize: 18,
+            fontWeight: '600',
+            color: '#000',
+            marginBottom: 8,
+          }}>
+          글 작성
+        </Text>
+        <View
+          style={{
+            height: 191,
+            padding: 16,
+            borderRadius: 10,
+            borderWidth: 1,
+            borderColor: '#e9e9e9',
+            justifyContent: 'center',
+          }}>
           <TextInput
-            style={styles.textInput}
+            style={{
+              flex: 1,
+              fontSize: 14,
+              fontWeight: '500',
+              color: '#000',
+              textAlignVertical: 'top',
+            }}
             placeholder="공지할 내용을 작성해주세요. 공지글을 업로드하면 그룹의 모든 보호자들에게 공지 알림이 전송됩니다."
-            placeholderTextColor="#bdbdbd" // Placeholder 색상
+            placeholderTextColor="#bdbdbd"
             multiline
             numberOfLines={6}
             value={noticeContent}
@@ -156,122 +233,38 @@ const CreateNotice = () => {
       </View>
 
       {/* 하단 버튼 */}
-      <View style={styles.footer}>
+      <View
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          width: '109%',
+          paddingBottom: 16,
+          paddingHorizontal: 16,
+        }}>
         <TouchableOpacity
-          style={[
-            styles.submitButton,
-            noticeContent.trim() ? styles.activeButton : styles.inactiveButton,
-          ]}
-          disabled={!noticeContent.trim()} // 텍스트가 없으면 비활성화
-          onPress={handleSubmit} // 작성 완료 시 handleSubmit 호출
-        >
+          style={{
+            width: '100%',
+            height: 50,
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: 10,
+            backgroundColor: noticeContent.trim() ? '#2ee8a5' : '#f4f4f4',
+          }}
+          disabled={!noticeContent.trim()}
+          onPress={handleSubmit}>
           <Text
-            style={[
-              styles.submitButtonText,
-              noticeContent.trim() ? styles.activeText : styles.inactiveText,
-            ]}>
+            style={{
+              fontSize: 20,
+              fontWeight: '500',
+              color: noticeContent.trim() ? '#fff' : '#8a8a8a',
+            }}>
             작성 완료
           </Text>
         </TouchableOpacity>
-        <View style={styles.footerIndicator} />
+        <View style={{height: 16}} />
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#feffff',
-    paddingHorizontal: 16,
-  },
-  cameraContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  cameraBox: {
-    width: 80,
-    height: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 7,
-    borderWidth: 1,
-    borderColor: '#d9d9d9',
-    marginRight: 10, // 아이콘과 이미지 사이에 공간 추가
-  },
-  cameraText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#bdbdbd',
-    marginTop: 8,
-  },
-  imagePreviewContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  previewImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 7,
-    marginRight: 10, // 각 이미지 사이에 공간 추가
-    borderWidth: 1,
-    borderColor: '#d9d9d9',
-  },
-  contentContainer: {
-    marginTop: 16,
-  },
-  titleText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#000',
-    marginBottom: 8,
-  },
-  textBox: {
-    height: 191,
-    padding: 16,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#e9e9e9',
-    justifyContent: 'center',
-  },
-  textInput: {
-    flex: 1,
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#000', // 입력 텍스트 색상
-    textAlignVertical: 'top',
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    alignItems: 'center',
-    paddingBottom: 16,
-  },
-  submitButton: {
-    width: 358,
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
-  },
-  activeButton: {
-    backgroundColor: '#2ee8a5', // 텍스트가 있을 때 활성화된 버튼 색상
-  },
-  inactiveButton: {
-    backgroundColor: '#f4f4f4', // 텍스트가 없을 때 비활성화된 버튼 색상
-  },
-  submitButtonText: {
-    fontSize: 20,
-    fontWeight: '500',
-  },
-  activeText: {
-    color: '#fff', // 활성화된 상태에서의 텍스트 색상
-  },
-  inactiveText: {
-    color: '#8a8a8a', // 비활성화된 상태에서의 텍스트 색상
-  },
-});
 
 export default CreateNotice;
