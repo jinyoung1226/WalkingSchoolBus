@@ -13,11 +13,13 @@ import CustomHeader from '../../../components/CustomHeader';
 import useWebsocketStore from '../../../store/websocketStore';
 import MapIcon from '../../../assets/icons/MapIcon.svg';
 import eventEmitter from '../../../utils/eventEmitter';
+import useShuttleStore from '../../../store/useShuttleStore';
 
 const ShuttleDetail = ({navigation}) => {
   const [isBeforeSchool, setIsBeforeSchool] = useState(true);
-  const [isGuideActive, setIsGuideActive] = useState(false);
+  // const [isGuideActive, setIsGuideActive] = useState(false);
   const {subscribeToChannel, unsubscribeToChannel} = useWebsocketStore();
+  const {isGuideActive, setIsGuideActive} = useShuttleStore();
   // today 날짜
   const formattedDate = formatDate();
   const insets = useSafeAreaInsets();
@@ -35,30 +37,31 @@ const ShuttleDetail = ({navigation}) => {
     queryFn: getWaypoints
   });
 
-  // 인솔자 출근/퇴근 API 호출
-  const onGuideButtonPress = () => {
-    const useMutateGuideActive = useMutation({
-      mutationFn: () => startGuide(groupInfo.id),
-      onSuccess: (response) => {
-        console.log(response);
-        setIsGuideActive(response.isGuideActive);
-      },
-      onError: (error) => {
-        console.log(error);
-      }
-    });
-  
-    const useMutateGuideDeactive = useMutation({
-      mutationFn: () => stopGuide(groupInfo.id),
-      onSuccess: (response) => {
-        console.log(response);
-        setIsGuideActive(response.isGuideActive);
-      },
-      onError: (error) => {
-        console.log(error);
-      }
-    });
 
+  // 인솔자 출근/퇴근 API 호출
+  const useMutateGuideActive = useMutation({
+    mutationFn: () => startGuide(groupInfo.id),
+    onSuccess: (response) => {
+      console.log(response);
+      setIsGuideActive(response.isGuideActive);
+    },
+    onError: (error) => {
+      console.log(error);
+    }
+  });
+
+  const useMutateGuideDeactive = useMutation({
+    mutationFn: () => stopGuide(groupInfo.id),
+    onSuccess: (response) => {
+      console.log(response);
+      setIsGuideActive(response.isGuideActive);
+    },
+    onError: (error) => {
+      console.log(error);
+    }
+  });
+
+  const onGuideButtonPress = () => {
     if (isGuideActive) {
       useMutateGuideDeactive.mutate();
       return;
@@ -170,6 +173,7 @@ const ShuttleDetail = ({navigation}) => {
         }}
       />
       <View style={{padding:16}}>
+        {/* 출근하기 이후 마지막 경유지 출석 완료시 퇴근하기 버튼 활성화, 완료 전까지는 운행중이라는 비활성화 버튼 제공 */}
         <CustomButton title={isGuideActive ? '퇴근하기' : '출근하기'} onPress={() => {onGuideButtonPress()}}/>
       </View>
     </View>

@@ -4,10 +4,10 @@ import {create} from 'zustand';
 const useShuttleStore = create(set => ({
   // 경유지 상태 관리
   waypoints: [],
-
+  isGuideActive: false,
   // 경유지 정보 설정
   setWaypoints: waypoints => set({waypoints}),
-
+  setIsGuideActive: isGuideActive => set({isGuideActive}),
   //   // 학생 출석 상태(0:미출석, 1:출석) 설정 - 잠시 생각중..
   //   markAttendance: waypointId =>
   //     set(state => ({
