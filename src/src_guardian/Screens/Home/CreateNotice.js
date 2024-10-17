@@ -237,7 +237,7 @@ const CreateNotice = () => {
         style={{
           position: 'absolute',
           bottom: 0,
-          width: '109%',
+          width: '108.4%',
           paddingBottom: 16,
           paddingHorizontal: 16,
         }}>
