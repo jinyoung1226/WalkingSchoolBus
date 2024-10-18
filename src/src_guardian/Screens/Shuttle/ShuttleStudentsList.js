@@ -6,39 +6,52 @@ import StudentCard from '../../../components/StudentCard';
 import ConfirmModal from '../../../components/ConfirmModal';
 import CustomHeader from '../../../components/CustomHeader';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { completeAttendance, getStudentsByWaypoint } from '../../../api/shuttleApi';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import CustomButton from '../../../components/CustomButton';
 import useWebsocketStore from '../../../store/websocketStore';
 import MapIcon from '../../../assets/icons/MapIcon.svg';
 import SingleActionModal from '../../../components/SingleActionModal';
-import CheckIcon from '../../../assets/icons/CheckIcon.svg';
 import ThinkingFaceIcon from '../../../assets/icons/ThinkingFaceIcon.svg';
 import HuggingFaceIcon from '../../../assets/icons/HuggingFaceIcon.svg';
 import eventEmitter from '../../../utils/eventEmitter';
+import useStudentList from '../../hooks/queries/useStudentList';
+import useGroupInfo from '../../hooks/queries/useGroupInfo';
+import useCompleteAttendance from '../../hooks/mutations/useCompleteAttendance';
+import useWaypoints from '../../hooks/queries/useWaypoints';
 
 const ShuttleStudentsList = ({navigation, route}) => {
-  const {waypoint, groupInfo, previousAttendanceComplete} = route.params;
+  const { waypointId, waypointName } = route.params;
   const [attendanceModalVisible, setAttendanceModalVisible] = useState(false);
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
   const [completeModalVisible, setCompleteModalVisible] = useState(false);
   const [nonCompleteModalVisible, setNonCompleteModalVisible] = useState(false);
   const [completeMessage, setCompleteMessage] = useState(null);
   const [selectedStudentId, setSelectedStudentId] = useState(null);
-  const [isAttendanceComplete, setIsAttendanceComplete] = useState(waypoint.attendanceComplete);
   const insets = useSafeAreaInsets();
   const { publish } = useWebsocketStore();
   const queryClient = useQueryClient();
 
+  const { data: waypoints, isSuccess: waypointsIsSuccess } = useWaypoints();
+
+  const { data: groupInfo } = useGroupInfo();
+  // 각 경유지에 배정된 학생 불러오기
+  const { data: studentList, isPending: studentListIsPending, isSuccess: studentListIsSuccess } = useStudentList(waypointId);
+  // 경유지별 출석 완료 API 호출
+  const useMutateAttendanceComplete = useCompleteAttendance(waypointId);
+
+  // 현 경유지 출석 완료 상태
+  const isAttendanceComplete = waypointsIsSuccess && waypoints.find((item) => item.waypointId === waypointId).attendanceComplete;
+  
+  // 미인증 상태인 학생 목록
+  const absentStudents = studentListIsSuccess && studentList.filter(student => student.attendanceStatus === 'UNCONFIRMED');
+
   useEffect(() => {
-    // 경유지 출석 완료 이벤트 핸들러 (인솔자중 한명이 출석 확인 완료시 모달 팝업, 출석 완료 상태 업데이트, 쿼리 리페치)
+    // 같은 경유지 상세정보 페이지에서 출석 완료 이벤트가 발생할 경우, 출석 완료 상태 업데이트 (인솔자중 한명이 출석 확인 완료시 모달 팝업, 출석 완료 상태 업데이트, 쿼리 리페치)
     const attendanceCompleteHandler = (message) => {
-      if (message.waypointId == waypoint.waypointId) {
+      if (message.waypointId == waypointId) {
         setCompleteMessage(message);
         setCompleteModalVisible(true);
-        setIsAttendanceComplete(true);
-        queryClient.invalidateQueries({ queryKey: ['studentsInfo', waypoint.waypointId] });
-        queryClient.invalidateQueries({ queryKey: ['waypoints'] });
+        queryClient.invalidateQueries({ queryKey: ['studentList', waypointId] });
       }
     };
     eventEmitter.on('attendanceComplete', attendanceCompleteHandler);
@@ -47,22 +60,8 @@ const ShuttleStudentsList = ({navigation, route}) => {
     }
   }, []);
 
-  // 각 경유지에 배정된 학생 불러오기
-  const { data: studentsInfo, isPending: studentsInfoIsPending, error: studentsInfoError } = useQuery({
-    queryKey: ['studentsInfo', waypoint.waypointId], 
-    queryFn: () => getStudentsByWaypoint(waypoint.waypointId)
-  });
-
-  // 경유지별 출석 완료 API 호출
-  const useMutateAttendanceComplete = useMutation({
-    mutationFn: () => completeAttendance(waypoint.waypointId),
-    onError: (error) => {
-      console.log(error);
-    }
-  })
-
   // 추후 스켈레톤 UI 추가
-  if (studentsInfoIsPending) {
+  if (studentListIsPending) {
     return <View />;
   }
 
@@ -83,8 +82,7 @@ const ShuttleStudentsList = ({navigation, route}) => {
     }
   }
 
-  // 미인증 상태인 학생 목록
-  const absentStudents = studentsInfo.filter(student => student.attendanceStatus === 'UNCONFIRMED');
+  
 
   return (
     <View style={{backgroundColor: 'white', flex: 1, paddingBottom: insets.bottom, paddingTop: insets.top}}>
@@ -161,7 +159,12 @@ const ShuttleStudentsList = ({navigation, route}) => {
         cancelTitle={'아니오'}
         confirmTitle={'네'}
         onConfirm={() => {
-          useMutateAttendanceComplete.mutate();
+          // 여기서 이전 경유지 출석 여부에 따라 출석 완료 이벤트 발생
+          useMutateAttendanceComplete.mutate(undefined, {
+            onError: () => {
+              setNonCompleteModalVisible(true);
+            },
+          });
           setAttendanceModalVisible(false);
         }}
         onCancel={() => {
@@ -197,7 +200,7 @@ const ShuttleStudentsList = ({navigation, route}) => {
         }}
       />
       <CustomHeader 
-        title={waypoint.waypointName} 
+        title={waypointName} 
         subtitle={groupInfo.groupName}
         subtitleVisible={true} 
         headerRight={<MapIcon/>} 
@@ -208,14 +211,14 @@ const ShuttleStudentsList = ({navigation, route}) => {
         <Text style={[textStyles.M2, {color: colors.Black}]}>
           {`📌 현재 출석`}
           <Text style={[textStyles.SB2, {color: colors.Red}]}>
-            {` ${studentsInfo.filter((student) => student.attendanceStatus === 'PRESENT').length}/${studentsInfo.length}`}
+            {` ${studentList.filter((student) => student.attendanceStatus === 'PRESENT').length}/${studentList.length}`}
           </Text>
           {`명 완료`}
         </Text>
       </View>
       <FlatList
         ListHeaderComponent={() => <View style={{height: 16}} />}
-        data={studentsInfo}
+        data={studentList}
         keyExtractor={(item) => item.studentId}
         renderItem={({item}) => (
           <StudentCard
@@ -237,11 +240,10 @@ const ShuttleStudentsList = ({navigation, route}) => {
         <CustomButton 
           title={!isAttendanceComplete ? '출석 확인' : '출석 완료'}
           onPress={() => {
-            if (!previousAttendanceComplete) {
-              setNonCompleteModalVisible(true);
-            } else {
+            // if (!previousAttendanceComplete) {
+            //   setNonCompleteModalVisible(true);
+            // } else {
               setAttendanceModalVisible(true);
-            }
           }}
           disabled={isAttendanceComplete}
         />
