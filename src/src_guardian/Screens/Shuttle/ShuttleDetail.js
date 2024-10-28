@@ -1,5 +1,5 @@
-import {useEffect, useState} from 'react';
-import { Text, TouchableOpacity, View} from 'react-native';
+import {useState} from 'react';
+import {Text, TouchableOpacity, View} from 'react-native';
 import {colors, textStyles} from '../../../styles/globalStyle';
 import {formatDate} from '../../../utils/formatDate';
 import {FlatList} from 'react-native-gesture-handler';
@@ -7,67 +7,50 @@ import WaypointCard from '../../../components/WaypointCard';
 import SchoolTimeComponent from '../../../components/SchoolTimeComponent';
 import CustomButton from '../../../components/CustomButton';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { getGroupForGuardian, getWaypoints } from '../../../api/shuttleApi';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import CustomHeader from '../../../components/CustomHeader';
-import useWebsocketStore from '../../../store/websocketStore';
 import MapIcon from '../../../assets/icons/MapIcon.svg';
+import useShuttleStore from '../../guardianStore/useShuttleStore';
+import useGroupInfo from '../../hooks/queries/useGroupInfo';
+import useWaypoints from '../../hooks/queries/useWaypoints';
+import useStartGuide from '../../hooks/mutations/useStartGuide';
+import useStopGuide from '../../hooks/mutations/useStopGuide';
+import useWebSocketSubscription from '../../hooks/websocket/useWebsocketSub';
+
 const ShuttleDetail = ({navigation}) => {
   const [isBeforeSchool, setIsBeforeSchool] = useState(true);
-
-  const {subscribeToChannel, unsubscribeToChannel} = useWebsocketStore();
+  const { isGuideActive } = useShuttleStore();
   // today 날짜
   const formattedDate = formatDate();
   const insets = useSafeAreaInsets();
-  const queryClient = useQueryClient();
 
-  const { data: groupInfo, isPending: groupInfoIsPending, error: groupInfoError } = useQuery({
-    queryKey: ['groupInfo'], 
-    queryFn: getGroupForGuardian
-  });
   // 인솔자가 배정된 그룹 정보 불러오기
-  const { data: waypoints, isPending: waypointsIsPending, error: waypointsError } = useQuery({
-    queryKey: ['waypoints'], 
-    queryFn: getWaypoints
-  });
+  const { data: groupInfo, isPending: groupInfoIsPending } = useGroupInfo();
 
-  useEffect(() => {
-    if (groupInfo) {
-      subscribeToChannel({
-        channel:`/sub/group/${groupInfo.id}`, 
-        callback: message => {
-          const newMessage = JSON.parse(message.body);
-          console.log(newMessage);
-          const { studentId, attendanceStatus, waypointId } = newMessage;
-          queryClient.setQueryData(['waypoints'], (oldData) => {
-            if (!oldData) return;
-            return oldData.map((waypoint) => {
-              if (waypoint.waypointId === waypointId) {
-                console.log('Updating waypoint:', waypoint.waypointName);
-                return { ...waypoint, currentCount: attendanceStatus === 'PRESENT' ? waypoint.currentCount + 1 : waypoint.currentCount - 1 };
-              }
-              return waypoint;
-            });
-          });
-          // React Query 캐시 업데이트
-          queryClient.setQueryData(['studentsInfo', waypointId], (oldData) => {
-            if (!oldData) return;
-            return oldData.map((student) => {
-              if (student.studentId === studentId) {
-                console.log('Updating student:', student.name);
-                return { ...student, attendanceStatus };
-              }
-              return student;
-            });
-          });
-        }
-      });
-    }
-    return () => {
-      unsubscribeToChannel()
-    }
-  }, [groupInfo]);
+  // 각 경유지 정보 불러오기
+  const { data: waypoints, isPending: waypointsIsPending, isSuccess: waypointsIsSuccess } = useWaypoints();
 
+  const lastWaypointAttendanceComplete = waypointsIsSuccess && waypoints[waypoints.length - 2].attendanceComplete;
+
+  // 인솔자 출근/퇴근 API 호출
+  const useMutateGuideActive = useStartGuide(groupInfo?.id);
+
+  const useMutateGuideDeactive = useStopGuide(groupInfo?.id);
+
+  const onGuideButtonPress = () => {
+    if (isGuideActive) {
+      useMutateGuideDeactive.mutate();
+      return;
+    }
+
+    if (!isGuideActive) {
+      useMutateGuideActive.mutate();
+      return;
+    }
+  }
+
+  // WebSocket 구독
+  useWebSocketSubscription(groupInfo);
+  
   return (
     <View 
       style={{backgroundColor: colors.White_Green, flex:1, paddingBottom: insets.bottom, paddingTop: insets.top}}>
@@ -76,7 +59,7 @@ const ShuttleDetail = ({navigation}) => {
         title={groupInfo.schoolName} 
         subtitle={groupInfo.groupName}
         headerRight={<MapIcon/>} 
-        onPressRightButton={() => navigation.navigate('ShuttleMap')}
+        onPressRightButton={() => navigation.navigate('ShuttleMap', {waypoints})}
       />}
       <View style={{height: 16}} />
       <View style={{flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal:32}}>
@@ -109,9 +92,7 @@ const ShuttleDetail = ({navigation}) => {
               title={item.waypointName}
               subtitle={`출석 ${item.currentCount}/${item.studentCount}`}
               onPress={() =>
-                navigation.navigate('ShuttleStudentsList', {
-                  waypointId: item.waypointId, waypointName: item.waypointName, groupInfo: groupInfo
-                })
+                navigation.navigate('ShuttleStudentsList', {waypointId: item.waypointId, waypointName: item.waypointName})
               }
               isFirstItem={item.waypointOrder === 1}
               isLastItem={item.waypointOrder === waypoints.length}
@@ -120,7 +101,8 @@ const ShuttleDetail = ({navigation}) => {
         }}
       />
       <View style={{padding:16}}>
-        <CustomButton title={'출근하기'} onPress={() => {}}/>
+        {/* 출근하기 이후 마지막 경유지 출석 완료시 퇴근하기 버튼 활성화, 완료 전까지는 운행중이라는 비활성화 버튼 제공 */}
+        <CustomButton title={isGuideActive ? (lastWaypointAttendanceComplete ? '퇴근하기'  : '아직 운행중이에요') : '출근하기'} onPress={() => {onGuideButtonPress()}} disabled={isGuideActive && !lastWaypointAttendanceComplete}/>
       </View>
     </View>
   );

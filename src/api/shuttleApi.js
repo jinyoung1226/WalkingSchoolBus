@@ -6,6 +6,18 @@ export const getGroupForGuardian = async () => {
   return response.data;
 };
 
+export const startGuide = async (groupId) => {
+  const response = await authApi.post(`/group/${groupId}/start-guide`);
+  console.log(response.data, '운행 시작');
+  return response.data;
+};
+
+export const stopGuide = async (groupId) => {
+  const response = await authApi.post(`/group/${groupId}/stop-guide`);
+  console.log(response.data, '운행 종료');
+  return response.data;
+};
+
 export const getWaypoints = async () => {
   const response = await authApi.get('/waypoints');
   console.log(response.data, '경유지 불러오기');
@@ -23,3 +35,4 @@ export const completeAttendance = async (waypointId) => {
   console.log(response.data, '출석 완료');
   return response.data;
 };
+

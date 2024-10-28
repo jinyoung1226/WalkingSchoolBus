@@ -1,13 +1,16 @@
-import {Button, Text, View} from 'react-native';
+import {View} from 'react-native';
+import WebView from 'react-native-webview';
 
-const ShuttleMap = ({navigation}) => {
+const ShuttleMap = ({route, navigation}) => {
+  const {waypoints} = route.params;
+  console.log(waypoints);
+
   return (
-    <View>
-      <Text>ShuttleMap</Text>
-      <Button title="GoBack"
-        onPress={() => {
-          navigation.goBack();
-        }}
+    <View style={{flex: 1}}>
+      <WebView
+        originWhitelist={['*']}
+        source={{uri: 'https://www.naver.com'}}
+        style={{flex: 1}}
       />
     </View>
   );

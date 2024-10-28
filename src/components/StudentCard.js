@@ -3,7 +3,7 @@ import {View, Text, TouchableOpacity, Image} from 'react-native';
 import ArrowIcon from '../assets/icons/ArrowIcon.svg';
 import {colors, textStyles} from '../styles/globalStyle';
 
-const StudentCard = ({ name, goStudentDetail, imagePath, initialStatus, onAttendanceButtonPress }) => {
+const StudentCard = ({ name, goStudentDetail, imagePath, initialStatus, onAttendanceButtonPress, changeStatusDisabled }) => {
 
   const attendanceButtonColor = (status) => {
     if (status === 'UNCONFIRMED') {
@@ -40,7 +40,7 @@ const StudentCard = ({ name, goStudentDetail, imagePath, initialStatus, onAttend
       return '미인증';
     } 
     if (status === 'PRESENT') {
-      return '출석완료';
+      return '출석';
     }
     if (status === 'ABSENT') {
       return '결석';
@@ -104,7 +104,9 @@ const StudentCard = ({ name, goStudentDetail, imagePath, initialStatus, onAttend
                 alignItems: 'center',
                 borderWidth: 1,
                 borderColor: initialStatus === 'UNCONFIRMED' ? colors.Main_Green : 'transparent',
-              }}>
+              }}
+              disabled={changeStatusDisabled}
+              >
               <Text style={[textStyles.SB4, {color: attendanceButtonTextColor(initialStatus)}]}>
                 {attendanceButtonText(initialStatus)}
               </Text>
