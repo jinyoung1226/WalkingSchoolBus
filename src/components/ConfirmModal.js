@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, Modal} from 'react-native';
 import CustomButton from './CustomButton';
-import { colors, textStyles } from '../styles/globalStyle';
+import {colors, textStyles} from '../styles/globalStyle';
 
 const ConfirmModal = ({
   setModalVisible,
@@ -12,11 +12,11 @@ const ConfirmModal = ({
   cancelTitle,
   confirmTitle,
   onCancel,
-  onConfirm
+  onConfirm,
 }) => {
   const modalClose = () => {
     setModalVisible(false);
-  }
+  };
 
   return (
     <Modal
@@ -64,7 +64,7 @@ const ConfirmModal = ({
                 <CustomButton
                   title={cancelTitle}
                   onPress={onCancel}
-                  type='cancel'
+                  type="cancel"
                   textStyle={[textStyles.SB3]}
                 />
               </View>
@@ -73,7 +73,7 @@ const ConfirmModal = ({
                 <CustomButton
                   title={confirmTitle}
                   onPress={onConfirm}
-                  type='confirm'
+                  type="confirm"
                   textStyle={[textStyles.SB3]}
                 />
               </View>

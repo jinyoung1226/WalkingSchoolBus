@@ -4,7 +4,6 @@ import {
   View,
   TouchableOpacity,
   TextInput,
-  Alert,
   Image,
   FlatList,
 } from 'react-native';
@@ -13,12 +12,15 @@ import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CameraIcon from '../../../assets/icons/Camera.svg';
-import NoticeXCircle from '../../../assets/icons/NoticeXCircle.svg'; // X 아이콘 추가
+import NoticeXCircle from '../../../assets/icons/NoticeXCircle.svg';
+import SingleActionModal from '../../../components/SingleActionModal';
+import CheckIcon from '../../../assets/icons/CheckIcon.svg';
 
 const CreateNotice = () => {
   const [images, setImages] = useState([]);
   const [noticeContent, setNoticeContent] = useState('');
   const [accessToken, setAccessToken] = useState('');
+  const [modalVisible, setModalVisible] = useState(false); // ConfirmModal 상태 추가
   const navigation = useNavigation();
 
   // 액세스 토큰 가져오기
@@ -30,7 +32,7 @@ const CreateNotice = () => {
           setAccessToken(token);
         } else {
           Alert.alert('Error', '로그인이 필요합니다.');
-          navigation.navigate('Login'); // 로그인 화면으로 이동
+          navigation.navigate('Login');
         }
       } catch (error) {
         console.error('Error fetching access token:', error);
@@ -47,7 +49,7 @@ const CreateNotice = () => {
       } else if (response.errorMessage) {
         Alert.alert('Error', response.errorMessage);
       } else {
-        setImages(response.assets || []); // 선택한 이미지를 상태에 저장
+        setImages(response.assets || []);
       }
     });
   };
@@ -90,8 +92,7 @@ const CreateNotice = () => {
       );
 
       if (response.status === 200 || response.status === 201) {
-        Alert.alert('Success', '공지가 등록되었습니다.');
-        navigation.goBack(); // 이전 화면으로 돌아갑니다.
+        setModalVisible(true); // 공지가 등록되면 모달 표시
       } else {
         Alert.alert(
           'Error',
@@ -106,6 +107,20 @@ const CreateNotice = () => {
 
   return (
     <View style={{flex: 1, backgroundColor: '#feffff', paddingHorizontal: 16}}>
+      {/* Confirm Modal */}
+      <SingleActionModal
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        title="공지 등록 완료"
+        subtitle={<Text>공지글이 성공적으로 등록되었습니다.</Text>}
+        confirmTitle="확인"
+        icon={<CheckIcon />}
+        onConfirm={() => {
+          setModalVisible(false);
+          navigation.goBack(); // 확인을 누르면 이전 화면으로 돌아갑니다.
+        }}
+      />
+
       {/* Camera Icon Section */}
       <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 20}}>
         <TouchableOpacity
@@ -156,18 +171,18 @@ const CreateNotice = () => {
                 <View
                   style={{
                     position: 'absolute',
-                    bottom: 0, // 이미지 하단에 고정
+                    bottom: 0,
                     width: 80,
                     height: 22,
                     borderBottomLeftRadius: 7,
                     borderBottomRightRadius: 7,
-                    backgroundColor: '#000', // background -> backgroundColor로 변경
-                    justifyContent: 'center', // 텍스트 수직 중앙 정렬
+                    backgroundColor: '#000',
+                    justifyContent: 'center',
                   }}>
                   <Text
                     style={{
                       fontSize: 12,
-                      fontWeight: '500', // fontWeight는 문자열로 설정
+                      fontWeight: '500',
                       textAlign: 'center',
                       color: '#fff',
                     }}>

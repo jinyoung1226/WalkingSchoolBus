@@ -9,7 +9,8 @@ const BASE_URL = 'https://walkingschoolbus.store';
 const useNoticeStore = create((set, get) => ({
   notices: [], // 공지 리스트 상태
   error: null, // fetch 요청 시의 오류 상태
-  hasNextPage: true, // To track if more data is available
+  hasNextPage: true, // 다음 페이지 존재 여부
+  page: 0, // 현재 페이지 번호
 
   // 공지 리스트를 설정하는 함수
   setNotices: newNotices => {
@@ -29,7 +30,6 @@ const useNoticeStore = create((set, get) => ({
       if (!token) {
         console.error('Access token is missing');
         Alert.alert('Error', '로그인이 필요합니다.');
-        // Optionally, navigate to login if needed
         return;
       }
 
@@ -47,26 +47,18 @@ const useNoticeStore = create((set, get) => ({
       );
 
       console.log('Response status:', response.status);
-      console.log(
-        'Full Response Data:',
-        JSON.stringify(response.data, null, 2),
-      );
+      console.log('Full Response Data:', JSON.stringify(response.data, null, 2));
 
       if (response.status === 200) {
-        // Validate response structure
         if (!Array.isArray(response.data.content)) {
           throw new Error('Invalid data format: content is not an array');
         }
 
-        // Transform and validate notices
         const transformedNotices = response.data.content
           .map((notice, index) => {
             if (!notice || !notice.groupNoticeId) {
-              console.warn(
-                `Notice at index ${index} is missing groupNoticeId or is undefined:`,
-                notice,
-              );
-              return null; // Exclude invalid notices
+              console.warn(`Notice at index ${index} is missing groupNoticeId or is undefined:`, notice);
+              return null;
             }
             return {
               id: notice.groupNoticeId,
@@ -76,39 +68,32 @@ const useNoticeStore = create((set, get) => ({
               createdAt: notice.createdAt || '',
               authorName: notice.guardian?.name || '작성자',
               authorImage: notice.guardian?.imagePath || '',
-              isLiked: notice.isLiked || false, // Ensure isLiked is present
+              isLiked: notice.isLiked || false,
             };
           })
-          .filter(notice => notice !== null); // Remove null entries
+          .filter(notice => notice !== null);
 
-        console.log('Transformed Notices Count:', transformedNotices.length);
-        console.log('Transformed Notices:', transformedNotices);
-
-        // Optimistically sort the notices in descending order by createdAt
         const sortedNotices = transformedNotices.sort((a, b) => {
           const dateA = new Date(a.createdAt);
           const dateB = new Date(b.createdAt);
-          return dateB - dateA; // Descending order
+          return dateB - dateA;
         });
 
-        // Update state with new notices
         if (pageToLoad === 0) {
           set({notices: sortedNotices});
         } else {
           set(state => ({notices: [...state.notices, ...sortedNotices]}));
         }
 
-        // Determine if more pages are available
         if (typeof response.data.last !== 'undefined') {
           set({hasNextPage: !response.data.last});
         } else if (typeof response.data.totalPages !== 'undefined') {
           set({hasNextPage: pageToLoad + 1 < response.data.totalPages});
         } else {
-          // Fallback: if less than requested size, assume no more pages
           set({hasNextPage: transformedNotices.length === size});
         }
 
-        set({error: null}); // Clear any previous errors
+        set({error: null, page: pageToLoad}); // 에러 상태 초기화 및 현재 페이지 갱신
       } else {
         console.error('Failed to fetch notices, status code:', response.status);
         set({
@@ -117,7 +102,22 @@ const useNoticeStore = create((set, get) => ({
       }
     } catch (error) {
       console.error('Error fetching notices:', error);
-      set({error: '공지사항을 불러오는 중 오류가 발생했습니다.'});
+
+      // 403 에러가 발생한 경우에만 error 상태를 "403"으로 설정
+      if (error.response?.status === 403) {
+        set({ error: 403 });
+      } else {
+        set({ error: '공지사항을 불러오는 중 오류가 발생했습니다.' });
+      }
+    }
+  },
+
+  // 다음 페이지를 로드하는 함수 (무한 스크롤을 위해 추가)
+  loadMoreNotices: async () => {
+    const {hasNextPage, page} = get();
+    
+    if (hasNextPage) {
+      await get().fetchNotices(page + 1);
     }
   },
 
@@ -128,14 +128,12 @@ const useNoticeStore = create((set, get) => ({
       if (!token) {
         console.error('Access token is missing');
         Alert.alert('Error', '로그인이 필요합니다.');
-        // Optionally, navigate to login if needed
         return;
       }
 
       const authHeader = `Bearer ${token}`;
       console.log('Authorization header:', authHeader);
 
-      // Find the notice in the current state
       const noticeIndex = get().notices.findIndex(notice => notice.id === id);
       if (noticeIndex === -1) {
         console.error('Notice not found in the store:', id);
@@ -145,7 +143,6 @@ const useNoticeStore = create((set, get) => ({
       const notice = get().notices[noticeIndex];
       const isCurrentlyLiked = notice.isLiked;
 
-      // Optimistically update the UI
       const updatedNotices = [...get().notices];
       updatedNotices[noticeIndex] = {
         ...notice,
@@ -154,23 +151,17 @@ const useNoticeStore = create((set, get) => ({
       };
       set({notices: updatedNotices});
 
-      // Define the backend endpoint for liking/unliking
       const endpoint = `${BASE_URL}/group-notices/${id}/like`;
 
       if (!isCurrentlyLiked) {
-        // Like the notice
-        const response = await axios.post(
-          endpoint,
-          {}, // Assuming no body is required
-          {
-            headers: {
-              Accept: 'application/json',
-              Authorization: authHeader,
-            },
+        await axios.post(endpoint, {}, {
+          headers: {
+            Accept: 'application/json',
+            Authorization: authHeader,
           },
-        );
+        });
       } else {
-        const response = await axios.delete(endpoint, {
+        await axios.delete(endpoint, {
           headers: {
             Accept: 'application/json',
             Authorization: authHeader,
@@ -181,7 +172,6 @@ const useNoticeStore = create((set, get) => ({
       console.error('Error toggling like:', error);
       Alert.alert('Error', '좋아요를 처리하는 중 오류가 발생했습니다.');
 
-      // Revert the optimistic update in case of an error
       const noticeIndex = get().notices.findIndex(notice => notice.id === id);
       if (noticeIndex !== -1) {
         const notice = get().notices[noticeIndex];
@@ -190,7 +180,7 @@ const useNoticeStore = create((set, get) => ({
         const revertedNotices = [...get().notices];
         revertedNotices[noticeIndex] = {
           ...notice,
-          isLiked: isCurrentlyLiked, // Revert to original state
+          isLiked: isCurrentlyLiked,
           likes: isCurrentlyLiked ? notice.likes + 1 : notice.likes - 1,
         };
         set({notices: revertedNotices});
