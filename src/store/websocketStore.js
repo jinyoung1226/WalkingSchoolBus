@@ -9,6 +9,8 @@ let webSocketClient = null;
 
 let groupSubscription = null;
 
+let subscribedGroup = null;
+
 // 웹소캣 상태 관리 store
 const useWebsocketStore = create(set => ({
   isConnected: false,
@@ -53,8 +55,11 @@ const useWebsocketStore = create(set => ({
         webSocketClient.onConnect = () => {
           console.log('WebSocket 연결 성공');
           set({isConnected: true});
+          if (subscribedGroup) {
+            console.log('이전 구독 채널 다시 구독: ', subscribedGroup);
+            useWebsocketStore.getState().subscribeToChannel(subscribedGroup);
+          }
         };
-        // webSocketClient.activate();
       } catch (error) {
         console.error('웹소캣 연결 실패', error);
         set({isConnected: false});
@@ -87,6 +92,7 @@ const useWebsocketStore = create(set => ({
       try {
         console.log('구독 성공');
         groupSubscription = webSocketClient.subscribe(channel, callback);
+        subscribedGroup = { channel, callback };
         console.log(groupSubscription)
       } catch (error) {
         console.error('구독 실패', error);
@@ -102,6 +108,7 @@ const useWebsocketStore = create(set => ({
         groupSubscription.unsubscribe();
         console.log('구독 해제 성공');
         groupSubscription = null;
+        subscribedGroup = null;
       } catch (error) {
         console.error('구독 해제 실패', error);
       }
