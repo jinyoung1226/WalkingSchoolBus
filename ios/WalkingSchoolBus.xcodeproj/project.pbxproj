@@ -17,6 +17,7 @@
 		68A23C6BE9DA69A9E5D5789E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A6F0DE08315454512744811F /* PrivacyInfo.xcprivacy */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		841E4E882815E9D7D4EFE8E7 /* Pods_WalkingSchoolBus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC0B03EA6D92D937F834680E /* Pods_WalkingSchoolBus.framework */; };
+		8B05A6FA2CD1F7E90035C077 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B05A6F92CD1F7E90035C077 /* File.swift */; };
 		8B6026762CB0223A007ED6BC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8B6026752CB0223A007ED6BC /* GoogleService-Info.plist */; };
 		8BA3B0972CB019BA0077E77F /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 8BA3B0962CB019BA0077E77F /* main.jsbundle */; };
 		95C22085293D41D099811A17 /* TTLaundryGothicB.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2E2774FCE2A64D3285A21733 /* TTLaundryGothicB.ttf */; };
@@ -61,6 +62,8 @@
 		8404BE40B599437183E5E4FC /* Pretendard-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Pretendard-SemiBold.ttf"; path = "../src/assets/fonts/Pretendard-SemiBold.ttf"; sourceTree = "<group>"; };
 		84E580554CDB4AB9997FBE7E /* BootSplash.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = BootSplash.storyboard; path = WalkingSchoolBus/BootSplash.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-WalkingSchoolBus-WalkingSchoolBusTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WalkingSchoolBus-WalkingSchoolBusTests.release.xcconfig"; path = "Target Support Files/Pods-WalkingSchoolBus-WalkingSchoolBusTests/Pods-WalkingSchoolBus-WalkingSchoolBusTests.release.xcconfig"; sourceTree = "<group>"; };
+		8B05A6F82CD1F7E90035C077 /* WalkingSchoolBus-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WalkingSchoolBus-Bridging-Header.h"; sourceTree = "<group>"; };
+		8B05A6F92CD1F7E90035C077 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		8B6026752CB0223A007ED6BC /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8BA3B0962CB019BA0077E77F /* main.jsbundle */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		8BC3CC432CB53EB600D947DF /* WalkingSchoolBus.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = WalkingSchoolBus.entitlements; path = WalkingSchoolBus/WalkingSchoolBus.entitlements; sourceTree = "<group>"; };
@@ -122,6 +125,8 @@
 				A6F0DE08315454512744811F /* PrivacyInfo.xcprivacy */,
 				84E580554CDB4AB9997FBE7E /* BootSplash.storyboard */,
 				12EFA1DB65D148C1962422F5 /* Colors.xcassets */,
+				8B05A6F92CD1F7E90035C077 /* File.swift */,
+				8B05A6F82CD1F7E90035C077 /* WalkingSchoolBus-Bridging-Header.h */,
 			);
 			name = WalkingSchoolBus;
 			sourceTree = "<group>";
@@ -252,7 +257,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1600;
 					};
 				};
 			};
@@ -463,6 +468,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
+				8B05A6FA2CD1F7E90035C077 /* File.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -551,6 +557,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = WalkingSchoolBus;
+				SWIFT_OBJC_BRIDGING_HEADER = "WalkingSchoolBus-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -578,6 +585,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = WalkingSchoolBus;
+				SWIFT_OBJC_BRIDGING_HEADER = "WalkingSchoolBus-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

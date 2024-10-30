@@ -32,6 +32,9 @@
 			<true/>
 		</dict>
 		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>Program requires GPS to track cars and job orders</string>
+		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<string>Program requires GPS to track cars and job orders</string>
 		<string/>
 		<key>UIAppFonts</key>
 		<array>
