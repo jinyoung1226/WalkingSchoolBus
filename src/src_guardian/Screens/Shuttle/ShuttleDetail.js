@@ -75,9 +75,9 @@ const ShuttleDetail = ({navigation}) => {
           <SchoolTimeComponent type={'before'} isSelected={isBeforeSchool} title={'등교'}/>
         </TouchableOpacity>
         {/* 하교 버튼 */}
-        <TouchableOpacity onPress={() => setIsBeforeSchool(false)}>
+        {/* <TouchableOpacity onPress={() => setIsBeforeSchool(false)}>
           <SchoolTimeComponent type={'after'} isSelected={!isBeforeSchool} title={'하교'}/>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <FlatList
         ListHeaderComponent={<View style={{height: 24}} />}

@@ -231,7 +231,7 @@ const ShuttleStudentsList = ({navigation, route}) => {
               onAttendanceButtonPress({studentId: item.studentId, status: item.attendanceStatus});
             }}
             goStudentDetail={() => {
-              navigation.navigate('StudentDetail', {studentId: item.studentId});
+              navigation.navigate('StudentDetail', {studentInfo: item});
             }}/>
         )}
         ItemSeparatorComponent={() => <View style={{height: 16}} />}
