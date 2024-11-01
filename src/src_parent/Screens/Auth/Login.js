@@ -23,7 +23,9 @@ const Login = ({navigation}) => {
   // 로그인 API 호출
   const login = async () => {
     try {
-      const response = await api.post('/auth/signIn', {email, password});
+      const fcmToken = await AsyncStorage.getItem('fcmToken');
+      console.log(fcmToken);
+      const response = await api.post('/auth/signIn', {email, password, fcmToken});
       console.log(response.status);
       if (response.status === 200) {
         const {accessToken, refreshToken, id: userId} = response.data;

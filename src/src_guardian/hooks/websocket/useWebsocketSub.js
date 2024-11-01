@@ -51,6 +51,10 @@ const useWebSocketSubscription = (groupInfo) => {
           eventEmitter.emit('attendanceComplete', newMessage);
           queryClient.invalidateQueries({ queryKey: ['waypoints'] });
         }
+
+        if (newMessage.messageType === 'GUIDE_STATUS_CHANGE') {
+          queryClient.invalidateQueries({ queryKey: ['guideStatus'] });
+        }
       }
       subscribeToChannel({ channel, callback });
     }
