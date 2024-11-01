@@ -18,6 +18,7 @@ import useStudentList from '../../hooks/queries/useStudentList';
 import useGroupInfo from '../../hooks/queries/useGroupInfo';
 import useCompleteAttendance from '../../hooks/mutations/useCompleteAttendance';
 import useWaypoints from '../../hooks/queries/useWaypoints';
+import useGuideStatus from '../../hooks/queries/useGuideStatus';
 
 const ShuttleStudentsList = ({navigation, route}) => {
   const { waypointId, waypointName } = route.params;
@@ -34,6 +35,8 @@ const ShuttleStudentsList = ({navigation, route}) => {
   const { data: waypoints, isSuccess: waypointsIsSuccess } = useWaypoints();
 
   const { data: groupInfo } = useGroupInfo();
+
+  const { data: guideStatus } = useGuideStatus();
   // 각 경유지에 배정된 학생 불러오기
   const { data: studentList, isPending: studentListIsPending, isSuccess: studentListIsSuccess } = useStudentList(waypointId);
   // 경유지별 출석 완료 API 호출
@@ -222,7 +225,7 @@ const ShuttleStudentsList = ({navigation, route}) => {
         keyExtractor={(item) => item.studentId}
         renderItem={({item}) => (
           <StudentCard
-            changeStatusDisabled={isAttendanceComplete}
+            changeStatusDisabled={isAttendanceComplete || !guideStatus.isGuideActive}
             initialStatus={item.attendanceStatus}
             studentId={item.studentId}
             name={item.name}
@@ -231,22 +234,20 @@ const ShuttleStudentsList = ({navigation, route}) => {
               onAttendanceButtonPress({studentId: item.studentId, status: item.attendanceStatus});
             }}
             goStudentDetail={() => {
-              navigation.navigate('StudentDetail', {studentId: item.studentId});
+              navigation.navigate('StudentDetail', {studentInfo: item});
             }}/>
         )}
         ItemSeparatorComponent={() => <View style={{height: 16}} />}
       />
       <View style={{padding:16}}>
+        {guideStatus.isGuideActive &&
         <CustomButton 
           title={!isAttendanceComplete ? '출석 확인' : '출석 완료'}
           onPress={() => {
-            // if (!previousAttendanceComplete) {
-            //   setNonCompleteModalVisible(true);
-            // } else {
-              setAttendanceModalVisible(true);
+            setAttendanceModalVisible(true);
           }}
           disabled={isAttendanceComplete}
-        />
+        />}
       </View>
     </View>
   );

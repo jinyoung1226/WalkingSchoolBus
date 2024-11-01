@@ -15,21 +15,6 @@ const ShuttleMap = ({ route }) => {
     longitude: waypoint.longitude,
   }));
 
-  // ios, 안드로이드의 사용자 현 위치 정보 얻는 설정
-  useEffect(() => {
-    const requestLocationPermission = async () => {
-      if (Platform.OS === 'ios') {
-        await Geolocation.requestAuthorization('whenInUse');
-      } else {
-        await PermissionsAndroid.requestMultiple([
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-        ]);
-      }
-    };
-    requestLocationPermission();
-  }, []);
-
   useEffect(() => {
     // 초기 위치 가져오기
     Geolocation.getCurrentPosition(
