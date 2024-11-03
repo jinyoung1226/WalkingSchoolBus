@@ -1,6 +1,5 @@
-import React, {useEffect, useCallback} from 'react';
+import React, {useEffect} from 'react';
 import {
-  Button,
   View,
   ActivityIndicator,
   FlatList,
@@ -8,46 +7,37 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import NoticeItem from '../../../components/NoticeItem';
-import useNoticeStore from '../../../store/noticeStore';
 import CustomHeader from '../../../components/CustomHeader';
 import Pencil from '../../../assets/icons/Pencil.svg';
 import EmptyNotice from '../../../assets/icons/EmptyNotice.svg';
-import {useFocusEffect} from '@react-navigation/native';
+import useInfiniteNotices from '../../hooks/queries/useInfiniteNotices';
+import {useQueryClient} from '@tanstack/react-query';
 
 const GroupNotice = ({navigation}) => {
-  const {notices, fetchNotices, error, hasNextPage} = useNoticeStore();
-  const [loading, setLoading] = React.useState(true);
-  const [page, setPage] = React.useState(0);
-  const [isFetchingNextPage, setIsFetchingNextPage] = React.useState(false);
+  const {
+    data,
+    error,
+    isLoading,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteNotices();
+  const queryClient = useQueryClient();
 
-  const loadNotices = async (pageToLoad = 0) => {
-    setLoading(pageToLoad === 0);
-    setIsFetchingNextPage(pageToLoad > 0);
-    await fetchNotices(pageToLoad);
-    setLoading(false);
-    setIsFetchingNextPage(false);
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      loadNotices(0);
-    }, []),
-  );
-
+  // 페이지를 나갈 때 캐시를 제거하여 다시 진입 시 첫 페이지부터 로드
   useEffect(() => {
-    loadNotices();
-  }, []);
+    return () => {
+      queryClient.removeQueries(['notices']);
+    };
+  }, [queryClient]);
 
   const loadMoreNotices = () => {
-    if (hasNextPage && !isFetchingNextPage && !loading) {
-      const nextPage = page + 1;
-      setPage(nextPage);
-      loadNotices(nextPage);
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
     }
   };
 
-  if (loading && page === 0) {
-    // 초기 로딩 화면
+  if (isLoading) {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <ActivityIndicator size="large" color="#2ee8a5" />
@@ -56,7 +46,6 @@ const GroupNotice = ({navigation}) => {
   }
 
   if (error && error !== 403) {
-    // 403 이외의 에러가 발생했을 때 에러 메시지와 다시 시도 버튼 표시
     return (
       <View
         style={{
@@ -74,16 +63,11 @@ const GroupNotice = ({navigation}) => {
           }}>
           공지사항을 불러오는 중 오류가 발생했습니다.
         </Text>
-        <Button
-          title="다시 시도"
-          onPress={() => {
-            setPage(0);
-            loadNotices(0);
-          }}
-        />
       </View>
     );
   }
+
+  const notices = data?.pages.flatMap(page => page.content) || [];
 
   return (
     <View style={{flex: 1, paddingTop: 16, backgroundColor: '#feffff'}}>
@@ -99,16 +83,20 @@ const GroupNotice = ({navigation}) => {
       />
       {error === 403 ? (
         <View style={{marginTop: 260, alignItems: 'center'}}>
-  <EmptyNotice width={169} height={95} />
-</View>
+          <EmptyNotice width={169} height={95} />
+        </View>
       ) : (
-        // 공지 리스트 표시
         <FlatList
+          style={{flex: 1}}
           data={notices}
           renderItem={({item}) => item && <NoticeItem notice={item} />}
-          keyExtractor={item => item.id.toString()}
+          keyExtractor={(item, index) =>
+            item?.groupNoticeId
+              ? item.groupNoticeId.toString()
+              : index.toString()
+          }
           onEndReached={loadMoreNotices}
-          onEndReachedThreshold={0.1}
+          onEndReachedThreshold={0.5}
           ListFooterComponent={
             isFetchingNextPage && (
               <ActivityIndicator size="small" color="#2ee8a5" />

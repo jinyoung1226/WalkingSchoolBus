@@ -6,42 +6,37 @@ import {
   TextInput,
   Image,
   FlatList,
+  Alert,
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {useNavigation} from '@react-navigation/native';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import CameraIcon from '../../../assets/icons/Camera.svg';
 import NoticeXCircle from '../../../assets/icons/NoticeXCircle.svg';
 import SingleActionModal from '../../../components/SingleActionModal';
 import CheckIcon from '../../../assets/icons/CheckIcon.svg';
+import {createNotice} from '../../../api/noticeApi';
+import {useQueryClient} from '@tanstack/react-query';
 
 const CreateNotice = () => {
   const [images, setImages] = useState([]);
   const [noticeContent, setNoticeContent] = useState('');
-  const [accessToken, setAccessToken] = useState('');
-  const [modalVisible, setModalVisible] = useState(false); // ConfirmModal 상태 추가
+  const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
+  // queryClient 인스턴스 가져오기
+  const queryClient = useQueryClient();
 
-  // 액세스 토큰 가져오기
-  useEffect(() => {
-    const fetchAccessToken = async () => {
-      try {
-        const token = await AsyncStorage.getItem('accessToken');
-        if (token) {
-          setAccessToken(token);
-        } else {
-          Alert.alert('Error', '로그인이 필요합니다.');
-          navigation.navigate('Login');
-        }
-      } catch (error) {
-        console.error('Error fetching access token:', error);
-      }
-    };
-    fetchAccessToken();
-  }, [navigation]);
+  const handleSubmit = async () => {
+    try {
+      await createNotice(noticeContent, images);
+      // 쿼리 무효화
+      queryClient.invalidateQueries(['notices']);
+      setModalVisible(true);
+    } catch (error) {
+      console.error('Error uploading notice:', error);
+      Alert.alert('Error', '서버와의 연결에 실패했습니다.');
+    }
+  };
 
-  // 이미지 선택 함수
   const selectImages = () => {
     launchImageLibrary({mediaType: 'photo', selectionLimit: 10}, response => {
       if (response.didCancel) {
@@ -54,55 +49,8 @@ const CreateNotice = () => {
     });
   };
 
-  // 사진 삭제 함수
   const photoDelete = index => {
     setImages(prevImages => prevImages.filter((_, i) => i !== index));
-  };
-
-  // 공지 작성 완료 함수
-  const handleSubmit = async () => {
-    if (!accessToken) {
-      Alert.alert('Error', '토큰을 가져오지 못했습니다. 다시 로그인 해주세요.');
-      return;
-    }
-
-    // FormData 생성
-    const formData = new FormData();
-    formData.append('content', noticeContent);
-    images.forEach(image => {
-      formData.append('photos', {
-        uri: image.uri.startsWith('file://')
-          ? image.uri
-          : `file://${image.uri}`,
-        name: image.fileName || `photo.${image.type.split('/')[1]}`,
-        type: image.type,
-      });
-    });
-
-    try {
-      const response = await axios.post(
-        'https://walkingschoolbus.store/group-notices',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${accessToken}`,
-          },
-        },
-      );
-
-      if (response.status === 200 || response.status === 201) {
-        setModalVisible(true); // 공지가 등록되면 모달 표시
-      } else {
-        Alert.alert(
-          'Error',
-          `공지 작성에 실패했습니다. 상태 코드: ${response.status}`,
-        );
-      }
-    } catch (error) {
-      console.error('Error uploading notice:', error);
-      Alert.alert('Error', '서버와의 연결에 실패했습니다.');
-    }
   };
 
   return (
@@ -117,11 +65,10 @@ const CreateNotice = () => {
         icon={<CheckIcon />}
         onConfirm={() => {
           setModalVisible(false);
-          navigation.goBack(); // 확인을 누르면 이전 화면으로 돌아갑니다.
+          navigation.goBack();
         }}
       />
 
-      {/* Camera Icon Section */}
       <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 20}}>
         <TouchableOpacity
           style={{
