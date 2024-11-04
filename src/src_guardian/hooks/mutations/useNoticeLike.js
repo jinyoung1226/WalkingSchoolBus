@@ -6,7 +6,7 @@ const useNoticeLike = () => {
 
   return useMutation({
     mutationFn: ({id, isCurrentlyLiked}) => toggleLike(id, isCurrentlyLiked),
-    queryKey: ['notices'], // v5에서 queryKey 추가
+    queryKey: ['notices'],
     onMutate: async ({id, isCurrentlyLiked}) => {
       await queryClient.cancelQueries({queryKey: ['notices']});
 
