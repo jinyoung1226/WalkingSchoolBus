@@ -10,7 +10,7 @@ import BackIcon from '../../assets/icons/BackIcon.svg';
 import MapIcon from '../../assets/icons/MapIcon.svg';
 import ShuttleMap from '../Screens/Shuttle/ShuttleMap';
 import ShuttleStudentsList from '../Screens/Shuttle/ShuttleStudentsList';
-
+import StudentDetail from '../Screens/Shuttle/StudentDetail';
 const Stack = createStackNavigator();
 
 const ShuttleTab = ({route}) => {
@@ -39,6 +39,7 @@ const ShuttleTab = ({route}) => {
       <Stack.Screen name="ShuttleDetail" component={ShuttleDetail} options={{headerShown:false}}/>
       <Stack.Screen name="ShuttleMap" component={ShuttleMap} />
       <Stack.Screen name="ShuttleStudentsList" component={ShuttleStudentsList} options={{headerShown:false}}/>
+      <Stack.Screen name="StudentDetail" component={StudentDetail} options={{headerShown:false}}/>
     </Stack.Navigator>
   );
 };

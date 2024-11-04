@@ -20,10 +20,10 @@ const CustomHeader = ({
         onPress={() => {
           navigation.goBack();
         }}
-        style={{padding:16}}>
+        style={{padding:16, flex:1}}>
         <BackIcon />
       </TouchableOpacity>
-      <View style={{alignItems: 'center', paddingVertical:8, gap:4, flex:1}}>
+      <View style={{alignItems: 'center', paddingVertical:8, gap:4, flex:6}}>
         <Text style={[textStyles.B1, {color: colors.Black, textAlign:'center'}]}>
           {title}
         </Text>
@@ -35,7 +35,7 @@ const CustomHeader = ({
       </View>
       <TouchableOpacity
         onPress={onPressRightButton}
-        style={{padding:16}}>
+        style={{padding:16, flex:1, alignItems:'flex-end'}}>
         {headerRight}
       </TouchableOpacity>
     </View>

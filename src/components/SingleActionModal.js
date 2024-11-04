@@ -1,15 +1,8 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Modal,
-  TouchableWithoutFeedback,
-  StyleSheet,
-} from 'react-native';
+import {View, Text, TouchableOpacity, Modal} from 'react-native';
 import CustomButton from './CustomButton';
-import {colors, textStyles} from '../styles/globalStyle';
-import {useNavigation} from '@react-navigation/native';
+import { colors, textStyles } from '../styles/globalStyle';
+import { useNavigation } from '@react-navigation/native';
 
 const SingleActionModal = ({
   setModalVisible,
@@ -25,12 +18,12 @@ const SingleActionModal = ({
     if (isBackgroundclosable) {
       setModalVisible(false);
     }
-  };
+  }
 
   return (
     <Modal
       animationType="fade"
-      transparent={true} // transparent를 true로 설정하여 배경을 투명하게
+      transparent={true}
       visible={modalVisible}
       onRequestClose={() => {
         modalClose();
