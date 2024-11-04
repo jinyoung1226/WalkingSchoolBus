@@ -22,7 +22,6 @@ const CreateNotice = () => {
   const [noticeContent, setNoticeContent] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
-  // queryClient 인스턴스 가져오기
   const queryClient = useQueryClient();
 
   const handleSubmit = async () => {
@@ -63,6 +62,7 @@ const CreateNotice = () => {
         subtitle={<Text>공지글이 성공적으로 등록되었습니다.</Text>}
         confirmTitle="확인"
         icon={<CheckIcon />}
+        isBackgroundclosable={false}
         onConfirm={() => {
           setModalVisible(false);
           navigation.goBack();
