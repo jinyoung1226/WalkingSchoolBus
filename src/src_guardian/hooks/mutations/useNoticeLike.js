@@ -6,8 +6,9 @@ const useNoticeLike = () => {
 
   return useMutation({
     mutationFn: ({id, isCurrentlyLiked}) => toggleLike(id, isCurrentlyLiked),
+    queryKey: ['notices'], // v5에서 queryKey 추가
     onMutate: async ({id, isCurrentlyLiked}) => {
-      await queryClient.cancelQueries(['notices']);
+      await queryClient.cancelQueries({queryKey: ['notices']});
 
       const previousNotices = queryClient.getQueryData(['notices']);
       queryClient.setQueryData(['notices'], old => {
@@ -35,7 +36,9 @@ const useNoticeLike = () => {
       queryClient.setQueryData(['notices'], context.previousNotices);
       alert('좋아요 처리 중 오류가 발생했습니다.');
     },
-    onSettled: () => {},
+    onSettled: () => {
+      queryClient.invalidateQueries({queryKey: ['notices']});
+    },
   });
 };
 
