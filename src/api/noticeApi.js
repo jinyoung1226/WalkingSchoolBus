@@ -26,3 +26,30 @@ export const fetchNotices = async (page = 0, size = 10) => {
     content: transformedNotices,
   };
 };
+
+export const createNotice = async (content, photos) => {
+  try {
+    const formData = new FormData();
+    formData.append('content', content);
+
+    // photos 배열을 통해 여러 이미지 파일 추가
+    photos.forEach((photo, index) => {
+      formData.append('photos', {
+        uri: photo.uri,
+        type: photo.type || 'image/jpeg', // 이미지 타입 지정
+        name: photo.name || `photo_${index}.jpg`,
+      });
+    });
+
+    const response = await authApi.post('/group-notices', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error creating notice:', error);
+    throw error;
+  }
+};
