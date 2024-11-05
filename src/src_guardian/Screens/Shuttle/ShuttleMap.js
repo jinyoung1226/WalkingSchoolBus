@@ -25,7 +25,7 @@ const ShuttleMap = ({ route }) => {
       error => {
         console.log(error);
       },
-      { enableHighAccuracy: true },
+      { enableHighAccuracy: true, maximumAge: 10000 },
     );
   }, []);
 
