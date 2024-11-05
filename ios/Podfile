@@ -4,6 +4,19 @@ require Pod::Executable.execute_command('node', ['-p',
     "react-native/scripts/react_native_pods.rb",
     {paths: [process.argv[1]]},
   )', __dir__]).strip
+  
+# `node_require` 함수를 정의해 `node`를 통해 스크립트를 불러옵니다.
+def node_require(script)
+  require Pod::Executable.execute_command('node', ['-p',
+    "require.resolve(
+      '#{script}',
+      {paths: [process.argv[1]]},
+    )", __dir__]).strip
+end
+
+# `node_require`를 사용해 `react-native`와 `react-native-permissions` 스크립트를 불러옵니다.
+node_require('react-native/scripts/react_native_pods.rb')
+node_require('react-native-permissions/scripts/setup.rb')
 
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
@@ -21,6 +34,12 @@ target 'WalkingSchoolBus' do
   pod 'FirebaseAuth' 
   pod 'FirebaseFirestore'
   use_frameworks! :linkage => :static
+
+  # 위치 권한을 추가
+  setup_permissions([
+    'LocationAlways',
+    'LocationWhenInUse'
+  ])
 
   use_react_native!(
     :path => config[:reactNativePath],

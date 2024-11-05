@@ -30,7 +30,8 @@ const App = () => {
   };
   useEffect(() => {
     const init = async () => {
-      getFcmToken();
+      Platform.OS === 'ios' && await iosRequestPermission();
+      // getFcmToken();
       getUserType();
       // …do multiple sync or async tasks
     };
@@ -39,6 +40,20 @@ const App = () => {
       console.log("BootSplash has been hidden successfully");
     });
   }, []);
+
+  const iosRequestPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+    if (enabled) {
+      const apnsToken = await messaging().getAPNSToken();
+      if (apnsToken) {
+        getFcmToken();
+      }
+      console.log('Authorization status:', authStatus);
+    } else {
+      console.log('Permission denied');
+    }
+  };
 
   return (
       <RootNavigator />
