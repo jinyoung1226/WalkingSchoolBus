@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Platform, PermissionsAndroid } from 'react-native';
+import { View } from 'react-native';
 import WebView from 'react-native-webview';
 import Geolocation from 'react-native-geolocation-service';
 
@@ -7,7 +7,6 @@ const ShuttleMap = ({ route }) => {
   const [initialLocation, setInitialLocation] = useState(null);
   const { waypoints } = route.params;
   const webviewRef = useRef(null);
-
 
   const extractedWaypoints = waypoints.map(waypoint => ({
     waypointName: waypoint.waypointName,
@@ -56,7 +55,7 @@ const ShuttleMap = ({ route }) => {
     return null; // 초기 위치를 얻기 전까지는 WebView를 렌더링하지 않음
   }
 
-  const url = `https://walking-school-bus-map.vercel.app?waypoints=${encodeURIComponent(
+  const url = `https://donghang-map.vercel.app?waypoints=${encodeURIComponent(
     JSON.stringify(extractedWaypoints),
   )}&initialLocation=${encodeURIComponent(JSON.stringify(initialLocation))}`;
 
