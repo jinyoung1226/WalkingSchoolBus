@@ -138,13 +138,14 @@ const ShuttleDetail = ({navigation}) => {
     useCallback(() => {
       const verifyPermissionAndStartGuide = async () => {
         const hasPermission = await checkLocationPermission();
-        if (hasPermission && !guideStatus.isGuideActive) {
+        if (hasPermission && guideStatus && !guideStatus.isGuideActive) {
           useMutateGuideActive.mutate();
         }
       };
       verifyPermissionAndStartGuide();
-    }, [])
+    }, [guideStatus])
   );
+  
 
   // WebSocket 구독
   useWebSocketSubscription(groupInfo);
