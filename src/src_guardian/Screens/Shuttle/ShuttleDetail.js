@@ -134,17 +134,17 @@ const ShuttleDetail = ({navigation}) => {
     }
   }
 
-  useFocusEffect(
-    useCallback(() => {
-      const verifyPermissionAndStartGuide = async () => {
-        const hasPermission = await checkLocationPermission();
-        if (hasPermission && guideStatus && !guideStatus.isGuideActive) {
-          useMutateGuideActive.mutate();
-        }
-      };
-      verifyPermissionAndStartGuide();
-    }, [guideStatus])
-  );
+  // useFocusEffect(
+  //   useCallbackr(() => {
+  //     const verifyPermissionAndStartGuide = async () => {
+  //       const hasPermission = await checkLocationPermission();
+  //       if (hasPermission && guideStatus && !guideStatus.isGuideActive) {
+  //         useMutateGuideActive.mutate();
+  //       }
+  //     };
+  //     verifyPermissionAndStartGuide();
+  //   }, [guideStatus])
+  // );
   
 
   // WebSocket 구독
