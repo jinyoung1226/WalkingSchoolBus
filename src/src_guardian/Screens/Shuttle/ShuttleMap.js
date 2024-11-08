@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Platform, PermissionsAndroid } from 'react-native';
+import { Pressable, View } from 'react-native';
 import WebView from 'react-native-webview';
 import Geolocation from 'react-native-geolocation-service';
+import MyLocationIcon from '../../../assets/icons/MyLocationIcon.svg';
 
 const ShuttleMap = ({ route }) => {
   const [initialLocation, setInitialLocation] = useState(null);
   const { waypoints } = route.params;
   const webviewRef = useRef(null);
-
 
   const extractedWaypoints = waypoints.map(waypoint => ({
     waypointName: waypoint.waypointName,
@@ -25,7 +25,7 @@ const ShuttleMap = ({ route }) => {
       error => {
         console.log(error);
       },
-      { enableHighAccuracy: true },
+      { enableHighAccuracy: true, maximumAge: 10000 },
     );
   }, []);
 
@@ -52,11 +52,18 @@ const ShuttleMap = ({ route }) => {
     }
   }, [initialLocation]);
 
+  // 버튼 클릭 시, 자기 위치(인솔자 현 위치)로 지도의 중심이 이동되도록 Webview로 메시지 전송
+  const handleCenterOnGuide = () => {
+    if (webviewRef.current) {
+      webviewRef.current.postMessage(JSON.stringify({action : 'centerMapOnGuide'}));
+    }
+  }
+
   if (!initialLocation) {
     return null; // 초기 위치를 얻기 전까지는 WebView를 렌더링하지 않음
   }
 
-  const url = `https://walking-school-bus-map.vercel.app?waypoints=${encodeURIComponent(
+  const url = `https://donghang-map.vercel.app?waypoints=${encodeURIComponent(
     JSON.stringify(extractedWaypoints),
   )}&initialLocation=${encodeURIComponent(JSON.stringify(initialLocation))}`;
 
@@ -69,6 +76,9 @@ const ShuttleMap = ({ route }) => {
         source={{ uri: url }}
         style={{ flex: 1 }}
       />
+      <Pressable onPress={handleCenterOnGuide} >
+        <MyLocationIcon/>
+      </Pressable>
     </View>
   );
 };

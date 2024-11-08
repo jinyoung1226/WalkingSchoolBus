@@ -1,5 +1,5 @@
-import {useState} from 'react';
-import {PermissionsAndroid, Platform, Text, TouchableOpacity, View} from 'react-native';
+import {useCallback, useEffect, useState} from 'react';
+import {Alert, PermissionsAndroid, Platform, Text, TouchableOpacity, View} from 'react-native';
 import {colors, textStyles} from '../../../styles/globalStyle';
 import {formatDate} from '../../../utils/formatDate';
 import {FlatList} from 'react-native-gesture-handler';
@@ -20,6 +20,8 @@ import SingleActionModal from '../../../components/SingleActionModal';
 import useGuideStatus from '../../hooks/queries/useGuideStatus';
 import HeartFaceIcon from '../../../assets/icons/HeartFaceIcon.svg';
 import useAuthStore from '../../../store/authStore';
+import { check, openSettings, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
+import { useFocusEffect } from '@react-navigation/native';
 
 const ShuttleDetail = ({navigation}) => {
   const [isBeforeSchool, setIsBeforeSchool] = useState(true);
@@ -34,7 +36,13 @@ const ShuttleDetail = ({navigation}) => {
 
   const requestLocationPermission = async () => {
     if (Platform.OS === 'ios') {
-      await Geolocation.requestAuthorization('whenInUse');
+      const permissionStatus = await request(PERMISSIONS.IOS.LOCATION_ALWAYS);
+      if (permissionStatus === RESULTS.GRANTED) {
+        console.log(PermissionsAndroid.RESULTS.GRANTED);
+        useMutateGuideActive.mutate();
+      } else {
+        setWarnModalVisible(true); 
+      }
     } else {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
@@ -60,10 +68,38 @@ const ShuttleDetail = ({navigation}) => {
   };
   
   const checkLocationPermission = async () => {
-    const check = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION);
+    if (Platform.OS === 'ios') {
+      // iOS에서 위치 권한 확인 및 요청
+      let permissionStatus = await check(PERMISSIONS.IOS.LOCATION_ALWAYS);
+
+      switch (permissionStatus) {
+          case RESULTS.UNAVAILABLE:
+              console.log("Location permission is unavailable on this device.");
+              Alert.alert("권한 없음", "이 장치에서는 위치 권한을 사용할 수 없습니다.");
+              return false;
+
+        case RESULTS.DENIED:
+          console.log("Location permission is denied, requesting permission.");
+          return false;
+
+          case RESULTS.GRANTED:
+              console.log("Location permission is granted.");
+              return true;
+
+          case RESULTS.BLOCKED:
+              console.log("Location permission is blocked. Opening settings.");
+              return false;
+
+          default:
+              return false;
+      }
+  } else {
+      const check = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION);
     console.log('check:', check);
     return check;
+    }
   }
+
   // 인솔자가 배정된 그룹 정보 불러오기
   const { data: groupInfo, isPending: groupInfoIsPending, isSuccess: groupInfoIsSuccess } = useGroupInfo();
 
@@ -98,6 +134,19 @@ const ShuttleDetail = ({navigation}) => {
     }
   }
 
+  // useFocusEffect(
+  //   useCallbackr(() => {
+  //     const verifyPermissionAndStartGuide = async () => {
+  //       const hasPermission = await checkLocationPermission();
+  //       if (hasPermission && guideStatus && !guideStatus.isGuideActive) {
+  //         useMutateGuideActive.mutate();
+  //       }
+  //     };
+  //     verifyPermissionAndStartGuide();
+  //   }, [guideStatus])
+  // );
+  
+
   // WebSocket 구독
   useWebSocketSubscription(groupInfo);
 
@@ -124,7 +173,17 @@ const ShuttleDetail = ({navigation}) => {
         confirmTitle={'확인'}
         onConfirm={() => {
           setWarnModalVisible(false);
-        }}
+          Alert.alert(
+            "위치 권한 필요",
+            '정확환 아이들의 위치를 제공하기 위해 설정 화면에서 "항상"으로 변경해 주세요.',
+            [
+                { text: "취소", style: "cancel" },
+                { text: "설정으로 이동", onPress: () => openSettings() },
+            ]
+          );
+
+          }}
+          
       />
       <SingleActionModal
         modalVisible={stopGuideModalVisible}
