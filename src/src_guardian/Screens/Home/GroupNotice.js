@@ -46,7 +46,7 @@ const GroupNotice = ({navigation}) => {
     );
   }
 
-  if (error && error !== 404) {
+  if (error) {
     return (
       <View
         style={{
@@ -62,12 +62,13 @@ const GroupNotice = ({navigation}) => {
             marginBottom: 16,
             textAlign: 'center',
           }}>
-          공지사항을 불러오는 중 오류가 발생했습니다.
+          공지사항을 불러오는 중 오류 발생했습니다.
         </Text>
       </View>
     );
   }
 
+  const isEmpty = data?.pages.every(page => page.content.length === 0) || false;
   const notices = data?.pages.flatMap(page => page.content) || [];
   console.log(data?.pages.flatMap(page => page.content));
   return (
@@ -82,7 +83,7 @@ const GroupNotice = ({navigation}) => {
           </TouchableOpacity>
         }
       />
-      {error === 404 ? (
+      {isEmpty ? ( // 모든 page.content가 비어 있을 경우
         <View style={{marginTop: 260, alignItems: 'center'}}>
           <EmptyNotice width={169} height={95} />
         </View>
