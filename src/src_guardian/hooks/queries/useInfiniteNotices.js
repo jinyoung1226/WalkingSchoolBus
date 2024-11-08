@@ -4,7 +4,8 @@ import {fetchNotices} from '../../../api/noticeApi';
 const useInfiniteNotices = () => {
   return useInfiniteQuery({
     queryKey: ['notices'],
-    queryFn: ({pageParam = 0}) => fetchNotices(pageParam),
+    queryFn: fetchNotices,
+    initialPageParam: 0,
     getNextPageParam: lastPage => {
       return lastPage.last ? undefined : lastPage.number + 1;
     },

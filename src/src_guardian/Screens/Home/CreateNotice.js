@@ -27,7 +27,6 @@ const CreateNotice = () => {
   const handleSubmit = async () => {
     try {
       await createNotice(noticeContent, images);
-      // 쿼리 무효화
       queryClient.invalidateQueries(['notices']);
       setModalVisible(true);
     } catch (error) {

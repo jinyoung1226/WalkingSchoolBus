@@ -5,6 +5,7 @@ import {
   FlatList,
   Text,
   TouchableOpacity,
+  Button,
 } from 'react-native';
 import NoticeItem from '../../../components/NoticeItem';
 import CustomHeader from '../../../components/CustomHeader';
@@ -23,8 +24,8 @@ const GroupNotice = ({navigation}) => {
     hasNextPage,
   } = useInfiniteNotices();
   const queryClient = useQueryClient();
+  console.log(data);
 
-  // 페이지를 나갈 때 캐시를 제거하여 다시 진입 시 첫 페이지부터 로드
   useEffect(() => {
     return () => {
       queryClient.removeQueries(['notices']);
@@ -45,7 +46,7 @@ const GroupNotice = ({navigation}) => {
     );
   }
 
-  if (error && error !== 403) {
+  if (error && error !== 404) {
     return (
       <View
         style={{
@@ -68,7 +69,7 @@ const GroupNotice = ({navigation}) => {
   }
 
   const notices = data?.pages.flatMap(page => page.content) || [];
-
+  console.log(data?.pages.flatMap(page => page.content));
   return (
     <View style={{flex: 1, paddingTop: 16, backgroundColor: '#feffff'}}>
       <CustomHeader
@@ -81,7 +82,7 @@ const GroupNotice = ({navigation}) => {
           </TouchableOpacity>
         }
       />
-      {error === 403 ? (
+      {error === 404 ? (
         <View style={{marginTop: 260, alignItems: 'center'}}>
           <EmptyNotice width={169} height={95} />
         </View>
@@ -89,7 +90,7 @@ const GroupNotice = ({navigation}) => {
         <FlatList
           style={{flex: 1}}
           data={notices}
-          renderItem={({item}) => item && <NoticeItem notice={item} />}
+          renderItem={({item}) => item && <NoticeItem item={item} />}
           keyExtractor={(item, index) =>
             item?.groupNoticeId
               ? item.groupNoticeId.toString()

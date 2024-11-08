@@ -5,39 +5,52 @@ const useNoticeLike = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({id, isCurrentlyLiked}) => toggleLike(id, isCurrentlyLiked),
-    queryKey: ['notices'],
-    onMutate: async ({id, isCurrentlyLiked}) => {
+    mutationFn: id => toggleLike(id),
+    onMutate: async id => {
       await queryClient.cancelQueries({queryKey: ['notices']});
 
       const previousNotices = queryClient.getQueryData(['notices']);
-      queryClient.setQueryData(['notices'], old => {
-        return {
-          ...old,
-          pages: old.pages.map(page => ({
-            ...page,
-            content: page.content.map(notice =>
+      queryClient.setQueryData(['notices'], oldData => {
+        if (!oldData) return oldData;
+
+        if (oldData.pages) {
+          return {
+            ...oldData,
+            pages: oldData.pages.map(page => ({
+              ...page,
+              content: page.content.map(notice =>
+                notice.groupNoticeId === id
+                  ? {
+                      ...notice,
+                      isLiked: !notice.isLiked,
+                      likes: notice.isLiked
+                        ? notice.likes - 1
+                        : notice.likes + 1,
+                    }
+                  : notice,
+              ),
+            })),
+          };
+        } else {
+          return {
+            ...oldData,
+            content: oldData.content.map(notice =>
               notice.groupNoticeId === id
                 ? {
                     ...notice,
-                    isLiked: !isCurrentlyLiked,
-                    likes: isCurrentlyLiked
-                      ? notice.likes - 1
-                      : notice.likes + 1,
+                    isLiked: !notice.isLiked,
+                    likes: notice.isLiked ? notice.likes - 1 : notice.likes + 1,
                   }
                 : notice,
             ),
-          })),
-        };
+          };
+        }
       });
       return {previousNotices};
     },
-    onError: (err, variables, context) => {
+    onError: context => {
       queryClient.setQueryData(['notices'], context.previousNotices);
       alert('좋아요 처리 중 오류가 발생했습니다.');
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({queryKey: ['notices']});
     },
   });
 };
