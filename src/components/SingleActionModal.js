@@ -1,8 +1,8 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, Modal} from 'react-native';
 import CustomButton from './CustomButton';
-import { colors, textStyles } from '../styles/globalStyle';
-import { useNavigation } from '@react-navigation/native';
+import {colors, textStyles} from '../styles/globalStyle';
+import {useNavigation} from '@react-navigation/native';
 
 const SingleActionModal = ({
   setModalVisible,
@@ -14,12 +14,11 @@ const SingleActionModal = ({
   onConfirm,
   isBackgroundclosable = true,
 }) => {
-
   const modalClose = () => {
     if (isBackgroundclosable) {
       setModalVisible(false);
     }
-  }
+  };
 
   return (
     <Modal
@@ -51,9 +50,7 @@ const SingleActionModal = ({
               paddingVertical: 32,
               paddingHorizontal: 16,
             }}>
-            <View style={{alignItems:'center'}}>
-            {icon}
-            </View>
+            <View style={{alignItems: 'center'}}>{icon}</View>
             <View style={{height: 24}} />
             <Text
               style={[
@@ -62,24 +59,25 @@ const SingleActionModal = ({
               ]}>
               {title}
             </Text>
-            {subtitle &&
-            <View>
-              <View style={{height: 8}} />
-              <Text
-                style={[
-                  textStyles.R1,
-                  {color: colors.Gray05, textAlign: 'center'},
-                ]}>
-                {subtitle}
-              </Text>
-            </View>}
+            {subtitle && (
+              <View>
+                <View style={{height: 8}} />
+                <Text
+                  style={[
+                    textStyles.R1,
+                    {color: colors.Gray05, textAlign: 'center'},
+                  ]}>
+                  {subtitle}
+                </Text>
+              </View>
+            )}
             <View style={{height: 24}} />
-              <CustomButton
-                title={confirmTitle}
-                onPress={onConfirm}
-                type='confirm'
-                textStyle={[textStyles.SB1]}
-              />
+            <CustomButton
+              title={confirmTitle}
+              onPress={onConfirm}
+              type="confirm"
+              textStyle={[textStyles.SB1]}
+            />
           </View>
           <TouchableOpacity
             style={{width: 32}}

@@ -29,7 +29,7 @@ const ShuttleStudentsList = ({navigation, route}) => {
   const [completeMessage, setCompleteMessage] = useState(null);
   const [selectedStudentId, setSelectedStudentId] = useState(null);
   const insets = useSafeAreaInsets();
-  const { publish } = useWebsocketStore();
+  const {publish} = useWebsocketStore();
   const queryClient = useQueryClient();
 
   const { data: waypoints, isSuccess: waypointsIsSuccess } = useWaypoints();
@@ -83,7 +83,7 @@ const ShuttleStudentsList = ({navigation, route}) => {
         attendanceStatus: 'PRESENT',
       });
     }
-  }
+  };
 
   
 
@@ -202,15 +202,15 @@ const ShuttleStudentsList = ({navigation, route}) => {
           setCancelModalVisible(false);
         }}
       />
-      <CustomHeader 
-        title={waypointName} 
+      <CustomHeader
+        title={waypointName}
         subtitle={groupInfo.groupName}
-        subtitleVisible={true} 
-        headerRight={<MapIcon/>} 
-        onPressRightButton={() => navigation.navigate('ShuttleMap')} 
+        subtitleVisible={true}
+        headerRight={<MapIcon />}
+        onPressRightButton={() => navigation.navigate('ShuttleMap')}
       />
       <View style={{height: 16}} />
-      <View style={{paddingHorizontal:32}}>
+      <View style={{paddingHorizontal: 32}}>
         <Text style={[textStyles.M2, {color: colors.Black}]}>
           {`📌 현재 출석`}
           <Text style={[textStyles.SB2, {color: colors.Red}]}>
@@ -231,7 +231,10 @@ const ShuttleStudentsList = ({navigation, route}) => {
             name={item.name}
             imagePath={item.imagePath}
             onAttendanceButtonPress={() => {
-              onAttendanceButtonPress({studentId: item.studentId, status: item.attendanceStatus});
+              onAttendanceButtonPress({
+                studentId: item.studentId,
+                status: item.attendanceStatus,
+              });
             }}
             goStudentDetail={() => {
               navigation.navigate('StudentDetail', {studentInfo: item});
