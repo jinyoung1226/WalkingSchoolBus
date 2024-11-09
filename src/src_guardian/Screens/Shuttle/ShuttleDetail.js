@@ -19,12 +19,16 @@ import Geolocation from 'react-native-geolocation-service';
 import SingleActionModal from '../../../components/SingleActionModal';
 import useGuideStatus from '../../hooks/queries/useGuideStatus';
 import HeartFaceIcon from '../../../assets/icons/HeartFaceIcon.svg';
+import SmileFaceIcon from '../../../assets/icons/SmileFaceIcon.svg';
+import CompassIcon from '../../../assets/icons/CompassIcon.svg';
+import WarningIcon from '../../../assets/icons/WarningIcon.svg';
 import useAuthStore from '../../../store/authStore';
 
 const ShuttleDetail = ({navigation}) => {
   const [isBeforeSchool, setIsBeforeSchool] = useState(true);
   const [guideModalVisible, setGuideModalVisible] = useState(false);
   const [warnModalVisible, setWarnModalVisible] = useState(false);
+  const [startGuideModalVisible, setStartGuideModalVisible] = useState(false);
   const [stopGuideModalVisible, setStopGuideModalVisible] = useState(false);
 
   const {userId} = useAuthStore();
@@ -47,7 +51,11 @@ const ShuttleDetail = ({navigation}) => {
         );
         if (granted == PermissionsAndroid.RESULTS.GRANTED) {
           console.log(PermissionsAndroid.RESULTS.GRANTED);
-          useMutateGuideActive.mutate();
+          useMutateGuideActive.mutate(undefined, {
+            onSuccess: () => {
+              setStartGuideModalVisible(true);
+            },
+          });
         } else {
           setWarnModalVisible(true);
         }
@@ -82,7 +90,11 @@ const ShuttleDetail = ({navigation}) => {
 
   const onGuideButtonPress = async() => {
     if (guideStatus.isGuideActive) {
-      useMutateGuideDeactive.mutate();
+      useMutateGuideDeactive.mutate(undefined, {
+        onSuccess: () => {
+          setStopGuideModalVisible(true);
+        },
+      });
       setStopGuideModalVisible(true);
       return;
     }
@@ -90,7 +102,11 @@ const ShuttleDetail = ({navigation}) => {
     if (!guideStatus.isGuideActive) {
       const hasLocationPermission = await checkLocationPermission();
       if (hasLocationPermission) {
-        useMutateGuideActive.mutate();
+        useMutateGuideActive.mutate(undefined, {
+          onSuccess: () => {
+            setStartGuideModalVisible(true);
+          },
+        });
       } else {
         setGuideModalVisible(true);
       }
@@ -108,8 +124,16 @@ const ShuttleDetail = ({navigation}) => {
       <SingleActionModal
         modalVisible={guideModalVisible}
         setModalVisible={setGuideModalVisible}
-        title={'위치정보를 "항상 허용" 해주세요!'}
-        subtitle={'학부모님들께 정확한 아이들의 위치를 제공하기 위해 권한 허용이 필요합니다.'}
+        icon={<CompassIcon />}
+        title={
+        <Text>
+          {`정확한 위치 정보 접근 권한을\n`}
+          <Text style={{color: colors.Red}}>
+          {`"항상 허용"`}
+          </Text> 
+          {` 해주세요!`}
+        </Text>}
+        subtitle={'운행 중 학부모님들께 위치 정보를 \n제공하기 위해 권한 허용이 필요합니다'}
         confirmTitle={'확인'}
         onConfirm={() => {
           requestLocationPermission();
@@ -119,11 +143,30 @@ const ShuttleDetail = ({navigation}) => {
       <SingleActionModal
         modalVisible={warnModalVisible}
         setModalVisible={setWarnModalVisible}
-        title={'정확한 위치정보 권한을 "항상 허용" 하지 않으면 출근할 수 없어요!'}
-        subtitle={'학부모님들께 정확한 아이들의 위치를 제공하기 위해 권한 허용이 필요합니다.'}
+        icon={<WarningIcon />}
+        title={
+        <Text>
+          {`정확한 위치 정보 접근 권한이\n`}
+          <Text style={{color: colors.Red}}>
+          {`"항상 허용"`}
+          </Text> 
+          {`으로 설정되어야\n출근할 수 있어요`}
+        </Text>
+        }
         confirmTitle={'확인'}
         onConfirm={() => {
           setWarnModalVisible(false);
+        }}
+      />
+      <SingleActionModal
+        modalVisible={startGuideModalVisible}
+        setModalVisible={setStartGuideModalVisible}
+        icon={<SmileFaceIcon />}
+        title={'워킹스쿨버스 운행을 시작합니다!'}
+        subtitle={'지금부터 퇴근 전까지 보호자에게 \n위치가 공유됩니다'}
+        confirmTitle={'확인'}
+        onConfirm={() => {
+          setStartGuideModalVisible(false);
         }}
       />
       <SingleActionModal

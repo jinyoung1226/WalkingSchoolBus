@@ -164,8 +164,10 @@ const ShuttleStudentsList = ({navigation, route}) => {
         onConfirm={() => {
           // 여기서 이전 경유지 출석 여부에 따라 출석 완료 이벤트 발생
           useMutateAttendanceComplete.mutate(undefined, {
-            onError: () => {
-              setNonCompleteModalVisible(true);
+            onError: (error) => {
+              if (error.response?.status === 400) {
+                setNonCompleteModalVisible(true);
+              }
             },
           });
           setAttendanceModalVisible(false);

@@ -26,7 +26,7 @@ const useWebsocketStore = create(set => ({
             forceBinaryWSFrames: true,
             appendMissingNULLonIncoming: true,
             connectHeaders: {accessToken: token},
-            reconnectDelay: 5000,
+            reconnectDelay: 500,
             debug: function (str) {
               console.log(str, '웹소캣 연결 로그');
             },
