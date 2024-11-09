@@ -71,11 +71,7 @@ const Homemain = ({navigation}) => {
           onPress={() => {
             navigation.navigate('GroupNotice');
           }}>
-          <HomeNoticeComponent
-            text={'aaaa'}
-            author={'aaaa'}
-            time={'1111'}></HomeNoticeComponent>
-          <View style={{height: 100}} />
+          <HomeNoticeComponent></HomeNoticeComponent>
         </HomeComponent>
         <View style={{height: 32}} />
       </View>
