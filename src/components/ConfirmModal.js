@@ -48,7 +48,8 @@ const ConfirmModal = ({
               paddingVertical: 32,
               paddingHorizontal: 16,
             }}>
-            {icon}
+            <View style={{alignItems: 'center'}}>{icon}</View>
+            <View style={{height: 24}} />
             <Text
               style={[
                 textStyles.SB1,
@@ -56,7 +57,6 @@ const ConfirmModal = ({
               ]}>
               {title}
             </Text>
-            <View style={{height: 8}} />
             {subtitle}
             <View style={{height: 24}} />
             <View style={{flexDirection: 'row'}}>

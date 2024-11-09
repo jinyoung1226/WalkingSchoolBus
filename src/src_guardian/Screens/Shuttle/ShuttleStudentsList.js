@@ -220,11 +220,13 @@ const ShuttleStudentsList = ({navigation, route}) => {
           </Text>
           {`명 완료`}
         </Text>
+        <View style={{height: 8}} />
       </View>
       <FlatList
-        ListHeaderComponent={() => <View style={{height: 16}} />}
+        ListHeaderComponent={() => <View style={{height: 8}} />}
         data={studentList}
         keyExtractor={(item) => item.studentId}
+        ListFooterComponent={<View style={{height: 16}} />}
         renderItem={({item}) => (
           <StudentCard
             changeStatusDisabled={isAttendanceComplete || !guideStatus.isGuideActive}
@@ -244,16 +246,16 @@ const ShuttleStudentsList = ({navigation, route}) => {
         )}
         ItemSeparatorComponent={() => <View style={{height: 16}} />}
       />
+      {guideStatus.isGuideActive &&
       <View style={{padding:16}}>
-        {guideStatus.isGuideActive &&
         <CustomButton 
           title={!isAttendanceComplete ? '출석 확인' : '출석 완료'}
           onPress={() => {
             setAttendanceModalVisible(true);
           }}
           disabled={isAttendanceComplete}
-        />}
-      </View>
+        />
+      </View>}
     </View>
   );
 };

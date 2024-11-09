@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, TouchableOpacity, View } from 'react-native';
 import WebView from 'react-native-webview';
 import Geolocation from 'react-native-geolocation-service';
 import MyLocationIcon from '../../../assets/icons/MyLocationIcon.svg';
+import CustomHeader from '../../../components/CustomHeader';
+import { colors } from '../../../styles/globalStyle';
 
 const ShuttleMap = ({ route }) => {
   const [initialLocation, setInitialLocation] = useState(null);
@@ -68,17 +70,20 @@ const ShuttleMap = ({ route }) => {
   )}&initialLocation=${encodeURIComponent(JSON.stringify(initialLocation))}`;
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{backgroundColor: colors.White_Green, flex:1}}>
+      <CustomHeader title="운행" />
+      <View style={{flex:1}}>
       <WebView
         ref={webviewRef}
         originWhitelist={['*']}
         javaScriptEnabled={true}
         source={{ uri: url }}
-        style={{ flex: 1 }}
+        style={{flex:1}}
       />
-      <Pressable onPress={handleCenterOnGuide} >
+      </View>
+      <TouchableOpacity style={{position: 'absolute', bottom: 32, right:32}} onPress={handleCenterOnGuide} >
         <MyLocationIcon/>
-      </Pressable>
+      </TouchableOpacity>
     </View>
   );
 };

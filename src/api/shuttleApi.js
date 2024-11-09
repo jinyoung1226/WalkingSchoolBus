@@ -41,3 +41,9 @@ export const getGuideStatus = async () => {
   console.log(response.data, '운행 상태 불러오기');
   return response.data;
 }
+
+export const getStudentMessages = async () => {
+  const response = await authApi.get('/message/received');
+  console.log(response.data, '학생 메시지 불러오기');
+  return response.data;
+}
