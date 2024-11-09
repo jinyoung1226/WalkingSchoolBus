@@ -1,6 +1,6 @@
 import React from 'react';
-import {View, FlatList, Text, Image} from 'react-native';
-import {useQuery} from '@tanstack/react-query';
+import {View, FlatList, Text, Image, ActivityIndicator} from 'react-native';
+import {useInfiniteQuery} from '@tanstack/react-query';
 import {fetchNotices} from '../api/noticeApi';
 
 // 날짜 포맷 함수
@@ -32,19 +32,32 @@ const formatDate = createdAt => {
   }
 };
 
-// HomeNotices 컴포넌트
 const HomeNotices = () => {
-  // React Query를 사용하여 데이터를 가져옵니다.
-  const {data, isLoading, isError} = useQuery({
-    queryKey: ['homeNotices'],
-    queryFn: () => fetchNotices({pageParam: 0, size: 3}), // 최대 3개 데이터 가져오기
-    staleTime: 0, // 항상 최신 데이터를 가져오도록 설정
-    cacheTime: 1000 * 60 * 5, // 캐시 시간 5분
+  // Infinite Query 설정
+  const {
+    data,
+    isLoading,
+    isError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ['Notices'],
+    queryFn: ({pageParam = 0}) => fetchNotices({pageParam, size: 3}),
+    getNextPageParam: lastPage => {
+      return lastPage.content.length < 10 ? undefined : lastPage.number + 1;
+    },
+    staleTime: 60000,
+    cacheTime: 300000,
   });
 
   // 로딩 상태 처리
   if (isLoading) {
-    return null; // 로딩 중에는 아무것도 표시하지 않음
+    return (
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <ActivityIndicator size="large" color="#2ee8a5" />
+      </View>
+    );
   }
 
   // 에러 상태 처리
@@ -64,15 +77,17 @@ const HomeNotices = () => {
     );
   }
 
-  // 데이터가 없는 경우 기본값 설정
-  const notices = data?.content || []; // content 필드가 없으면 빈 배열 반환
+  // 데이터 병합 후 슬라이싱
+  const allNotices = data?.pages.flatMap(page => page.content) || [];
+  const notices = allNotices.slice(0, 3); // 병합된 데이터 중 첫 3개만 표시
 
+  // FlatList 컴포넌트 렌더링
   return (
     <View style={{flex: 1, backgroundColor: '#FFFFFF', paddingHorizontal: 16}}>
       <FlatList
         data={notices}
-        keyExtractor={item => item.groupNoticeId.toString()} // 각 항목의 고유 ID
-        renderItem={({item, index}) => (
+        keyExtractor={item => item.groupNoticeId.toString()}
+        renderItem={({item}) => (
           <View
             style={{
               flexDirection: 'row',
@@ -81,7 +96,7 @@ const HomeNotices = () => {
               width: 326,
               padding: 10,
               backgroundColor: '#FFFFFF',
-              marginBottom: index === notices.length - 1 ? 0 : 16, // 마지막 항목 여백 제거
+              marginBottom: 16,
             }}>
             {/* 텍스트 영역 */}
             <View
@@ -91,7 +106,7 @@ const HomeNotices = () => {
                 alignItems: 'flex-start',
                 flexGrow: 1,
                 gap: 4,
-                paddingRight: item.photos?.length > 0 ? 32 : 0, // 이미지가 있을 경우 여백 추가
+                paddingRight: item.photos?.length > 0 ? 32 : 0,
               }}>
               <Text
                 style={{
@@ -100,9 +115,9 @@ const HomeNotices = () => {
                   textAlign: 'left',
                   color: '#333d4b',
                   lineHeight: 17,
-                  maxWidth: 192, // 텍스트가 이미지 영역을 침범하지 않도록 제한
+                  maxWidth: 192,
                 }}
-                numberOfLines={2} // 최대 2줄
+                numberOfLines={2}
                 ellipsizeMode="tail">
                 {item.content}
               </Text>
@@ -119,20 +134,29 @@ const HomeNotices = () => {
             {/* 이미지 영역 */}
             {item.photos?.length > 0 && (
               <Image
-                source={{uri: item.photos[0]}} // 첫 번째 이미지만 표시
+                source={{uri: item.photos[0]}}
                 style={{
                   width: 70,
                   height: 70,
-                  borderRadius: 7, // 모서리 둥글기
+                  borderRadius: 7,
                 }}
                 resizeMode="cover"
               />
             )}
           </View>
         )}
-        contentContainerStyle={{
-          paddingVertical: 16,
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
+          }
         }}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          isFetchingNextPage && (
+            <ActivityIndicator size="small" color="#2ee8a5" />
+          )
+        }
+        contentContainerStyle={{}}
       />
     </View>
   );

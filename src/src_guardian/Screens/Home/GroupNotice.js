@@ -83,7 +83,7 @@ const GroupNotice = ({navigation}) => {
           </TouchableOpacity>
         }
       />
-      {isEmpty ? ( // 모든 page.content가 비어 있을 경우
+      {isEmpty ? (
         <View style={{marginTop: 260, alignItems: 'center'}}>
           <EmptyNotice width={169} height={95} />
         </View>
