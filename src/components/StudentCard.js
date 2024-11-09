@@ -72,10 +72,11 @@ const StudentCard = ({ name, goStudentDetail, imagePath, initialStatus, onAttend
                 backgroundColor: colors.Gray03,
                 overflow: 'hidden',
               }}>
+              {!imagePath == "" &&
               <Image
                 src={imagePath}
                 style={{flex:1}}
-              />
+              />}
             </View>
             <View style={{width: 24}} />
             <TouchableOpacity

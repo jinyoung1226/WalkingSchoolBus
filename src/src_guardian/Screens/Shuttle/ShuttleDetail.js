@@ -25,6 +25,7 @@ import WarningIcon from '../../../assets/icons/WarningIcon.svg';
 import useAuthStore from '../../../store/authStore';
 import { check, openSettings, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import { useFocusEffect } from '@react-navigation/native';
+import ConfirmModal from '../../../components/ConfirmModal';
 
 const ShuttleDetail = ({navigation}) => {
   const [isBeforeSchool, setIsBeforeSchool] = useState(true);
@@ -126,15 +127,8 @@ const ShuttleDetail = ({navigation}) => {
 
   const onGuideButtonPress = async() => {
     if (guideStatus.isGuideActive) {
-      useMutateGuideDeactive.mutate(undefined, {
-        onSuccess: () => {
-          setStopGuideModalVisible(true);
-        },
-      });
       setStopGuideModalVisible(true);
-      return;
     }
-
     if (!guideStatus.isGuideActive) {
       const hasLocationPermission = await checkLocationPermission();
       if (hasLocationPermission) {
@@ -149,19 +143,6 @@ const ShuttleDetail = ({navigation}) => {
       return;
     }
   }
-
-  // useFocusEffect(
-  //   useCallbackr(() => {
-  //     const verifyPermissionAndStartGuide = async () => {
-  //       const hasPermission = await checkLocationPermission();
-  //       if (hasPermission && guideStatus && !guideStatus.isGuideActive) {
-  //         useMutateGuideActive.mutate();
-  //       }
-  //     };
-  //     verifyPermissionAndStartGuide();
-  //   }, [guideStatus])
-  // );
-  
 
   // WebSocket 구독
   useWebSocketSubscription(groupInfo);
@@ -228,18 +209,32 @@ const ShuttleDetail = ({navigation}) => {
           setStartGuideModalVisible(false);
         }}
       />
-      <SingleActionModal
+      <ConfirmModal
         modalVisible={stopGuideModalVisible}
         setModalVisible={setStopGuideModalVisible}
         icon={<HeartFaceIcon />}
         title={'워킹스쿨버스 운행을 종료합니다!'}
-        subtitle={'이제 위치 공유가 중단됩니다.\n오늘도 수고하셨습니다 :)'}
+        subtitle={
+          <Text 
+          style={[
+            textStyles.R1,
+            {color: colors.Gray05, textAlign: 'center'},
+          ]}>
+            {'확인 버튼을 누르면 운행이\n종료되고 위치 공유가 중단됩니다'}
+          </Text>
+          }
         confirmTitle={'확인'}
         onConfirm={() => {
-          // useMutateGuideDeactive.mutate();
+          useMutateGuideDeactive.mutate(undefined, {
+            onSuccess: () => {
+              setStopGuideModalVisible(false);
+            },
+          });
+        }}
+        cancelTitle={'취소'}
+        onCancel={() => {
           setStopGuideModalVisible(false);
         }}
-        isBackgroundclosable={false}
       />
       <CustomHeader 
         title={groupInfo.schoolName} 
@@ -288,7 +283,7 @@ const ShuttleDetail = ({navigation}) => {
       />
       <View style={{padding:16}}>
         {/* 출근하기 이후 마지막 경유지 출석 완료시 퇴근하기 버튼 활성화, 완료 전까지는 운행중이라는 비활성화 버튼 제공 */}
-        <CustomButton title={guideStatus.isGuideActive ? (guideStatus.dutyGuardianId == userId ? (lastWaypointAttendanceComplete ? '퇴근하기'  : '아직 운행중이에요'): '아직 운행중이에요') : '출근하기'} onPress={() => {onGuideButtonPress()}} disabled={guideStatus.isGuideActive && (!lastWaypointAttendanceComplete || guideStatus.dutyGuardianId !== userId)}/>
+        <CustomButton title={guideStatus.isGuideActive ? (guideStatus.dutyGuardianId == userId ? (lastWaypointAttendanceComplete ? '운행 종료하기'  : '아직 운행중이에요'): '아직 운행중이에요') : guideStatus.shuttleStatus ? '오늘 운행이 종료되었어요' : '운행 시작하기'} onPress={() => {onGuideButtonPress()}} disabled={guideStatus.isGuideActive ? (!lastWaypointAttendanceComplete || guideStatus.dutyGuardianId !== userId) : guideStatus.shuttleStatus}/>
       </View>
     </View>
   );

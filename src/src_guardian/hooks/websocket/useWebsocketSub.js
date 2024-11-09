@@ -55,6 +55,10 @@ const useWebSocketSubscription = (groupInfo) => {
         if (newMessage.messageType === 'GUIDE_STATUS_CHANGE') {
           queryClient.invalidateQueries({ queryKey: ['guideStatus'] });
         }
+
+        if (newMessage.shuttleStatus === true) {
+          queryClient.invalidateQueries({ queryKey: ['waypoints'] });
+        }
       }
       subscribeToChannel({ channel, callback });
     }
