@@ -6,6 +6,7 @@ const useInfiniteNotices = () => {
     queryKey: ['notices'],
     queryFn: fetchNotices,
     initialPageParam: 0,
+    size: 10,
     getNextPageParam: lastPage => {
       return lastPage.last ? undefined : lastPage.number + 1;
     },
