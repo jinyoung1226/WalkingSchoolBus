@@ -24,7 +24,7 @@ const ShuttleDetail = ({ route }) => {
     latitude: waypoint.latitude,
     longitude: waypoint.longitude,
   }));
-  const initialLocation = {latitude: waypoints[0].latitude, longitude: waypoints[0].longitude};
+
   useEffect(() => {
     const channel = `/sub/group/${groupInfo.id}/location`;
     const callback = (message) => {
@@ -51,7 +51,7 @@ const ShuttleDetail = ({ route }) => {
 
   const url = `https://donghang-map.vercel.app?waypoints=${encodeURIComponent(
     JSON.stringify(extractedWaypoints),
-  )}&initialLocation=${encodeURIComponent(JSON.stringify(initialLocation))}`;
+  )}&initialLocation=${encodeURIComponent(JSON.stringify({latitude: 37.5576, longitude: 127.0403}))}`;
 
   return (
     <View style={{backgroundColor: colors.White_Green, flex:1, paddingBottom: insets.bottom, paddingTop: insets.top}}>
