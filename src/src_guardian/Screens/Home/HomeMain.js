@@ -28,17 +28,9 @@ const Homemain = ({navigation}) => {
 
   return (
     <ScrollView style={{backgroundColor: colors.White_Green}}>
-      <View style={{paddingHorizontal: 16}}>
-        <View style={{height: 8}} />
-        <View
-          style={{
-            padding: 32,
-            backgroundColor: colors.White_Green,
-            borderRadius: 10,
-            elevation: 4,
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
+      <View style={{paddingHorizontal:16}}>
+        <View style={{height: 8}}/>
+        <View style={{padding:32, backgroundColor: colors.White_Green, borderRadius: 10, elevation:4, flexDirection:'row', alignItems:'center', shadowColor: "#000",shadowOffset: { width: 0, height: 1 },shadowOpacity: 0.05, shadowRadius: 10}}>
           <View>
             <Text style={[textStyles.SB2, {color: '#4B4A4A'}]}>
               {'오늘도 안전한 등교\n지켜주셔서 감사합니다'}
