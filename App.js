@@ -82,6 +82,34 @@ const App = () => {
         },
       })
     }
+
+    if (message.data.type === 'END_WORK_GUARDIAN') {
+      notifee.displayNotification({
+        title: message.notification.title,
+        body: message.notification.body,
+        data: { type: message.data.type },
+        android: {
+          channelId: channelId,
+          smallIcon: 'ic_launcher',
+          importance: AndroidImportance.HIGH,
+          visibility: AndroidVisibility.PUBLIC,
+        },
+      })
+    }
+
+    if (message.data.type === 'PICKUP') {
+      notifee.displayNotification({
+        title: message.notification.title,
+        body: message.notification.body,
+        data: { type: message.data.type },
+        android: {
+          channelId: channelId,
+          smallIcon: 'ic_launcher',
+          importance: AndroidImportance.HIGH,
+          visibility: AndroidVisibility.PUBLIC,
+        },
+      })
+    }
     // if (message.data.type === 'FEEDBACK') {
     //   notifee.displayNotification({
     //     title: message.notification.title,
