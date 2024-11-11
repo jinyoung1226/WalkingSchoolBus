@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import {View, FlatList, Text, Image, ActivityIndicator} from 'react-native';
 import {useInfiniteQuery, useQueryClient} from '@tanstack/react-query';
 import {fetchNotices} from '../api/noticeApi';
+import { colors, textStyles } from '../styles/globalStyle';
 
 // 날짜 포맷 함수
 const formatDate = createdAt => {
@@ -86,7 +87,7 @@ const HomeNotices = () => {
 
   // FlatList 컴포넌트 렌더링
   return (
-    <View style={{flex: 1, backgroundColor: '#FFFFFF', paddingHorizontal: 16}}>
+    <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
       <FlatList
         data={notices}
         keyExtractor={item => item.groupNoticeId.toString()}
@@ -94,54 +95,30 @@ const HomeNotices = () => {
           <View
             style={{
               flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              width: 326,
-              padding: 10,
+              flex:1,
               backgroundColor: '#FFFFFF',
-              marginBottom: 16,
+              padding: 16
             }}>
-            <View
-              style={{
-                flexDirection: 'column',
-                justifyContent: 'flex-start',
-                alignItems: 'flex-start',
-                flexGrow: 1,
-                gap: 4,
-                paddingRight: item.photos?.length > 0 ? 32 : 0,
-              }}>
+            <View style={{flex:1, height: 70, justifyContent:'space-between', paddingVertical:5}}>
               <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: '500',
-                  textAlign: 'left',
-                  color: '#333d4b',
-                  lineHeight: 17,
-                  maxWidth: 192,
-                }}
                 numberOfLines={2}
-                ellipsizeMode="tail">
+                style={[textStyles.M4, {color: colors.Black}]}>
                 {item.content}
               </Text>
+
               <Text
-                style={{
-                  fontSize: 12,
-                  textAlign: 'left',
-                  color: '#8a8a8a',
-                }}>
-                {item.guardian?.name || '익명'} 인솔자・
+                style={[textStyles.R3, {color:colors.Gray06}]}>
+                {item.guardian?.name || '익명'} {"인솔자 ・ "}
                 {formatDate(item.createdAt)}
               </Text>
             </View>
+            <View style={{width:32}} />
             {item.photos?.length > 0 && (
-              <View style={{width: 70, height: 70, flex: 1}}>
+              <View style={{width: 70, height: 70, borderRadius:10, overflow:'hidden'}}>
                 <Image
                   source={{uri: item.photos[0]}}
                   style={{
-                    width: '100%',
-                    height: undefined,
-                    aspectRatio: 1, // 정사각형 비율 유지
-                    borderRadius: 7,
+                    flex:1
                   }}
                   resizeMode="cover"
                 />
