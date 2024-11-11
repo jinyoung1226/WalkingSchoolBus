@@ -116,7 +116,6 @@ const NoticeItem = ({item}) => {
                   style={{
                     width: width - 32,
                     height: width - 32, // 1:1 비율로 고정
-                    borderRadius: 10,
                     backgroundColor: '#e9e9e9',
                     marginTop: 16,
                   }}
