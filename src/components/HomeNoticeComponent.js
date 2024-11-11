@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, FlatList, Text, Image, ActivityIndicator} from 'react-native';
-import {useInfiniteQuery} from '@tanstack/react-query';
+import {useInfiniteQuery, useQueryClient} from '@tanstack/react-query';
 import {fetchNotices} from '../api/noticeApi';
 
 // 날짜 포맷 함수
@@ -33,7 +33,7 @@ const formatDate = createdAt => {
 };
 
 const HomeNotices = () => {
-  // Infinite Query 설정
+  const queryClient = useQueryClient();
   const {
     data,
     isLoading,
@@ -51,7 +51,10 @@ const HomeNotices = () => {
     cacheTime: 300000,
   });
 
-  // 로딩 상태 처리
+  useEffect(() => {
+    queryClient.invalidateQueries(['Notices']);
+  }, [queryClient]);
+
   if (isLoading) {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -131,7 +134,6 @@ const HomeNotices = () => {
                 {formatDate(item.createdAt)}
               </Text>
             </View>
-            {/* 이미지 영역 */}
             {item.photos?.length > 0 && (
               <Image
                 source={{uri: item.photos[0]}}
