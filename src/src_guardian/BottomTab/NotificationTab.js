@@ -4,6 +4,8 @@ import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import useTabBarStore from '../../store/tabBarStore';
 import BackIcon from '../../assets/icons/BackIcon.svg';
 import NotiMain from '../Screens/Noitfication/NotiMain';
+import { colors, textStyles } from '../../styles/globalStyle';
+import { TouchableOpacity } from 'react-native';
 
 const Stack = createStackNavigator();
 
@@ -19,17 +21,25 @@ const NotificationTab = ({route}) => {
       showTabBar();
     } else {
       hideTabBar();
-    }
+    } 
   }, [route]);
 
   return (
     <Stack.Navigator
-      screenOptions={{
-        headerBackImage: () => (
-          <BackIcon width={24} height={24} /> // 사용자 정의 아이콘
+    screenOptions={{
+      headerTitleAlign:'center', 
+        headerTitleStyle: [textStyles.B1, { color: colors.Black }],
+        headerLeft: ({ onPress }) => (
+          <TouchableOpacity onPress={onPress} style={{ paddingLeft: 16 }}>
+            <BackIcon width={24} height={24} />
+          </TouchableOpacity>
         ),
-      }}>
-      <Stack.Screen name="NotiMain" component={NotiMain} />
+        headerStyle: {
+          elevation: 0, // Android의 그림자 제거
+          shadowOpacity: 0, // iOS의 그림자 제거
+        },
+    }}>
+      <Stack.Screen name="NotiMain" component={NotiMain} options={{title: "알림 센터"}}/>
     </Stack.Navigator>
   );
 };

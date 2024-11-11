@@ -12,7 +12,9 @@ import CustomHeader from '../../../components/CustomHeader';
 import Pencil from '../../../assets/icons/Pencil.svg';
 import EmptyNotice from '../../../assets/icons/EmptyNotice.svg';
 import useInfiniteNotices from '../../hooks/queries/useInfiniteNotices';
-import {useQueryClient} from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 
 const GroupNotice = ({navigation}) => {
   const {
@@ -24,6 +26,7 @@ const GroupNotice = ({navigation}) => {
     hasNextPage,
   } = useInfiniteNotices();
   const queryClient = useQueryClient();
+  const insets = useSafeAreaInsets();
   console.log(data);
 
   useEffect(() => {
@@ -72,7 +75,7 @@ const GroupNotice = ({navigation}) => {
   const notices = data?.pages.flatMap(page => page.content) || [];
   console.log(data?.pages.flatMap(page => page.content));
   return (
-    <View style={{flex: 1, paddingTop: 16, backgroundColor: '#feffff'}}>
+    <View style={{flex: 1, paddingTop: 16, backgroundColor: '#feffff', paddingBottom: insets.bottom, paddingTop: insets.top}}>
       <CustomHeader
         title="그룹 공지"
         headerRight={
