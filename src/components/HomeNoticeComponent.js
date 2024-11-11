@@ -47,7 +47,7 @@ const HomeNotices = () => {
     getNextPageParam: lastPage => {
       return lastPage.content.length < 10 ? undefined : lastPage.number + 1;
     },
-    staleTime: 60000,
+    staleTime: 0,
     cacheTime: 300000,
   });
 
