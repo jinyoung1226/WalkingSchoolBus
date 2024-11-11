@@ -8,8 +8,10 @@ import * as StompJs from '@stomp/stompjs';
 let webSocketClient = null;
 
 let groupSubscription = null;
-
 let subscribedGroup = null;
+
+let locationSubscription = null;
+let subscribedLocation = null;
 
 // 웹소캣 상태 관리 store
 const useWebsocketStore = create(set => ({
@@ -58,6 +60,10 @@ const useWebsocketStore = create(set => ({
           if (subscribedGroup) {
             console.log('이전 구독 채널 다시 구독: ', subscribedGroup);
             useWebsocketStore.getState().subscribeToChannel(subscribedGroup);
+          }
+          if (subscribedLocation) {
+            console.log('이전 위치 구독 채널 다시 구독: ', subscribedLocation);
+            useWebsocketStore.getState().subscribeToLocationChannel(subscribedLocation);
           }
         };
       } catch (error) {
@@ -117,6 +123,35 @@ const useWebsocketStore = create(set => ({
     }
   },
 
+  subscribeToLocationChannel: async ({channel, callback}) => {
+    if (webSocketClient && webSocketClient.connected) {
+      try {
+        console.log('구독 성공');
+        locationSubscription = webSocketClient.subscribe(channel, callback);
+        subscribedLocation = { channel, callback };
+      } catch (error) {
+        console.error('구독 실패', error);
+      }
+    } else {
+      console.error('웹소켓이 연결되지 않았습니다.');
+    }
+  },
+
+  unsubscribeToLocationChannel: async () => {
+    if (locationSubscription) {
+      try {
+        locationSubscription.unsubscribe();
+        console.log('구독 해제 성공');
+        locationSubscription = null;
+        subscribedLocation = null;
+      } catch (error) {
+        console.error('구독 해제 실패', error);
+      }
+    } else {
+      console.log('구독 중인 채널이 없습니다.');
+    }
+  },
+
   publish: async ({destination, header, studentId, attendanceStatus}) => {
     if (webSocketClient) {
       try {
@@ -135,7 +170,28 @@ const useWebsocketStore = create(set => ({
     } else {
       console.error('WebSocket is not connected.');
     }
+  },
+
+  publishLocation: async ({destination, header, latitude, longitude}) => {
+    if (webSocketClient) {
+      try {
+        console.log(destination, header, '메시지 전송');
+        webSocketClient.publish({
+          destination: destination,
+          Headers: header,
+          body: JSON.stringify({
+            latitude: latitude,
+            longitude: longitude,
+          }),
+        });
+      } catch (error) {
+        console.error('메시지 전송 실패', error);
+      }
+    } else {
+      console.error('WebSocket is not connected.');
+    }
   }
+
 
 }));
 

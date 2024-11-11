@@ -2,13 +2,20 @@ import { useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import useWebsocketStore from '../../../store/websocketStore';
 import eventEmitter from '../../../utils/eventEmitter';
+import useShuttleStore from '../../guardianStore/useShuttleStore';
 
 const useWebSocketSubscription = (groupInfo) => {
   const { subscribeToChannel, unsubscribeToChannel } = useWebsocketStore();
   const queryClient = useQueryClient();
-
+  
   useEffect(() => {
     if (groupInfo) {
+      // const locationChannel = `/sub/group/${groupInfo.id}/location`;
+      // const locationCallback = (message) => {
+      //   const newMessage = JSON.parse(message.body);
+      //   console.log(newMessage, '@@@@@@@@@@');
+      // }
+      
       const channel = `/sub/group/${groupInfo.id}`;
       const callback = (message) => {
         const newMessage = JSON.parse(message.body);
@@ -56,11 +63,12 @@ const useWebSocketSubscription = (groupInfo) => {
           queryClient.invalidateQueries({ queryKey: ['guideStatus'] });
         }
 
-        if (newMessage.shuttleStatus === true) {
-          queryClient.invalidateQueries({ queryKey: ['waypoints'] });
-        }
+        // if (newMessage.shuttleStatus === true) {
+        //   queryClient.invalidateQueries({ queryKey: ['waypoints'] });
+        // }
       }
       subscribeToChannel({ channel, callback });
+      // subscribeToChannel({ channel: locationChannel, callback: locationCallback });
     }
     return () => {
       unsubscribeToChannel();

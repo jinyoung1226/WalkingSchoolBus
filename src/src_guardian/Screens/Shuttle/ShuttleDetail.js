@@ -26,6 +26,7 @@ import useAuthStore from '../../../store/authStore';
 import { check, openSettings, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import { useFocusEffect } from '@react-navigation/native';
 import ConfirmModal from '../../../components/ConfirmModal';
+import { useQueryClient } from '@tanstack/react-query';
 
 const ShuttleDetail = ({navigation}) => {
   const [isBeforeSchool, setIsBeforeSchool] = useState(true);
@@ -38,6 +39,7 @@ const ShuttleDetail = ({navigation}) => {
   // today 날짜
   const formattedDate = formatDate();
   const insets = useSafeAreaInsets();
+  const queryClient = useQueryClient();
 
   const requestLocationPermission = async () => {
     if (Platform.OS === 'ios') {
@@ -228,6 +230,7 @@ const ShuttleDetail = ({navigation}) => {
           useMutateGuideDeactive.mutate(undefined, {
             onSuccess: () => {
               setStopGuideModalVisible(false);
+              queryClient.invalidateQueries('waypoints');
             },
           });
         }}
@@ -240,7 +243,14 @@ const ShuttleDetail = ({navigation}) => {
         title={groupInfo.schoolName} 
         subtitle={groupInfo.groupName}
         headerRight={<MapIcon/>} 
-        onPressRightButton={() => navigation.navigate('ShuttleMap', {waypoints})}
+        onPressRightButton={() => {
+          if (guideStatus.isGuideActive) {
+            navigation.navigate('ShuttleMap', {waypoints})
+          }
+          if (!guideStatus.isGuideActive) {
+            Alert.alert('운행시작 전에는 위치정보를 확인할 수 없습니다.')
+          }
+        }}
       />
       <View style={{height: 16}} />
       <View style={{flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal:32}}>
@@ -283,7 +293,7 @@ const ShuttleDetail = ({navigation}) => {
       />
       <View style={{padding:16}}>
         {/* 출근하기 이후 마지막 경유지 출석 완료시 퇴근하기 버튼 활성화, 완료 전까지는 운행중이라는 비활성화 버튼 제공 */}
-        <CustomButton title={guideStatus.isGuideActive ? (guideStatus.dutyGuardianId == userId ? (lastWaypointAttendanceComplete ? '운행 종료하기'  : '아직 운행중이에요'): '아직 운행중이에요') : guideStatus.shuttleStatus ? '오늘 운행이 종료되었어요' : '운행 시작하기'} onPress={() => {onGuideButtonPress()}} disabled={guideStatus.isGuideActive ? (!lastWaypointAttendanceComplete || guideStatus.dutyGuardianId !== userId) : guideStatus.shuttleStatus}/>
+        <CustomButton title={guideStatus.isGuideActive ? (guideStatus.dutyGuardianId == userId ? (lastWaypointAttendanceComplete ? '운행 종료하기'  : '아직 운행중이에요'): '아직 운행중이에요') : guideStatus.shuttleStatus ? '오늘 운행이 종료되었어요' : '운행 시작하기'} onPress={() => {onGuideButtonPress()}} />
       </View>
     </View>
   );

@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useMemo} from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, Alert} from 'react-native';
 import {colors, textStyles} from '../../../styles/globalStyle';
 import { FlatList } from 'react-native-gesture-handler';
 import StudentCard from '../../../components/StudentCard';
@@ -209,7 +209,14 @@ const ShuttleStudentsList = ({navigation, route}) => {
         subtitle={groupInfo.groupName}
         subtitleVisible={true}
         headerRight={<MapIcon />}
-        onPressRightButton={() => navigation.navigate('ShuttleMap')}
+        onPressRightButton={() => {
+          if (guideStatus.isGuideActive) {
+            navigation.navigate('ShuttleMap', {waypoints})
+          }
+          if (!guideStatus.isGuideActive) {
+            Alert.alert('운행시작 전에는 위치정보를 확인할 수 없습니다.')
+          }
+        }}
       />
       <View style={{height: 16}} />
       <View style={{paddingHorizontal: 32}}>
