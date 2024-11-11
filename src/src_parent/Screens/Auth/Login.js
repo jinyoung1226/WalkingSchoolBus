@@ -11,6 +11,9 @@ import {api} from '../../../api/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import useAuthStore from '../../../store/authStore';
+import CustomButton from '../../../components/CustomButton';
+import LoginParentText from '../../../assets/icons/LoginParentText';
+import { textStyle, colors } from '../../../styles/globalStyle';
 
 const Login = ({navigation}) => {
   // email, password 상태 관리
@@ -56,47 +59,45 @@ const Login = ({navigation}) => {
   };
 
   return (
-    <View style={{flex: 1, justifyContent: 'center', padding: 16}}>
-      <Text style={{fontSize: 16, marginBottom: 8}}>학부모 로그인</Text>
-      <Text style={{fontSize: 16, marginBottom: 8}}>이메일</Text>
+    <View style={{flex: 1, justifyContent: 'center', padding: 16, backgroundColor: colors.White}}>
+      <LoginParentText />
+      <View style={{height: 64}}/>
       <TextInput
         style={{
           borderWidth: 1,
-          borderColor: '#ccc',
-          padding: 12,
+          borderColor: colors.Gray03,
+          padding: 16,
           marginBottom: 16,
-          borderRadius: 4,
+          borderRadius: 10,
         }}
         value={email}
         onChangeText={setEmail}
-        placeholder="이메일을 입력하세요"
+        placeholder="아이디를 입력해주세요"
         keyboardType="email-address"
         autoCapitalize="none"
       />
 
-      <Text style={{fontSize: 16, marginBottom: 8}}>비밀번호</Text>
       <TextInput
         style={{
           borderWidth: 1,
-          borderColor: '#ccc',
-          padding: 12,
-          marginBottom: 16,
-          borderRadius: 4,
+          borderColor: colors.Gray03,
+          padding: 16,
+          
+          borderRadius: 10,
         }}
         value={password}
         onChangeText={setPassword}
-        placeholder="비밀번호를 입력하세요"
+        placeholder="비밀번호를 입력해주세요"
         secureTextEntry={true}
       />
-      <Button title="로그인" onPress={login} />
+      <View style={{height: 32}}/>
+      <CustomButton title="로그인" onPress={login} />
       <TouchableOpacity onPress={handleRegister}>
-        <Text style={{marginTop: 16, color: 'blue', textAlign: 'center'}}>
-          회원가입하기
-        </Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={navigateToGuardianLogin}>
-        <Text style={{marginTop: 16, color: 'blue', textAlign: 'center'}}>
-          인솔자 로그인 전환
+      <View style={{height: 24}}/>
+        <Text style={{marginTop: 16, color: colors.Main_Green, textAlign: 'center'}}>
+          인솔자 버전으로 전환하기
         </Text>
       </TouchableOpacity>
     </View>
