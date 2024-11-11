@@ -46,16 +46,8 @@ const NoticeItem = ({item}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const queryClient = useQueryClient();
   const {mutate: toggleLike} = useNoticeLike();
-  const [imageHeights, setImageHeights] = useState({});
   const [isLiked, setIsLiked] = useState(item.liked);
   const [likesCount, setLikesCount] = useState(item.likes);
-
-  const handleImageLoad = (index, event) => {
-    const {width: imageWidth, height: imageOriginalHeight} =
-      event.nativeEvent.source;
-    const calculatedHeight = (imageOriginalHeight * (width - 32)) / imageWidth;
-    setImageHeights(prev => ({...prev, [index]: calculatedHeight}));
-  };
 
   const handleLikePress = () => {
     setIsLiked(prevIsLiked => !prevIsLiked);
@@ -111,54 +103,25 @@ const NoticeItem = ({item}) => {
         </View>
 
         {item.photos?.length > 0 && (
-          <View style={{position: 'relative'}}>
+          <View style={{marginBottom: 16}}>
             <FlatList
-              data={item.photos || []} // photos가 undefined면 빈 배열로 설정
+              data={item.photos || []}
               horizontal
               pagingEnabled
               showsHorizontalScrollIndicator={false}
               keyExtractor={(photo, index) => `${index}`}
-              renderItem={({item: photo, index}) => (
-                <View style={{position: 'relative'}}>
-                  <Image
-                    source={{uri: photo}}
-                    style={{
-                      width: width - 32,
-                      height: imageHeights[index] || 200,
-                      borderRadius: 10,
-                      backgroundColor: '#e9e9e9',
-                      marginTop: 16,
-                    }}
-                    resizeMode="cover"
-                    onLoad={event => handleImageLoad(index, event)}
-                  />
-                  {/* 페이지 인디케이터 */}
-                  <View
-                    style={{
-                      position: 'absolute',
-                      bottom: 8,
-                      left: 0,
-                      right: 0,
-                      flexDirection: 'row',
-                      justifyContent: 'center',
-                    }}>
-                    {item.photos.map((_, indicatorIndex) => (
-                      <View
-                        key={indicatorIndex}
-                        style={{
-                          width: 8,
-                          height: 8,
-                          borderRadius: 4,
-                          marginHorizontal: 4,
-                          backgroundColor:
-                            currentIndex === indicatorIndex
-                              ? '#2ee8a5'
-                              : '#ccc',
-                        }}
-                      />
-                    ))}
-                  </View>
-                </View>
+              renderItem={({item: photo}) => (
+                <Image
+                  source={{uri: photo}}
+                  style={{
+                    width: width - 32,
+                    height: width - 32, // 1:1 비율로 고정
+                    borderRadius: 10,
+                    backgroundColor: '#e9e9e9',
+                    marginTop: 16,
+                  }}
+                  resizeMode="cover"
+                />
               )}
               onScroll={event => {
                 const index = Math.round(
@@ -168,6 +131,27 @@ const NoticeItem = ({item}) => {
               }}
               scrollEventThrottle={16}
             />
+            {/* 이미지 아래 인디케이터 */}
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'center',
+                marginTop: 8,
+              }}>
+              {item.photos.map((_, indicatorIndex) => (
+                <View
+                  key={indicatorIndex}
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: 4,
+                    marginHorizontal: 4,
+                    backgroundColor:
+                      currentIndex === indicatorIndex ? '#2ee8a5' : '#ccc',
+                  }}
+                />
+              ))}
+            </View>
           </View>
         )}
         <Text
