@@ -293,7 +293,11 @@ const ShuttleDetail = ({navigation}) => {
       />
       <View style={{padding:16}}>
         {/* 출근하기 이후 마지막 경유지 출석 완료시 퇴근하기 버튼 활성화, 완료 전까지는 운행중이라는 비활성화 버튼 제공 */}
-        <CustomButton title={guideStatus.isGuideActive ? (guideStatus.dutyGuardianId == userId ? (lastWaypointAttendanceComplete ? '운행 종료하기'  : '아직 운행중이에요'): '아직 운행중이에요') : guideStatus.shuttleStatus ? '오늘 운행이 종료되었어요' : '운행 시작하기'} onPress={() => {onGuideButtonPress()}} disabled={guideStatus.isGuideActive ? (!lastWaypointAttendanceComplete || guideStatus.dutyGuardianId !== userId) : guideStatus.shuttleStatus}/>
+        <CustomButton 
+        title={guideStatus.isGuideActive ? (guideStatus.dutyGuardianId == userId ? (lastWaypointAttendanceComplete ? '운행 종료하기'  : '아직 운행중이에요'): '아직 운행중이에요') : guideStatus.shuttleStatus ? '오늘 운행이 종료되었어요' : '운행 시작하기'} 
+        onPress={() => {onGuideButtonPress()}} 
+        disabled={guideStatus.isGuideActive ? (!lastWaypointAttendanceComplete || guideStatus.dutyGuardianId !== userId) : guideStatus.shuttleStatus}
+        />
       </View>
     </View>
   );

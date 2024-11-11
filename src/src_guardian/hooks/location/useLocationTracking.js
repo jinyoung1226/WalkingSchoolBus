@@ -8,31 +8,27 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const useLocationTracking = () => {
-  const { isAuthenticated } = useAuthStore();
   const { isGuideActive: localIsGuideActive } = useShuttleStore();
   const { data: groupInfo } = useGroupInfo();
   const { publishLocation } = useWebsocketStore();
   const [isGuideActive, setIsGuideActive] = useState(false);
 
   useEffect(() => {
-    if (localIsGuideActive !== null) {
-      setIsGuideActive(localIsGuideActive);
-    } else {
-      const fetchIsGuideActive = async () => {
-        try {
-          const storedValue = await AsyncStorage.getItem('isGuideActive');
-          setIsGuideActive(storedValue === 'true');
-          console.log('Fetched isGuideActive from AsyncStorage:', storedValue);
-        } catch (error) {
-          console.error('Error fetching isGuideActive:', error);
-        }
-      };
-  
-      fetchIsGuideActive();
-    }
-    let intervalId = null;
+    const fetchIsGuideActive = async () => {
+      try {
+        const storedValue = await AsyncStorage.getItem('isGuideActive');
+        setIsGuideActive(storedValue === 'true');
+        console.log('Fetched isGuideActive from AsyncStorage:', storedValue);
+      } catch (error) {
+        console.error('Error fetching isGuideActive:', error);
+      }
+    };
 
-    if (isGuideActive && isAuthenticated && groupInfo) {
+    fetchIsGuideActive();
+
+    let intervalId = null;
+    console.log(isGuideActive, groupInfo, "@@@@@@@@");
+    if ((localIsGuideActive || isGuideActive) && groupInfo) {
       
       console.log('운행 시작: 위치 정보를 2초마다 전송합니다.');
 
@@ -71,7 +67,7 @@ const useLocationTracking = () => {
         clearInterval(intervalId);
       }
     };
-  }, [isGuideActive, isAuthenticated, groupInfo, localIsGuideActive]);
+  }, [isGuideActive, groupInfo, localIsGuideActive]);
 };
 
 export default useLocationTracking;
