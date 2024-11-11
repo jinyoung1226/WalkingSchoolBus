@@ -4,7 +4,7 @@ import ShuttleMain from '../Screens/Shuttle/ShuttleMain';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import useTabBarStore from '../../store/tabBarStore';
 import BackIcon from '../../assets/icons/BackIcon.svg';
-
+import ShuttleDetail from '../Screens/Shuttle/ShuttleDetail';
 const Stack = createStackNavigator();
 
 const ShuttleTab = ({route}) => {
@@ -28,7 +28,8 @@ const ShuttleTab = ({route}) => {
           <BackIcon width={24} height={24} /> // 사용자 정의 아이콘
         ),
       }}>
-      <Stack.Screen name="Shuttle" component={ShuttleMain} />
+      <Stack.Screen name="ShuttleMain" component={ShuttleMain} />
+      <Stack.Screen name="ShuttleDetail" component={ShuttleDetail} options={{headerShown:false}}/>
     </Stack.Navigator>
   );
 };

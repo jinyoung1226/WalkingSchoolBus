@@ -6,6 +6,12 @@ export const getGroupForGuardian = async () => {
   return response.data;
 };
 
+export const getGroupForParent = async () => {
+  const response = await authApi.get('parents/group');
+  console.log(response.data, '학부모 그룹정보 불러오기');
+  return response.data;
+};
+
 export const startGuide = async () => {
   const response = await authApi.post(`/group/start-guide`);
   console.log(response.data, '운행 시작');

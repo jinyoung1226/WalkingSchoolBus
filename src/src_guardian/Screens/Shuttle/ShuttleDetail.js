@@ -26,6 +26,7 @@ import useAuthStore from '../../../store/authStore';
 import { check, openSettings, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import { useFocusEffect } from '@react-navigation/native';
 import ConfirmModal from '../../../components/ConfirmModal';
+import { useQueryClient } from '@tanstack/react-query';
 
 const ShuttleDetail = ({navigation}) => {
   const [isBeforeSchool, setIsBeforeSchool] = useState(true);
@@ -38,6 +39,7 @@ const ShuttleDetail = ({navigation}) => {
   // today 날짜
   const formattedDate = formatDate();
   const insets = useSafeAreaInsets();
+  const queryClient = useQueryClient();
 
   const requestLocationPermission = async () => {
     if (Platform.OS === 'ios') {
@@ -228,6 +230,7 @@ const ShuttleDetail = ({navigation}) => {
           useMutateGuideDeactive.mutate(undefined, {
             onSuccess: () => {
               setStopGuideModalVisible(false);
+              queryClient.invalidateQueries('waypoints');
             },
           });
         }}
@@ -240,7 +243,14 @@ const ShuttleDetail = ({navigation}) => {
         title={groupInfo.schoolName} 
         subtitle={groupInfo.groupName}
         headerRight={<MapIcon/>} 
-        onPressRightButton={() => navigation.navigate('ShuttleMap', {waypoints})}
+        onPressRightButton={() => {
+          if (guideStatus.isGuideActive) {
+            navigation.navigate('ShuttleMap', {waypoints})
+          }
+          if (!guideStatus.isGuideActive) {
+            Alert.alert('운행시작 전에는 위치정보를 확인할 수 없습니다.')
+          }
+        }}
       />
       <View style={{height: 16}} />
       <View style={{flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal:32}}>
