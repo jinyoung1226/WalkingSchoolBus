@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {View, FlatList, Text, Image, ActivityIndicator} from 'react-native';
-import {useInfiniteQuery, useQueryClient} from '@tanstack/react-query';
+import {useInfiniteQuery, useQuery, useQueryClient} from '@tanstack/react-query';
 import {fetchNotices} from '../api/noticeApi';
 import { colors, textStyles } from '../styles/globalStyle';
 
@@ -34,28 +34,11 @@ const formatDate = createdAt => {
 };
 
 const HomeNotices = () => {
-  const queryClient = useQueryClient();
-  const {
-    data,
-    isLoading,
-    isError,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
-    queryKey: ['Notices'],
-    queryFn: ({pageParam = 0}) => fetchNotices({pageParam, size: 3}),
-    getNextPageParam: lastPage => {
-      return lastPage.content.length < 10 ? undefined : lastPage.number + 1;
-    },
-    staleTime: 0,
-    cacheTime: 0,
+  const {data, isLoading, isError} = useQuery({
+    queryKey: ['mainNotices'],
+    queryFn: () => fetchNotices({pageParam: 0, size: 3}),
   });
-
-  useEffect(() => {
-    queryClient.invalidateQueries(['Notices']);
-  }, [queryClient]);
-
+  console.log(data);
   if (isLoading) {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
@@ -82,14 +65,12 @@ const HomeNotices = () => {
   }
 
   // 데이터 병합 후 슬라이싱
-  const allNotices = data?.pages.flatMap(page => page.content) || [];
-  const notices = allNotices.slice(0, 3); // 병합된 데이터 중 첫 3개만 표시
 
   // FlatList 컴포넌트 렌더링
   return (
     <View style={{flex: 1, backgroundColor: '#FFFFFF'}}>
       <FlatList
-        data={notices}
+        data={data.content}
         keyExtractor={item => item.groupNoticeId.toString()}
         renderItem={({item}) => (
           <View
@@ -127,18 +108,6 @@ const HomeNotices = () => {
           </View>
         )}
         scrollEnabled={false}
-        onEndReached={() => {
-          if (hasNextPage && !isFetchingNextPage) {
-            fetchNextPage();
-          }
-        }}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={
-          isFetchingNextPage && (
-            <ActivityIndicator size="small" color="#2ee8a5" />
-          )
-        }
-        contentContainerStyle={{}}
       />
     </View>
   );

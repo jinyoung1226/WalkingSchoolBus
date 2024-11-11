@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 import {Button, Text, View} from 'react-native';
+import CustomButton from '../../../components/CustomButton';
+import { colors } from '../../../styles/globalStyle';
 
 const ShuttleMain = ({navigation}) => {
 
@@ -8,9 +10,9 @@ const ShuttleMain = ({navigation}) => {
   }, []);
 
   return (
-    <View>
-      <Text>Shuttle Main</Text>
-      <Button title="운행 화면으로 돌아가기"
+    <View style={{flex:1, backgroundColor:colors.White_Green, padding:16, justifyContent:'center'}}> 
+      <CustomButton
+        title="운행 화면으로 돌아가기"
         onPress={() => {
           navigation.navigate('ShuttleDetail');
         }}
