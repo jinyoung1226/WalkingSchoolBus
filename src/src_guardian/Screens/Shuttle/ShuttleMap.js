@@ -5,12 +5,14 @@ import Geolocation from 'react-native-geolocation-service';
 import MyLocationIcon from '../../../assets/icons/MyLocationIcon.svg';
 import CustomHeader from '../../../components/CustomHeader';
 import { colors } from '../../../styles/globalStyle';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ShuttleMap = ({ route }) => {
   const [initialLocation, setInitialLocation] = useState(null);
   const { waypoints } = route.params;
   const webviewRef = useRef(null);
-
+  const insets = useSafeAreaInsets();
+  
   const extractedWaypoints = waypoints.map(waypoint => ({
     waypointName: waypoint.waypointName,
     latitude: waypoint.latitude,
@@ -70,7 +72,7 @@ const ShuttleMap = ({ route }) => {
   )}&initialLocation=${encodeURIComponent(JSON.stringify(initialLocation))}`;
 
   return (
-    <View style={{backgroundColor: colors.White_Green, flex:1}}>
+    <View style={{backgroundColor: colors.White_Green, flex:1, paddingBottom: insets.bottom, paddingTop: insets.top}}>
       <CustomHeader title="운행" />
       <View style={{flex:1}}>
       <WebView

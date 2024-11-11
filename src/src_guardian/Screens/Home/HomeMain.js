@@ -7,8 +7,12 @@ import HomeButton from '../../../components/HomeButton';
 import GuardianIcon from '../../../assets/icons/GuardianIcon.svg';
 import HomeComponent from '../../../components/HomeComponent';
 import HomeNoticeComponent from '../../../components/HomeNoticeComponent';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Homemain = ({navigation}) => {
+
+  const insets = useSafeAreaInsets();
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: '',
@@ -27,7 +31,7 @@ const Homemain = ({navigation}) => {
   }, [navigation]);
 
   return (
-    <ScrollView style={{backgroundColor: colors.White_Green}}>
+    <ScrollView style={{backgroundColor: colors.White_Green, paddingBottom: insets.bottom, paddingTop: insets.top}}>
       <View style={{paddingHorizontal:16}}>
         <View style={{height: 8}}/>
         <View style={{padding:32, backgroundColor: colors.White_Green, borderRadius: 10, elevation:4, flexDirection:'row', alignItems:'center', shadowColor: "#000",shadowOffset: { width: 0, height: 1 },shadowOpacity: 0.05, shadowRadius: 10}}>

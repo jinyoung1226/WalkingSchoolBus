@@ -8,11 +8,12 @@ import { colors } from '../../../styles/globalStyle';
 import useWebsocketStore from '../../../store/websocketStore';
 import useWaypoints from '../../../src_guardian/hooks/queries/useWaypoints';
 import useParentGroupInfo from '../../hooks/queries/useParentGroupInfo';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ShuttleDetail = ({ route }) => {
   const [initialLocation, setInitialLocation] = useState(null);
   // const { waypoints } = route.params;
-  
+  const insets = useSafeAreaInsets();
   const webviewRef = useRef(null);
   const { data: groupInfo, isPending: groupInfoIsPending, isSuccess: groupInfoIsSuccess } = useParentGroupInfo();
   const { data: waypoints, isPending: waypointsIsPending, isSuccess: waypointsIsSuccess } = useWaypoints();
@@ -61,7 +62,7 @@ const ShuttleDetail = ({ route }) => {
   )}&initialLocation=${encodeURIComponent(JSON.stringify(initialLocation))}`;
 
   return (
-    <View style={{backgroundColor: colors.White_Green, flex:1}}>
+    <View style={{backgroundColor: colors.White_Green, flex:1, paddingBottom: insets.bottom, paddingTop: insets.top}}>
       <CustomHeader title="운행" />
       <View style={{flex:1}}>
       <WebView

@@ -7,6 +7,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import CustomButton from '../../../components/CustomButton';
 import useStudentMessages from '../../hooks/queries/useStudentMessages';
 import MessageItem from '../../../components/MessageItem';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 const StudentInfoRow = ({ title, content }) => (
   <View>
     <Text style={[textStyles.SB3, { color: colors.Black }]}>{title}</Text>
@@ -19,12 +20,12 @@ const StudentInfoRow = ({ title, content }) => (
 
 const StudentDetail = ({ navigation, route }) => {
   const { studentInfo } = route.params;
-
+  const insets = useSafeAreaInsets();
   const {data, isPending} = useStudentMessages()
 
 
   return (
-    <View style={{flex:1, backgroundColor:colors.White_Green}}>
+    <View style={{flex:1, backgroundColor:colors.White_Green, paddingBottom: insets.bottom, paddingTop: insets.top}}>
       <CustomHeader title="학생 프로필" />
       <ScrollView>
         <View style={{alignItems:'center'}}>
