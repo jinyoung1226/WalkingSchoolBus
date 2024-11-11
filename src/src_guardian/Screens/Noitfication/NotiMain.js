@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import {View, Text, TouchableOpacity, Button} from 'react-native';
+import { colors, textStyles } from '../../../styles/globalStyle';
+import TextLogo from "../../../assets/icons/TextLogo.svg";
 
-const NotiMain = ({navigation}) => {
+
+const NotiMain = ({ navigation }) => {
+
+  
+  
   return (
-    <View>
-      <Button title="Go Back" onPress={() => navigation.goBack()} /> 
-      <Text>NotiMain</Text>
+    <View style={{ flex:1 ,backgroundColor: colors.White }}>
+      <Text>asd</Text>
     </View>
   );
 };
