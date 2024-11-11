@@ -24,14 +24,13 @@ const ShuttleDetail = ({ route }) => {
     latitude: waypoint.latitude,
     longitude: waypoint.longitude,
   }));
-
+  const initialLocation = {latitude: waypoints[0].latitude, longitude: waypoints[0].longitude};
   useEffect(() => {
     const channel = `/sub/group/${groupInfo.id}/location`;
     const callback = (message) => {
       const newMessage = JSON.parse(message.body);
       console.log(newMessage, '@@@@@@@@@@');
       const { latitude, longitude } = newMessage;
-      initialLocationRef.current = { latitude, longitude };
       const newLocation = { latitude, longitude };
         if (webviewRef.current) {
           webviewRef.current.postMessage(JSON.stringify(newLocation));
@@ -50,13 +49,9 @@ const ShuttleDetail = ({ route }) => {
     }
   }
 
-  if (!initialLocationRef.current) {
-    return null; // 초기 위치를 얻기 전까지는 WebView를 렌더링하지 않음
-  }
-
   const url = `https://donghang-map.vercel.app?waypoints=${encodeURIComponent(
     JSON.stringify(extractedWaypoints),
-  )}&initialLocation=${encodeURIComponent(JSON.stringify(initialLocationRef.current))}`;
+  )}&initialLocation=${encodeURIComponent(JSON.stringify(initialLocation))}`;
 
   return (
     <View style={{backgroundColor: colors.White_Green, flex:1, paddingBottom: insets.bottom, paddingTop: insets.top}}>
