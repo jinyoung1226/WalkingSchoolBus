@@ -48,7 +48,7 @@ const HomeNotices = () => {
       return lastPage.content.length < 10 ? undefined : lastPage.number + 1;
     },
     staleTime: 0,
-    cacheTime: 300000,
+    cacheTime: 0,
   });
 
   useEffect(() => {
@@ -101,7 +101,6 @@ const HomeNotices = () => {
               backgroundColor: '#FFFFFF',
               marginBottom: 16,
             }}>
-            {/* 텍스트 영역 */}
             <View
               style={{
                 flexDirection: 'column',
@@ -135,18 +134,22 @@ const HomeNotices = () => {
               </Text>
             </View>
             {item.photos?.length > 0 && (
-              <Image
-                source={{uri: item.photos[0]}}
-                style={{
-                  width: 70,
-                  height: 70,
-                  borderRadius: 7,
-                }}
-                resizeMode="cover"
-              />
+              <View style={{width: 70, height: 70, flex: 1}}>
+                <Image
+                  source={{uri: item.photos[0]}}
+                  style={{
+                    width: '100%',
+                    height: undefined,
+                    aspectRatio: 1, // 정사각형 비율 유지
+                    borderRadius: 7,
+                  }}
+                  resizeMode="cover"
+                />
+              </View>
             )}
           </View>
         )}
+        scrollEnabled={false}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) {
             fetchNextPage();
