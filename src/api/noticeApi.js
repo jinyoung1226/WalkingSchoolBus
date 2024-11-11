@@ -1,8 +1,9 @@
 import {authApi} from './api';
 
-export const fetchNotices = async ({pageParam}) => {
+export const fetchNotices = async ({pageParam = 0, size = 10}) => {
+  console.log('aaaa');
   const response = await authApi.get(
-    `group-notices/group/notices?page=${pageParam}&size=10`,
+    `group-notices/group/notices?page=${pageParam}&${size}`,
   );
   return response.data;
 };

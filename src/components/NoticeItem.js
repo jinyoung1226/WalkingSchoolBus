@@ -43,6 +43,7 @@ const formatDate = createdAt => {
 };
 
 const NoticeItem = ({item}) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
   const queryClient = useQueryClient();
   const {mutate: toggleLike} = useNoticeLike();
   const [imageHeights, setImageHeights] = useState({});
@@ -118,18 +119,46 @@ const NoticeItem = ({item}) => {
               showsHorizontalScrollIndicator={false}
               keyExtractor={(photo, index) => `${index}`}
               renderItem={({item: photo, index}) => (
-                <Image
-                  source={{uri: photo}}
-                  style={{
-                    width: width - 32,
-                    height: imageHeights[index] || 200,
-                    borderRadius: 10,
-                    backgroundColor: '#e9e9e9',
-                    marginTop: 16,
-                  }}
-                  resizeMode="cover"
-                  onLoad={event => handleImageLoad(index, event)}
-                />
+                <View style={{position: 'relative'}}>
+                  <Image
+                    source={{uri: photo}}
+                    style={{
+                      width: width - 32,
+                      height: imageHeights[index] || 200,
+                      borderRadius: 10,
+                      backgroundColor: '#e9e9e9',
+                      marginTop: 16,
+                    }}
+                    resizeMode="cover"
+                    onLoad={event => handleImageLoad(index, event)}
+                  />
+                  {/* 페이지 인디케이터 */}
+                  <View
+                    style={{
+                      position: 'absolute',
+                      bottom: 8,
+                      left: 0,
+                      right: 0,
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                    }}>
+                    {item.photos.map((_, indicatorIndex) => (
+                      <View
+                        key={indicatorIndex}
+                        style={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: 4,
+                          marginHorizontal: 4,
+                          backgroundColor:
+                            currentIndex === indicatorIndex
+                              ? '#2ee8a5'
+                              : '#ccc',
+                        }}
+                      />
+                    ))}
+                  </View>
+                </View>
               )}
               onScroll={event => {
                 const index = Math.round(
@@ -141,7 +170,6 @@ const NoticeItem = ({item}) => {
             />
           </View>
         )}
-
         <Text
           style={{
             fontSize: 14,
