@@ -12,7 +12,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ShuttleDetail = ({ route }) => {
   const initialLocationRef = useRef(null);
-  const [initialLocation, setInitialLocation] = useState(null);
   const {groupInfo, waypoints} = route.params;
   const insets = useSafeAreaInsets();
   const webviewRef = useRef(null);
