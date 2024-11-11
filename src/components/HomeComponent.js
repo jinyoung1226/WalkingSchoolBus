@@ -5,7 +5,7 @@ import ArrowIcon from '../assets/icons/ArrowIcon';
 
 const HomeComponent = ({title, children, onPress}) => {
   return (
-    <View style={{paddingHorizontal:16, paddingVertical:24, backgroundColor: colors.White_Green, borderRadius: 10, elevation:5}}>
+    <View style={{paddingHorizontal:16, paddingVertical:24, backgroundColor: colors.White_Green, borderRadius: 10, elevation:5, shadowColor: "#000",shadowOffset: { width: 0, height: 1 },shadowOpacity: 0.05, shadowRadius: 10}}>
       <View style={{flexDirection:'row', alignItems:'center'}}>
         <Text style={[textStyles.SB2, {color: colors.Black}]}>
           {title}

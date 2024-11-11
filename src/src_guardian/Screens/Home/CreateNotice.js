@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   Text,
   View,
@@ -9,6 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import {launchImageLibrary} from 'react-native-image-picker';
+import ImageResizer from 'react-native-image-resizer';
 import {useNavigation} from '@react-navigation/native';
 import CameraIcon from '../../../assets/icons/Camera.svg';
 import NoticeXCircle from '../../../assets/icons/NoticeXCircle.svg';
@@ -18,12 +19,55 @@ import {createNotice} from '../../../api/noticeApi';
 import {useQueryClient} from '@tanstack/react-query';
 
 const CreateNotice = () => {
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState([]); // 리사이즈된 이미지
   const [noticeContent, setNoticeContent] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
   const queryClient = useQueryClient();
 
+  // 이미지 선택 및 리사이즈 처리
+  const selectImages = () => {
+    launchImageLibrary(
+      {mediaType: 'photo', selectionLimit: 10},
+      async response => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.errorMessage) {
+          Alert.alert('Error', response.errorMessage);
+        } else {
+          try {
+            const resizedPhotosPromises = response.assets.map(async image => {
+              const resizedImage = await ImageResizer.createResizedImage(
+                image.uri, // 원본 이미지 경로
+                800, // 너비 (설정 값)
+                800, // 높이 (설정 값)
+                'JPEG', // 포맷
+                80, // 품질 (0-100)
+              );
+              return {
+                uri: resizedImage.uri,
+                type: 'image/jpeg',
+                name: resizedImage.name || `resized_${Date.now()}.jpg`,
+              };
+            });
+
+            const resizedPhotos = await Promise.all(resizedPhotosPromises);
+            setImages(prevImages => [...prevImages, ...resizedPhotos]);
+          } catch (error) {
+            console.error('Error resizing images:', error);
+            Alert.alert('Error', '이미지 리사이즈 중 오류가 발생했습니다.');
+          }
+        }
+      },
+    );
+  };
+
+  // 이미지 삭제
+  const photoDelete = index => {
+    setImages(prevImages => prevImages.filter((_, i) => i !== index));
+  };
+
+  // 공지 작성
   const handleSubmit = async () => {
     try {
       await createNotice(noticeContent, images);
@@ -35,25 +79,8 @@ const CreateNotice = () => {
     }
   };
 
-  const selectImages = () => {
-    launchImageLibrary({mediaType: 'photo', selectionLimit: 10}, response => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.errorMessage) {
-        Alert.alert('Error', response.errorMessage);
-      } else {
-        setImages(response.assets || []);
-      }
-    });
-  };
-
-  const photoDelete = index => {
-    setImages(prevImages => prevImages.filter((_, i) => i !== index));
-  };
-
   return (
     <View style={{flex: 1, backgroundColor: '#feffff', paddingHorizontal: 16}}>
-      {/* Confirm Modal */}
       <SingleActionModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
@@ -93,7 +120,6 @@ const CreateNotice = () => {
           </Text>
         </TouchableOpacity>
 
-        {/* 이미지 미리보기 섹션 */}
         <FlatList
           horizontal
           data={images}
@@ -112,7 +138,6 @@ const CreateNotice = () => {
                 }}
               />
 
-              {/* 첫 번째 이미지에만 요소를 덮음 */}
               {index === 0 && (
                 <View
                   style={{
@@ -137,7 +162,6 @@ const CreateNotice = () => {
                 </View>
               )}
 
-              {/* 사진 삭제 아이콘 */}
               <TouchableOpacity
                 style={{
                   position: 'absolute',
@@ -155,7 +179,6 @@ const CreateNotice = () => {
         />
       </View>
 
-      {/* 글 작성 섹션 */}
       <View style={{marginTop: 16}}>
         <Text
           style={{
@@ -193,7 +216,6 @@ const CreateNotice = () => {
         </View>
       </View>
 
-      {/* 하단 버튼 */}
       <View
         style={{
           position: 'absolute',
