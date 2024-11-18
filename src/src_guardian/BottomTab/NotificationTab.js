@@ -29,11 +29,6 @@ const NotificationTab = ({route}) => {
     screenOptions={{
       headerTitleAlign:'center', 
         headerTitleStyle: [textStyles.B1, { color: colors.Black }],
-        headerLeft: ({ onPress }) => (
-          <TouchableOpacity onPress={onPress} style={{ paddingLeft: 16 }}>
-            <BackIcon width={24} height={24} />
-          </TouchableOpacity>
-        ),
         headerStyle: {
           elevation: 0, // Android의 그림자 제거
           shadowOpacity: 0, // iOS의 그림자 제거
