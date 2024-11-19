@@ -1,84 +1,124 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import LogOut from '../../../assets/icons/logOut.svg';
 import BlueBag from '../../../assets/icons/blueBag.svg';
 import NextIcon from '../../../assets/icons/NextIcon.svg';
-import {View, Text, TouchableOpacity, Alert} from 'react-native';
+import {View, Text, TouchableOpacity, Image} from 'react-native';
 import {textStyles, colors} from '../../../styles/globalStyle';
 import ConfirmModal from '../../../components/ConfirmModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useAuthStore from '../../../store/authStore';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import {refreshApi} from '../../../api/api';
+import ImageResizer from 'react-native-image-resizer';
+import {getGuardianInfo, getGroupInfo} from '../../../api/mypageApi';
 
 const MypageMain = ({navigation}) => {
   const {setLogout} = useAuthStore();
   const [modalVisible, setModalVisible] = useState(false);
+  const [resizedImage, setResizedImage] = useState(null);
+  const [userName, setUserName] = useState('');
+  const [schoolGroupName, setSchoolGroupName] = useState('');
 
-  // 로그아웃 함수 정의
   const logout = async () => {
     try {
       const response = await refreshApi.post('/auth/signOut');
       if (response.status === 200) {
-        console.log(response.status, '로그아웃 성공');
+        console.log('로그아웃 성공');
         await AsyncStorage.removeItem('accessToken');
         await EncryptedStorage.removeItem('refreshToken');
-        setLogout(false, null, null, null); // 상태 초기화
+        setLogout(false, null, null, null);
       }
     } catch (error) {
-      if (error.response) {
-        console.log('Error response status:', error.response.status);
-        await AsyncStorage.removeItem('accessToken');
-        await EncryptedStorage.removeItem('refreshToken');
-        setLogout(false, null, null, null); // 상태 초기화
-      } else {
-        Alert.alert('서버 접속 오류');
-        await AsyncStorage.removeItem('accessToken');
-        await EncryptedStorage.removeItem('refreshToken');
-        setLogout(false, null, null, null); // 상태 초기화
-      }
+      console.error('로그아웃 중 오류 ㅁㅁㅁㅁ 발생:', error);
+      await AsyncStorage.removeItem('accessToken');
+      await EncryptedStorage.removeItem('refreshToken');
+      setLogout(false, null, null, null);
     }
   };
 
+  const fetchGuardianInfo = async () => {
+    const guardianInfo = await getGuardianInfo();
+    setUserName(guardianInfo.name);
+
+    if (guardianInfo.imagePath) {
+      const resized = await ImageResizer.createResizedImage(
+        guardianInfo.imagePath, // 원본 이미지 경로
+        800, // 너비
+        800, // 높이
+        'JPEG', // 포맷
+        80, // 품질
+      );
+      setResizedImage({
+        uri: resized.uri,
+        type: 'image/jpeg',
+        name: resized.name || `resized_${Date.now()}.jpg`,
+      });
+    }
+  };
+
+  const fetchGroupInfo = async () => {
+    const groupInfo = await getGroupInfo();
+    setSchoolGroupName(`${groupInfo.schoolName} ${groupInfo.groupName}`);
+  };
+
+  useEffect(() => {
+    fetchGuardianInfo();
+    fetchGroupInfo();
+  }, []);
+
   const handleLogoutPress = () => {
-    setModalVisible(true); // 모달 표시
+    setModalVisible(true);
   };
 
   return (
     <View
       style={{
         flex: 1,
-        backgroundColor: colors.Gray01,
-        justifyContent: 'center',
-        paddingHorizontal: 32,
+        backgroundColor: colors.White,
       }}>
-      {/* Profile Section */}
+      {/* 상단 섹션 */}
       <View
         style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
           marginBottom: 32,
+          marginTop: 24,
           backgroundColor: colors.White,
+          paddingHorizontal: 32,
+          height: 70,
         }}>
         <View
           style={{
             flexDirection: 'row',
             alignItems: 'center',
-            gap: 16,
-            backgroundColor: 'red',
           }}>
+          {resizedImage && (
+            <Image
+              source={{uri: resizedImage.uri}}
+              style={{
+                width: 70,
+                height: 70,
+                borderRadius: 100,
+                marginRight: 8,
+              }}
+            />
+          )}
           <View>
+            {/* 사용자 이름 표시 */}
             <Text style={[textStyles.B1, {color: colors.Black}]}>
-              박지킴 님
+              {userName} 님
             </Text>
           </View>
-        </View>
-        <View style={{padding: 8}}>
-          <NextIcon onPress={() => navigation.navigate('MypageDetail')} />
+          <View
+            style={{
+              padding: 8,
+              position: 'absolute',
+              right: 0,
+            }}>
+            <NextIcon onPress={() => navigation.navigate('MypageDetail')} />
+          </View>
         </View>
       </View>
 
-      {/* Group Section */}
-      <View style={{marginBottom: 32}}>
+      {/* 그룹 섹션 */}
+      <View style={{marginBottom: 32, paddingHorizontal: 32}}>
         <Text style={[textStyles.SB2, {color: colors.Black, marginBottom: 16}]}>
           나의 그룹
         </Text>
@@ -104,7 +144,7 @@ const MypageMain = ({navigation}) => {
               alignItems: 'center',
             }}>
             <Text style={[textStyles.SB3, {color: colors.Black}]}>
-              아주초등학교 네모 그룹
+              {schoolGroupName} {/* 그룹 이름 표시 */}
             </Text>
             <View
               style={{
@@ -118,23 +158,32 @@ const MypageMain = ({navigation}) => {
           </View>
         </View>
       </View>
-
-      <View style={{gap: 16, backgroundColor: 'blue'}}>
+      <View
+        style={{
+          width: '100%',
+          height: 8,
+          backgroundColor: colors.Gray01,
+        }}
+      />
+      <View
+        style={{
+          width: '100%',
+          height: 32,
+          backgroundColor: colors.White,
+        }}
+      />
+      <View style={{paddingHorizontal: 32}}>
         <TouchableOpacity
           style={{
             flexDirection: 'row',
-            alignItems: 'center', // 세로 정렬
-            padding: 16,
-            borderRadius: 8,
+            alignItems: 'center',
             backgroundColor: colors.White,
           }}
-          onPress={handleLogoutPress} // 로그아웃 버튼 클릭 시 모달 표시
-        >
+          onPress={handleLogoutPress}>
           <LogOut width={25} height={25} style={{marginRight: 8}} />
           <Text style={[textStyles.SB2, {color: colors.Black}]}>로그아웃</Text>
         </TouchableOpacity>
       </View>
-
       <ConfirmModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
@@ -142,7 +191,10 @@ const MypageMain = ({navigation}) => {
         subtitle={
           <Text style={{textAlign: 'center'}}>정말 로그아웃하시나요?</Text>
         }
-        cancelTitle="취소"
+        cancelTitle={'취소'}
+        onCancel={() => {
+          setModalVisible(false);
+        }}
         confirmTitle="확인"
         icon={<LogOut width={40} height={40} />}
         isBackgroundclosable={false}
