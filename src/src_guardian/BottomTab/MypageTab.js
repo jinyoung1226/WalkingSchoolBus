@@ -4,6 +4,7 @@ import MypageMain from '../Screens/Mypage/MypageMain';
 import useTabBarStore from '../../store/tabBarStore';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import BackIcon from '../../assets/icons/BackIcon.svg';
+import MypageDetail from '../Screens/Mypage/MypageDetail';
 
 const Stack = createStackNavigator();
 
@@ -24,11 +25,13 @@ const MypageTab = ({route}) => {
   return (
     <Stack.Navigator
       screenOptions={{
+        headerShown: false,
         headerBackImage: () => (
           <BackIcon width={24} height={24} /> // 사용자 정의 아이콘
         ),
       }}>
-      <Stack.Screen name="MypageMain" component={MypageMain} />
+      <Stack.Screen name="Mypagemain" component={MypageMain} />
+      <Stack.Screen name="MypageDetail" component={MypageDetail} />
     </Stack.Navigator>
   );
 };

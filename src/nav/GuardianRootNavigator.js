@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import { Alert, Linking, PermissionsAndroid } from 'react-native';
+import {Alert, Linking, PermissionsAndroid} from 'react-native';
 import MainNavigator from '../src_guardian/nav/MainNavigator';
 import AuthNavigator from '../src_guardian/nav/AuthNavigator';
 import useAuthStore from '../store/authStore';
@@ -8,14 +8,14 @@ import Geolocation from 'react-native-geolocation-service';
 import useLocationTracking from '../src_guardian/hooks/location/useLocationTracking';
 const GuardianRootNavigator = () => {
   const {isAuthenticated} = useAuthStore();
-  const {connectWebSocket, disconnectWebSocket, isConnected} = useWebsocketStore();
+  const {connectWebSocket, disconnectWebSocket, isConnected} =
+    useWebsocketStore();
 
-  useLocationTracking((location) => {
+  useLocationTracking(location => {
     console.log('Publishing location:', location);
   });
   // WebSocket 연결/해제 useEffect hook
   useEffect(() => {
-
     if (isAuthenticated) {
       connectWebSocket();
     }
@@ -31,11 +31,7 @@ const GuardianRootNavigator = () => {
     console.log('isConnected 상태 변경:', isConnected);
   }, [isConnected]);
 
-  return (isAuthenticated ? 
-    <MainNavigator /> 
-    : 
-    <AuthNavigator />
-  );
+  return isAuthenticated ? <MainNavigator /> : <AuthNavigator />;
 };
 
 export default GuardianRootNavigator;
