@@ -5,6 +5,14 @@ import useTabBarStore from '../../store/tabBarStore';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import BackIcon from '../../assets/icons/BackIcon.svg';
 
+import ShuttleMain from '../Screens/Shuttle/ShuttleMain';
+import ShuttleDetail from '../Screens/Shuttle/ShuttleDetail';
+import ShuttleMap from '../Screens/Shuttle/ShuttleMap';
+import ShuttleStudentsList from '../Screens/Shuttle/ShuttleStudentsList';
+import StudentDetail from '../Screens/Shuttle/StudentDetail';
+import MessageList from '../Screens/Shuttle/MessageList';
+import NotiMain from '../Screens/Noitfication/NotiMain';
+
 const Stack = createStackNavigator();
 
 const MypageTab = ({route}) => {
@@ -29,6 +37,12 @@ const MypageTab = ({route}) => {
         ),
       }}>
       <Stack.Screen name="MypageMain" component={MypageMain} />
+      <Stack.Screen name="ShuttleDetail3" component={ShuttleDetail} options={{headerShown:false}}/>
+      <Stack.Screen name="ShuttleMap" component={ShuttleMap} options={{headerShown:false}}/>
+      <Stack.Screen name="ShuttleStudentsList" component={ShuttleStudentsList} options={{headerShown:false}}/>
+      <Stack.Screen name="StudentDetail" component={StudentDetail} options={{headerShown:false}}/>
+      <Stack.Screen name="MessageList" component={MessageList} options={{headerShown:false}}/>
+      <Stack.Screen name="NotiMain3" component={NotiMain} options={{title: "알림 센터"}}/>
     </Stack.Navigator>
   );
 };
