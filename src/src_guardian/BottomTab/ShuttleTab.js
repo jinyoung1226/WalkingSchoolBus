@@ -36,7 +36,7 @@ const ShuttleTab = ({route}) => {
           <BackIcon width={24} height={24} /> // 사용자 정의 아이콘
         ),
       }}>
-      <Stack.Screen name="ShuttleMain" component={ShuttleMain} />
+      <Stack.Screen name="ShuttleMain" component={ShuttleMain} options={{headerShown:false}}/>
       <Stack.Screen name="ShuttleDetail" component={ShuttleDetail} options={{headerShown:false}}/>
       <Stack.Screen name="ShuttleMap" component={ShuttleMap} options={{headerShown:false}}/>
       <Stack.Screen name="ShuttleStudentsList" component={ShuttleStudentsList} options={{headerShown:false}}/>

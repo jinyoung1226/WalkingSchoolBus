@@ -16,10 +16,10 @@ const HomeSchedule = ({ navigation }) => {
 
   const todayString = new Date().toISOString().split('T')[0];
   // 달력 언어 설정
-  const {data} = useQuery({
-    queryKey: ['dailySchedule'], 
-    queryFn: () => getDailySchedule(todayString)
-  });
+  // const {data} = useQuery({
+  //   queryKey: ['dailySchedule'], 
+  //   queryFn: () => getDailySchedule(todayString)
+  // });
 
   LocaleConfig.locales['kr'] = {
     monthNames: [

@@ -44,7 +44,6 @@ const formatDate = createdAt => {
 
 const NoticeItem = ({item}) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const queryClient = useQueryClient();
   const {mutate: toggleLike} = useNoticeLike();
   const [isLiked, setIsLiked] = useState(item.liked);
   const [likesCount, setLikesCount] = useState(item.likes);
@@ -57,9 +56,9 @@ const NoticeItem = ({item}) => {
     toggleLike(item.groupNoticeId);
   };
 
-  useEffect(() => {
-    queryClient.invalidateQueries(['notices']);
-  }, [isLiked, queryClient]);
+  // useEffect(() => {
+  //   queryClient.invalidateQueries(['notices']);
+  // }, [isLiked, queryClient]);
 
   return (
     <View>

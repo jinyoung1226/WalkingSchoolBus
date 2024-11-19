@@ -7,7 +7,7 @@ const Stack = createStackNavigator();
 
 const AuthNavigator = () => (
   <Stack.Navigator>
-    <Stack.Screen name="Login" component={Login} />
+    <Stack.Screen name="Login" component={Login} options={{ headerShown: false }}/>
     <Stack.Screen name="Register" component={Register} options={{ title: '회원가입', headerTitleAlign: 'center'}}/>
   </Stack.Navigator>
 );

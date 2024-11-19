@@ -27,7 +27,6 @@ const GroupNotice = ({navigation}) => {
   } = useInfiniteNotices();
   const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
-  console.log(data);
 
   useEffect(() => {
     return () => {
@@ -73,7 +72,6 @@ const GroupNotice = ({navigation}) => {
 
   const isEmpty = data?.pages.every(page => page.content.length === 0) || false;
   const notices = data?.pages.flatMap(page => page.content) || [];
-  console.log(data?.pages.flatMap(page => page.content));
   return (
     <View style={{flex: 1, paddingTop: 16, backgroundColor: '#feffff', paddingBottom: insets.bottom, paddingTop: insets.top}}>
       <CustomHeader
@@ -101,7 +99,7 @@ const GroupNotice = ({navigation}) => {
               : index.toString()
           }
           onEndReached={loadMoreNotices}
-          onEndReachedThreshold={0.5}
+          onEndReachedThreshold={0.8}
           ListFooterComponent={
             isFetchingNextPage && (
               <ActivityIndicator size="small" color="#2ee8a5" />

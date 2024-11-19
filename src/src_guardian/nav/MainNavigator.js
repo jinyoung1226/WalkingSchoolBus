@@ -9,10 +9,15 @@ import MypageIcon from '../../assets/tabBarIcon/MypageIcon.svg';
 import NotiIcon from '../../assets/tabBarIcon/NotiIcon.svg';
 import CustomTabBar from '../../components/CustomTabBar';
 import {colors} from '../../styles/globalStyle';
+import useLocationTracking from '../hooks/location/useLocationTracking';
 
 const Tab = createBottomTabNavigator();
 
 const MainNavigator = () => {
+
+  useLocationTracking((location) => {
+    console.log('Publishing location:', location);
+  });
   return (
     <Tab.Navigator
       initialRouteName="HomeTab"
