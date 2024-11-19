@@ -3,7 +3,7 @@ import {View, Text} from 'react-native';
 import { colors, textStyles } from '../../../styles/globalStyle';
 import { authApi } from '../../../api/api';
 import { FlatList } from 'react-native-gesture-handler';
-import MessageIcon from '../../../assets/icons/MessageIcon.svg';
+import MessageIcon from '../../../assets/icons/NoticeMessageIcon.svg';
 
 
 const NotiMain = () => {
