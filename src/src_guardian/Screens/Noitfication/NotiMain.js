@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, TouchableOpacity} from 'react-native';
 import { colors, textStyles } from '../../../styles/globalStyle';
 import { authApi } from '../../../api/api';
 import { FlatList } from 'react-native-gesture-handler';
 import MessageIcon from '../../../assets/icons/NoticeMessageIcon.svg';
+import CustomHeader from '../../../components/CustomHeader';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import MessageIcon2 from '../../../assets/icons/MessageIcon.svg';
+
+
 
 
 const NotiMain = () => {
-  const [alertList, setAlertList ] = useState([]);
+  const [alertList, setAlertList] = useState([]);
+  const insets = useSafeAreaInsets();
 
   // 알림 센터 내용 불러오는 api
   useEffect(() => {
@@ -62,7 +68,7 @@ const NotiMain = () => {
   };
 
   const renderItem = ({ item }) => (
-    <View style={{ flex:1, paddingHorizontal: 16, paddingVertical: 32, justifyContent:'center' }}>
+    <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 32, justifyContent: 'center', backgroundColor: item.read ? 'transparent' : 'rgba(77, 237, 180, 0.06)'}}>
       <View style={{ flexDirection: 'row' }}>
         <MessageIcon />
         <View style={{flex:1, marginHorizontal:16, gap:8}}>
@@ -77,8 +83,21 @@ const NotiMain = () => {
   
 
   return (
-    <View style={{ flex:1 ,backgroundColor: colors.White }}>
-      <FlatList
+    <View style={{ flex: 1, backgroundColor: colors.White, paddingBottom: insets.bottom, paddingTop: insets.top }}>
+      <CustomHeader
+        title="알림 센터"
+        headerRight={
+          <TouchableOpacity
+            style={{paddingHorizontal: 10}}>
+          </TouchableOpacity>
+        }
+      />
+      {alertList.length == 0 ?
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', gap: 16 }}>
+          <MessageIcon2 />
+          <Text style={[textStyles.R1, {color:colors.Gray06}]}>아직 받은 알림이 없어요!</Text>
+        </View> :
+        <FlatList
         data={alertList}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
@@ -88,6 +107,8 @@ const NotiMain = () => {
           </Text>
         )}
       />
+        }
+      
     </View>
   );
 };
