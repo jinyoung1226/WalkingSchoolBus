@@ -4,6 +4,14 @@ import MypageMain from '../Screens/Mypage/MypageMain';
 import useTabBarStore from '../../store/tabBarStore';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import BackIcon from '../../assets/icons/BackIcon.svg';
+
+import ShuttleMain from '../Screens/Shuttle/ShuttleMain';
+import ShuttleDetail from '../Screens/Shuttle/ShuttleDetail';
+import ShuttleMap from '../Screens/Shuttle/ShuttleMap';
+import ShuttleStudentsList from '../Screens/Shuttle/ShuttleStudentsList';
+import StudentDetail from '../Screens/Shuttle/StudentDetail';
+import MessageList from '../Screens/Shuttle/MessageList';
+import NotiMain from '../Screens/Noitfication/NotiMain';
 import MypageDetail from '../Screens/Mypage/MypageDetail';
 
 const Stack = createStackNavigator();
@@ -30,8 +38,7 @@ const MypageTab = ({route}) => {
           <BackIcon width={24} height={24} /> // 사용자 정의 아이콘
         ),
       }}>
-      <Stack.Screen name="Mypagemain" component={MypageMain} />
-      <Stack.Screen name="MypageDetail" component={MypageDetail} />
+      <Stack.Screen name="MypageMain" component={MypageMain} />
     </Stack.Navigator>
   );
 };

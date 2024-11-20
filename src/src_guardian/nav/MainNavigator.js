@@ -1,7 +1,5 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeTab from '../BottomTab/HomeTab';
-import ShuttleTab from '../BottomTab/ShuttleTab';
-import NotificationTab from '../BottomTab/NotificationTab';
 import MypageTab from '../BottomTab/MypageTab';
 import HomeIcon from '../../assets/tabBarIcon/HomeIcon.svg';
 import ShuttleIcon from '../../assets/tabBarIcon/ShuttleIcon.svg';
@@ -15,9 +13,13 @@ const Tab = createBottomTabNavigator();
 
 const MainNavigator = () => {
 
+  const ShuttleTab = () => null;
+  const NotificationTab = () => null;
+
   useLocationTracking((location) => {
     console.log('Publishing location:', location);
   });
+
   return (
     <Tab.Navigator
       initialRouteName="HomeTab"
@@ -43,6 +45,12 @@ const MainNavigator = () => {
             <ShuttleIcon color={focused ? colors.Main_Green : colors.Gray06} />
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.navigate(`ShuttleDetail${navigation.getState().index}`)
+          },
+        })}
       />
       <Tab.Screen
         name="NotificationTab"
@@ -54,6 +62,12 @@ const MainNavigator = () => {
             <NotiIcon color={focused ? colors.Main_Green : colors.Gray06} />
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.navigate(`NotiMain${navigation.getState().index}`)
+          },
+        })}
       />
       <Tab.Screen
         name="MypageTab"

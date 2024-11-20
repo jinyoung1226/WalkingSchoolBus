@@ -1,9 +1,10 @@
 import React, {useLayoutEffect} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import ShuttleMain from '../Screens/Shuttle/ShuttleMain';
+
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import useTabBarStore from '../../store/tabBarStore';
 import BackIcon from '../../assets/icons/BackIcon.svg';
+import ShuttleMain from '../Screens/Shuttle/ShuttleMain';
 import ShuttleDetail from '../Screens/Shuttle/ShuttleDetail';
 const Stack = createStackNavigator();
 

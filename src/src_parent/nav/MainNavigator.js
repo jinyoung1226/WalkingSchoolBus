@@ -1,7 +1,5 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeTab from '../BottomTab/HomeTab';
-import GroupTab from '../BottomTab/GroupTab';
-import ShuttleTab from '../BottomTab/ShuttleTab';
 import MypageTab from '../BottomTab/MypageTab';
 import HomeIcon from '../../assets/tabBarIcon/HomeIcon.svg';
 import GroupIcon from '../../assets/tabBarIcon/GroupIcon.svg';
@@ -9,10 +7,19 @@ import ShuttleIcon from '../../assets/tabBarIcon/ShuttleIcon.svg';
 import MypageIcon from '../../assets/tabBarIcon/MypageIcon.svg';
 import CustomTabBar from '../../components/CustomTabBar';
 import {colors} from '../../styles/globalStyle';
+import useParentGroupInfo from '../hooks/queries/useParentGroupInfo';
+import useWaypoints from '../../src_guardian/hooks/queries/useWaypoints';
+import useStudents from '../hooks/queries/useStudents';
 
 const Tab = createBottomTabNavigator();
-
+const GroupTab = () => null;
+const ShuttleTab = () => null;
 const MainNavigator = () => {
+
+  const { data: groupInfo, isPending: groupInfoIsPending, isSuccess: groupInfoIsSuccess } = useParentGroupInfo();
+  const { data: waypoints, isPending: waypointsIsPending, isSuccess: waypointsIsSuccess } = useWaypoints();
+  const { data: students, isPending: studentsIsPending, isSuccess: studentsIsSuccess } = useStudents();
+  
   return (
     <Tab.Navigator
       initialRouteName="HomeTab"
@@ -38,6 +45,12 @@ const MainNavigator = () => {
             <GroupIcon color={focused ? colors.Main_Green : colors.Gray05} />
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.navigate(`GroupMain${navigation.getState().index}`)
+          },
+        })}
       />
       <Tab.Screen
         name="ShuttleTab"
@@ -49,6 +62,12 @@ const MainNavigator = () => {
             <ShuttleIcon color={focused ? colors.Main_Green : colors.Gray05} />
           ),
         }}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.navigate(`ShuttleMain${navigation.getState().index}`, {waypoints: waypoints, groupInfo: groupInfo, students: students})
+          },
+        })}
       />
       <Tab.Screen
         name="MypageTab"

@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { getStudentMessages } from '../../../api/shuttleApi';
 
-const useStudentMessages = () => {
+const useStudentMessages = (studentId) => {
   return useQuery({
-    queryKey: ['studentMessages'],
-    queryFn: getStudentMessages,
+    queryKey: ['studentMessages', studentId],
+    queryFn: () => getStudentMessages(studentId),
   });
 };
 

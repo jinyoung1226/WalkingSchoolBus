@@ -96,7 +96,7 @@ authApi.interceptors.response.use(
         }
       } catch (error) {
         if (error.response.status == 401) {
-          Alert.alert(error.response.data.message);
+          // Alert.alert(error.response.data.message);
           return Promise.reject(error.response.data.message);
         }
       }

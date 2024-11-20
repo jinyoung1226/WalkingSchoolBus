@@ -51,7 +51,7 @@ const RootNavigator = () => {
       } catch (error) {
         if (error.response) {
           console.log(error.response.status);
-          Alert.alert('로그인이 필요합니다');
+          // Alert.alert('로그인이 필요합니다');
           setAutoLogin(false, false, null, null, null);
         } else {
           console.log(error);

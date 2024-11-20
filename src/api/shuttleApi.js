@@ -48,8 +48,20 @@ export const getGuideStatus = async () => {
   return response.data;
 }
 
-export const getStudentMessages = async () => {
-  const response = await authApi.get('/message/received');
+export const getStudentMessages = async (studentId) => {
+  const response = await authApi.get(`/message/received/${studentId}`);
   console.log(response.data, '학생 메시지 불러오기');
+  return response.data;
+}
+
+export const getMessagePreview = async (studentId) => {
+  const response = await authApi.get(`/message/received/one/${studentId}`);
+  console.log(response.data, '학생 메시지 프리뷰');
+  return response.data;
+}
+
+export const getStudents = async () => {
+  const response = await authApi.get('/students');
+  console.log(response.data, '학생 목록 불러오기');
   return response.data;
 }
