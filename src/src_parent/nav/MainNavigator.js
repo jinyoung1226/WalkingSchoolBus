@@ -48,7 +48,7 @@ const MainNavigator = () => {
         listeners={({ navigation }) => ({
           tabPress: (e) => {
             e.preventDefault();
-            navigation.navigate(`GroupMain${navigation.getState().index}`)
+            navigation.navigate(`GroupMain${navigation.getState().index}`, {groupInfo: groupInfo, waypoints: waypoints, students: students})
           },
         })}
       />

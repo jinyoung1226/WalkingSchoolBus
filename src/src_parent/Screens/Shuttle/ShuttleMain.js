@@ -112,7 +112,7 @@ const ShuttleMain = ({navigation, route}) => {
             {students.length === 1 ? (
               <View style={{flexDirection:'row', gap:16}}>
                 <View style={{width:70, height:70, borderRadius:35, backgroundColor:colors.Gray03, overflow:'hidden'}}>
-                  {students[0].imagePath == "" ?
+                  {students[0].imagePath == null ?
                   <StudentBoy width={70} height={70}/>
                   :
                   <Image src={students[0].imagePath} style={{flex:1}}/>}

@@ -65,3 +65,9 @@ export const getStudents = async () => {
   console.log(response.data, '학생 목록 불러오기');
   return response.data;
 }
+
+export const applyPreabsent = async ({studentId, date}) => {
+  const response = await authApi.post(`/attendance/${studentId}/preabsent?date=${date}`);
+  console.log(response.data, '사전결석 신청');
+  return response.data;
+};
