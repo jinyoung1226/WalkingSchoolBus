@@ -25,15 +25,7 @@ const NotificationTab = ({route}) => {
   }, [route]);
 
   return (
-    <Stack.Navigator
-    screenOptions={{
-      headerTitleAlign:'center', 
-        headerTitleStyle: [textStyles.B1, { color: colors.Black }],
-        headerStyle: {
-          elevation: 0, // Android의 그림자 제거
-          shadowOpacity: 0, // iOS의 그림자 제거
-        },
-    }}>
+    <Stack.Navigator>
       <Stack.Screen name="NotiMain" component={NotiMain} options={{title: "알림 센터"}}/>
     </Stack.Navigator>
   );
