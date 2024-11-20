@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState, useCallback} from 'react';
+import {View, Text, TouchableOpacity, Image} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 import LogOut from '../../../assets/icons/logOut.svg';
 import BlueBag from '../../../assets/icons/blueBag.svg';
 import NextIcon from '../../../assets/icons/NextIcon.svg';
-import {View, Text, TouchableOpacity, Image} from 'react-native';
 import {textStyles, colors} from '../../../styles/globalStyle';
 import ConfirmModal from '../../../components/ConfirmModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -28,7 +29,7 @@ const MypageMain = ({navigation}) => {
         setLogout(false, null, null, null);
       }
     } catch (error) {
-      console.error('로그아웃 중 오류 ㅁㅁㅁㅁ 발생:', error);
+      console.error('로그아웃 중 오류 발생:', error);
       await AsyncStorage.removeItem('accessToken');
       await EncryptedStorage.removeItem('refreshToken');
       setLogout(false, null, null, null);
@@ -36,45 +37,52 @@ const MypageMain = ({navigation}) => {
   };
 
   const fetchGuardianInfo = async () => {
-    const guardianInfo = await getGuardianInfo();
-    setUserName(guardianInfo.name);
+    try {
+      const guardianInfo = await getGuardianInfo();
+      setUserName(guardianInfo.name);
 
-    if (guardianInfo.imagePath) {
-      const resized = await ImageResizer.createResizedImage(
-        guardianInfo.imagePath, // 원본 이미지 경로
-        800, // 너비
-        800, // 높이
-        'JPEG', // 포맷
-        80, // 품질
-      );
-      setResizedImage({
-        uri: resized.uri,
-        type: 'image/jpeg',
-        name: resized.name || `resized_${Date.now()}.jpg`,
-      });
+      if (guardianInfo.imagePath) {
+        const resized = await ImageResizer.createResizedImage(
+          guardianInfo.imagePath,
+          800,
+          800,
+          'JPEG',
+          80,
+        );
+        setResizedImage({
+          uri: resized.uri,
+          type: 'image/jpeg',
+          name: resized.name || `resized_${Date.now()}.jpg`,
+        });
+      }
+    } catch (error) {
+      console.error('Guardian 정보 가져오기 오류:', error);
     }
   };
 
   const fetchGroupInfo = async () => {
-    const groupInfo = await getGroupInfo();
-    setSchoolGroupName(`${groupInfo.schoolName} ${groupInfo.groupName}`);
+    try {
+      const groupInfo = await getGroupInfo();
+      setSchoolGroupName(`${groupInfo.schoolName} ${groupInfo.groupName}`);
+    } catch (error) {
+      console.error('Group 정보 가져오기 오류:', error);
+    }
   };
 
-  useEffect(() => {
-    fetchGuardianInfo();
-    fetchGroupInfo();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      // 화면이 focus될 때마다 데이터를 fetch
+      fetchGuardianInfo();
+      fetchGroupInfo();
+    }, []),
+  );
 
   const handleLogoutPress = () => {
     setModalVisible(true);
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.White,
-      }}>
+    <View style={{flex: 1, backgroundColor: colors.White}}>
       {/* 상단 섹션 */}
       <View
         style={{
@@ -84,11 +92,7 @@ const MypageMain = ({navigation}) => {
           paddingHorizontal: 32,
           height: 70,
         }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
           {resizedImage && (
             <Image
               source={{uri: resizedImage.uri}}
@@ -101,7 +105,6 @@ const MypageMain = ({navigation}) => {
             />
           )}
           <View>
-            {/* 사용자 이름 표시 */}
             <Text style={[textStyles.B1, {color: colors.Black}]}>
               {userName} 님
             </Text>
@@ -144,7 +147,7 @@ const MypageMain = ({navigation}) => {
               alignItems: 'center',
             }}>
             <Text style={[textStyles.SB3, {color: colors.Black}]}>
-              {schoolGroupName} {/* 그룹 이름 표시 */}
+              {schoolGroupName}
             </Text>
             <View
               style={{
@@ -158,19 +161,12 @@ const MypageMain = ({navigation}) => {
           </View>
         </View>
       </View>
+
       <View
-        style={{
-          width: '100%',
-          height: 8,
-          backgroundColor: colors.Gray01,
-        }}
+        style={{width: '100%', height: 8, backgroundColor: colors.Gray01}}
       />
       <View
-        style={{
-          width: '100%',
-          height: 32,
-          backgroundColor: colors.White,
-        }}
+        style={{width: '100%', height: 32, backgroundColor: colors.White}}
       />
       <View style={{paddingHorizontal: 32}}>
         <TouchableOpacity
@@ -184,6 +180,7 @@ const MypageMain = ({navigation}) => {
           <Text style={[textStyles.SB2, {color: colors.Black}]}>로그아웃</Text>
         </TouchableOpacity>
       </View>
+
       <ConfirmModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
