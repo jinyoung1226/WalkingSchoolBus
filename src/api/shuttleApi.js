@@ -59,3 +59,9 @@ export const getMessagePreview = async (studentId) => {
   console.log(response.data, '학생 메시지 프리뷰');
   return response.data;
 }
+
+export const getStudents = async () => {
+  const response = await authApi.get('/students');
+  console.log(response.data, '학생 목록 불러오기');
+  return response.data;
+}

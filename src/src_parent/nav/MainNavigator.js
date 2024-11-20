@@ -9,6 +9,7 @@ import CustomTabBar from '../../components/CustomTabBar';
 import {colors} from '../../styles/globalStyle';
 import useParentGroupInfo from '../hooks/queries/useParentGroupInfo';
 import useWaypoints from '../../src_guardian/hooks/queries/useWaypoints';
+import useStudents from '../hooks/queries/useStudents';
 
 const Tab = createBottomTabNavigator();
 const GroupTab = () => null;
@@ -17,6 +18,8 @@ const MainNavigator = () => {
 
   const { data: groupInfo, isPending: groupInfoIsPending, isSuccess: groupInfoIsSuccess } = useParentGroupInfo();
   const { data: waypoints, isPending: waypointsIsPending, isSuccess: waypointsIsSuccess } = useWaypoints();
+  const { data: students, isPending: studentsIsPending, isSuccess: studentsIsSuccess } = useStudents();
+  
   return (
     <Tab.Navigator
       initialRouteName="HomeTab"
@@ -62,7 +65,7 @@ const MainNavigator = () => {
         listeners={({ navigation }) => ({
           tabPress: (e) => {
             e.preventDefault();
-            navigation.navigate(`ShuttleMain${navigation.getState().index}`, {waypoints: waypoints, groupInfo: groupInfo})
+            navigation.navigate(`ShuttleMain${navigation.getState().index}`, {waypoints: waypoints, groupInfo: groupInfo, students: students})
           },
         })}
       />
