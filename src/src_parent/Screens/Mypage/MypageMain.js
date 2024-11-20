@@ -4,31 +4,28 @@ import {useFocusEffect} from '@react-navigation/native';
 import LogOut from '../../../assets/icons/logOut.svg';
 import NextIcon from '../../../assets/icons/NextIcon.svg';
 import Parents from '../../../assets/icons/Parents.svg';
-import {textStyles, colors} from '../../../styles/globalStyle';
 import ConfirmModal from '../../../components/ConfirmModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import useAuthStore from '../../../store/authStore';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import ImageResizer from 'react-native-image-resizer';
-import {getParentsInfo} from '../../../api/mypageApi';
+import useAuthStore from '../../../store/authStore';
+import {getParentsInfo, getStudentInfo} from '../../../api/mypageApi';
+import Student from '../../../assets/icons/Student.svg';
 
 const MypageMain = ({navigation}) => {
   const {setLogout} = useAuthStore();
   const [modalVisible, setModalVisible] = useState(false);
-  const [resizedImage, setResizedImage] = useState(null);
   const [userName, setUserName] = useState('');
+  const [students, setStudents] = useState([]);
 
   const logout = async () => {
     try {
       const response = await refreshApi.post('/auth/signOut');
       if (response.status === 200) {
         console.log('로그아웃 성공');
-        await AsyncStorage.removeItem('accessToken');
-        await EncryptedStorage.removeItem('refreshToken');
-        setLogout(false, null, null, null);
       }
     } catch (error) {
       console.error('로그아웃 중 오류 발생:', error);
+    } finally {
       await AsyncStorage.removeItem('accessToken');
       await EncryptedStorage.removeItem('refreshToken');
       setLogout(false, null, null, null);
@@ -39,142 +36,201 @@ const MypageMain = ({navigation}) => {
     try {
       const parentsInfo = await getParentsInfo();
       setUserName(parentsInfo.name);
-      // if (parentsInfo.imagePath) {
-      //   const resized = await ImageResizer.createResizedImage(
-      //     parentsInfo.imagePath,
-      //     800,
-      //     800,
-      //     'JPEG',
-      //     80,
-      //   );
-      //   setResizedImage({
-      //     uri: resized.uri,
-      //     type: 'image/jpeg',
-      //     name: resized.name || `resized_${Date.now()}.jpg`,
-      //   });
-      // }
     } catch (error) {
       console.error('Parents 정보 가져오기 오류:', error);
+    }
+  };
+
+  const fetchStudentInfo = async () => {
+    try {
+      const data = await getStudentInfo();
+      const formattedData = data.map(student => ({
+        name: student.name,
+        imagePath: student.imagePath || null,
+        schoolName: student.schoolName,
+        grade: student.grade,
+      }));
+      setStudents(formattedData);
+    } catch (error) {
+      console.error('Student 정보 가져오기 오류:', error);
     }
   };
 
   useFocusEffect(
     useCallback(() => {
       fetchParentsInfo();
+      fetchStudentInfo();
     }, []),
   );
 
-  const handleLogoutPress = () => {
-    setModalVisible(true);
-  };
+  const handleLogoutPress = () => setModalVisible(true);
+
+  const StudentCard = ({student}) => (
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 16,
+        marginLeft: 16,
+      }}>
+      <View
+        style={{
+          width: 50,
+          height: 50,
+          borderRadius: 25,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#f0f0f0',
+          overflow: 'hidden',
+        }}>
+        {student.imagePath ? (
+          <Image
+            source={{uri: student.imagePath}}
+            style={{
+              width: 50,
+              height: 50,
+            }}
+            resizeMode="cover" // 이미지를 부모 영역에 꽉 차게 조정
+          />
+        ) : (
+          <Student width={50} height={50} />
+        )}
+      </View>
+      <View style={{marginLeft: 32}}>
+        <Text
+          style={{
+            fontSize: 16,
+            fontWeight: '600',
+            color: '#000',
+            marginBottom: 4,
+          }}>
+          {student.name}
+        </Text>
+        <Text
+          style={{
+            fontSize: 14,
+            color: '#8a8a8a',
+          }}>
+          {student.schoolName} {student.grade}학년
+        </Text>
+      </View>
+    </View>
+  );
 
   return (
-    <View style={{flex: 1, backgroundColor: colors.White}}>
+    <View style={{flex: 1, backgroundColor: '#ffffff'}}>
       {/* 상단 섹션 */}
       <View
         style={{
           marginBottom: 32,
           marginTop: 24,
-          backgroundColor: colors.White,
           paddingHorizontal: 32,
           height: 70,
+          backgroundColor: '#ffffff',
         }}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
           <Parents width={70} height={70} style={{marginRight: 32}} />
-          <View>
-            <Text style={[textStyles.B1, {color: colors.Black}]}>
-              {userName} 님
-            </Text>
-          </View>
-          <View
+          <Text
             style={{
-              padding: 8,
+              fontSize: 18,
+              fontWeight: 'bold',
+              color: '#000',
+            }}>
+            {userName} 님
+          </Text>
+          <TouchableOpacity
+            style={{
               position: 'absolute',
               right: 0,
-            }}>
-            <NextIcon onPress={() => navigation.navigate('MypageDetail')} />
-          </View>
+              padding: 8,
+            }}
+            onPress={() => navigation.navigate('MypageDetail')}>
+            <NextIcon />
+          </TouchableOpacity>
         </View>
       </View>
 
       {/* 그룹 섹션 */}
       <View style={{marginBottom: 32, paddingHorizontal: 32}}>
-        <Text style={[textStyles.SB2, {color: colors.Black, marginBottom: 16}]}>
+        <Text
+          style={{
+            fontSize: 16,
+            fontWeight: 'bold',
+            color: '#000',
+            marginBottom: 16,
+          }}>
           나의 자녀
         </Text>
         <View
           style={{
-            backgroundColor: colors.White,
+            backgroundColor: '#ffffff',
             padding: 24,
             borderRadius: 10,
-            shadowColor: colors.Black,
+            shadowColor: '#000',
             shadowOffset: {width: 0, height: 1},
             shadowOpacity: 0.1,
             shadowRadius: 4,
             elevation: 3,
           }}>
-          <Text
-            style={[textStyles.M4, {color: colors.Gray06, marginBottom: 8}]}>
-            2024년 2학기
-          </Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-            <View
-              style={{
-                width: 60,
-                height: 60,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}></View>
-          </View>
+          {students.map((student, index) => (
+            <StudentCard key={index} student={student} />
+          ))}
         </View>
       </View>
 
+      {/* 로그아웃 */}
       <View
-        style={{width: '100%', height: 8, backgroundColor: colors.Gray01}}
+        style={{
+          width: '100%',
+          height: 8,
+          backgroundColor: '#f7f7f7',
+        }}
       />
-      <View
-        style={{width: '100%', height: 32, backgroundColor: colors.White}}
-      />
-      <View style={{paddingHorizontal: 32}}>
-        <TouchableOpacity
+      <TouchableOpacity
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 32,
+          marginTop: 16,
+        }}
+        onPress={handleLogoutPress}>
+        <LogOut width={25} height={25} style={{marginRight: 8}} />
+        <Text
           style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            backgroundColor: colors.White,
-          }}
-          onPress={handleLogoutPress}>
-          <LogOut width={25} height={25} style={{marginRight: 8}} />
-          <Text style={[textStyles.SB2, {color: colors.Black}]}>로그아웃</Text>
-        </TouchableOpacity>
-      </View>
+            fontSize: 16,
+            fontWeight: 'bold',
+            color: '#000',
+          }}>
+          로그아웃
+        </Text>
+      </TouchableOpacity>
 
       <ConfirmModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
         title="로그아웃"
         subtitle={
-          <Text style={{textAlign: 'center'}}>정말 로그아웃하시나요?</Text>
+          <Text
+            style={{
+              textAlign: 'center',
+              fontSize: 14,
+              color: '#000',
+            }}>
+            정말 로그아웃하시나요?
+          </Text>
         }
         cancelTitle={'취소'}
-        onCancel={() => {
-          setModalVisible(false);
-        }}
+        onCancel={() => setModalVisible(false)}
         confirmTitle="확인"
         icon={<LogOut width={40} height={40} />}
         isBackgroundclosable={false}
         onConfirm={async () => {
-          try {
-            await logout();
-            setModalVisible(false);
-            console.log('로그아웃 완료');
-          } catch (error) {
-            console.error('로그아웃 중 오류 발생:', error);
-          }
+          await logout();
+          setModalVisible(false);
         }}
       />
     </View>

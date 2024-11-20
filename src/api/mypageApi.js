@@ -16,3 +16,18 @@ export const getGroupInfo = async () => {
   const response = await authApi.get(`/guardian/group`);
   return response.data;
 };
+
+export const getStudentInfo = async () => {
+  const response = await authApi.get(`/students`);
+  return response.data;
+};
+
+export const fixStudentNote = async () => {
+  const response = await authApi.patch(`/students/update/notes`);
+  return response.data;
+};
+
+export const fixStudentImage = async () => {
+  const response = await authApi.patch(`/students/update/imageFile`);
+  return response.data;
+};

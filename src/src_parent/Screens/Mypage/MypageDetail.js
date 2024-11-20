@@ -3,7 +3,7 @@ import {View, Text} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {textStyles, colors} from '../../../styles/globalStyle';
 import CustomHeader from '../../../components/CustomHeader';
-import {getParentsInfo} from '../../../api/mypageApi';
+import {getParentsInfo, getStudentInfo} from '../../../api/mypageApi';
 import Parents from '../../../assets/icons/Parents.svg';
 
 const MypageDetail = ({navigation}) => {
@@ -15,17 +15,13 @@ const MypageDetail = ({navigation}) => {
     email: '정보 없음',
   });
 
-  const [modalVisible, setModalVisible] = useState(false); // 모달 상태 관리
-
-  // get /parents API 호출
   useEffect(() => {
     const fetchParentsInfo = async () => {
       const data = await getParentsInfo();
       setParentsInfo({
-        imagePath: data.imagePath,
         name: data.name,
         phone: data.phone || '정보 없음',
-        email: data.id ? `${data.id}@example.com` : '정보 없음',
+        email: data.email || '정보 없음',
       });
     };
     fetchParentsInfo();

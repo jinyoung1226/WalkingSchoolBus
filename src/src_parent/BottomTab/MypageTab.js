@@ -63,6 +63,11 @@ const MypageTab = ({route}) => {
         component={MypageDetail}
         options={{headerShown: false}}
       />
+      <Stack.Screen
+        name="MypageStudentDetail"
+        component={MypageDetail}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 };
