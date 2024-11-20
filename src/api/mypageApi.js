@@ -16,8 +16,3 @@ export const getGroupInfo = async () => {
   const response = await authApi.get(`/guardian/group`);
   return response.data;
 };
-
-export const getParentsGroupInfo = async () => {
-  const response = await authApi.get(`/parents/group`);
-  return response.data;
-};
