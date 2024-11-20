@@ -23,6 +23,8 @@ const Homemain = ({navigation}) => {
             flex: 1,
             paddingHorizontal: 32,
             backgroundColor: colors.White_Green,
+            paddingBottom: insets.bottom,
+            paddingTop: insets.top,
           }}>
           <TextLogo />
         </View>

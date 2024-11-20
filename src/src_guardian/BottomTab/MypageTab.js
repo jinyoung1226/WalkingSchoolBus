@@ -42,7 +42,7 @@ const MypageTab = ({route}) => {
       <Stack.Screen name="ShuttleStudentsList" component={ShuttleStudentsList} options={{headerShown:false}}/>
       <Stack.Screen name="StudentDetail" component={StudentDetail} options={{headerShown:false}}/>
       <Stack.Screen name="MessageList" component={MessageList} options={{headerShown:false}}/>
-      <Stack.Screen name="NotiMain3" component={NotiMain} options={{title: "알림 센터"}}/>
+      <Stack.Screen name="NotiMain3" component={NotiMain} options={{headerShown:false}}/>
     </Stack.Navigator>
   );
 };
