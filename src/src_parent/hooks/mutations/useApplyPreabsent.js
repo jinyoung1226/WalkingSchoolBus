@@ -3,7 +3,7 @@ import { applyPreabsent } from '../../../api/shuttleApi';
 
 const useApplyPreabsent = () => {
   return useMutation({
-    mutationFn: (studentId, date) => applyPreabsent(studentId, date),
+    mutationFn: ({ studentId, date }) => applyPreabsent({studentId, date}),
     onSuccess: (response) => {
       console.log(response);
     },

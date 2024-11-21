@@ -71,3 +71,9 @@ export const applyPreabsent = async ({studentId, date}) => {
   console.log(response.data, '사전결석 신청');
   return response.data;
 };
+
+export const sendMessage = async ({studentId, message}) => {
+  const response = await authApi.post(`message/send`, {studentId, message});
+  console.log(response.data, '메시지 전송');
+  return response.data;
+}

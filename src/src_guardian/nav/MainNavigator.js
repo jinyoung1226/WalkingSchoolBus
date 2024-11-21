@@ -8,17 +8,22 @@ import NotiIcon from '../../assets/tabBarIcon/NotiIcon.svg';
 import CustomTabBar from '../../components/CustomTabBar';
 import {colors} from '../../styles/globalStyle';
 import useLocationTracking from '../hooks/location/useLocationTracking';
+import useGroupInfo from '../hooks/queries/useGroupInfo';
+import useGuideStatus from '../hooks/queries/useGuideStatus';
+import useAuthStore from '../../store/authStore';
 
 const Tab = createBottomTabNavigator();
 
 const MainNavigator = () => {
 
+    const { data: groupInfo = {} } = useGroupInfo();
+    const {userId} = useAuthStore();
+    const { data: guideStatus = {} } = useGuideStatus();
   const ShuttleTab = () => null;
   const NotificationTab = () => null;
 
-  useLocationTracking((location) => {
-    console.log('Publishing location:', location);
-  });
+  
+  useLocationTracking({ userId, guideStatus, groupInfo });
 
   return (
     <Tab.Navigator

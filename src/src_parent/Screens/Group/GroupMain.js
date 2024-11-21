@@ -20,6 +20,8 @@ import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider, Bottom
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import ConfirmModal from '../../../components/ConfirmModal';
 import useApplyPreabsent from '../../hooks/mutations/useApplyPreabsent';
+import MessageModal from '../../../components/MessageModal';
+import useSendMessage from '../../hooks/mutations/useSendMessage';
 const GroupMain = ({navigation, route}) => {
   const {groupInfo, waypoints, students} = route.params;
   const insets = useSafeAreaInsets();
@@ -30,9 +32,13 @@ const GroupMain = ({navigation, route}) => {
   const [year, setYear] = useState('');
   const [selected, setSelected] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [messageModalVisible, setMessageModalVisible] = useState(false);
+  const [isMessage, setIsMessage] = useState(false);
+  const [message, setMessage] = useState('');
   const bottomSheetModalRef = useRef(null);
   
   const mutateApplyPreabsent = useApplyPreabsent();
+  const mutateSendMessage = useSendMessage();
   // callbacks
   const handlePresentModalPress = useCallback(() => {
     bottomSheetModalRef.current?.present();
@@ -43,6 +49,7 @@ const GroupMain = ({navigation, route}) => {
       setStep(0);
       setSelected(null);
       setMarkedDates({});
+      setIsMessage(false);
     }
   }, []);
 
@@ -189,7 +196,28 @@ const GroupMain = ({navigation, route}) => {
   };
 
   return (
-    <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.White_Green, paddingBottom: insets.bottom, paddingTop: insets.top }}>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: colors.White_Green, paddingBottom: insets.bottom }}>
+      <MessageModal
+        modalVisible={messageModalVisible}
+        setModalVisible={setMessageModalVisible}
+        confirmTitle={'확인'}
+        onConfirm={() => {
+          mutateSendMessage.mutate({
+            studentId: selectedStudent.studentId,
+            content: message
+          },
+          {
+            onSuccess: () => {
+              bottomSheetModalRef.current?.close();
+              setMessageModalVisible(false);
+            }
+          }
+        );
+        }}          
+        value={message}
+        setMessage={setMessage}
+        onChangeText={(text) => setMessage(text)}
+      />
       <ConfirmModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
@@ -315,7 +343,7 @@ const GroupMain = ({navigation, route}) => {
               </View>
               <View style={{height:24}}/>
               <TouchableOpacity 
-                onPress={()=>{handlePresentModalPress()}}
+                onPress={()=>{handlePresentModalPress(); setIsMessage(true)}}
                 style={{padding:32, backgroundColor:colors.Gray01, borderRadius:10, borderWidth:1, borderColor:colors.Gray03, flexDirection:'row', alignItems:'center'}}>
                 <Text style={[textStyles.SB3, {color:colors.Gray07}]}>
                 {"인솔자에게 메세지 보내기"}
@@ -326,7 +354,7 @@ const GroupMain = ({navigation, route}) => {
             </View>
           </View>
         </ScrollView>
-        <View style={{position:'absolute'}}>
+        <View style={{position:'absolute',  paddingTop: insets.top-10}}>
           <CustomHeader title=""/>
         </View>
         <View style={{padding:16, elevation:10}}>
@@ -348,7 +376,7 @@ const GroupMain = ({navigation, route}) => {
           </View>
           }
         >
-          <BottomSheetView>
+          <BottomSheetView style={{paddingBottom:insets.bottom}}>
             {step === 0 && <View style={{gap:24, paddingHorizontal:16}}>
               <View style={{flexDirection:'row', alignItems:'center'}}>
                 <View style={{flex:1}}/>
@@ -356,7 +384,7 @@ const GroupMain = ({navigation, route}) => {
                 <View style={{flex:1, flexDirection:'row'}}>
                   <View style={{flex:1}}/>
                   <TouchableOpacity onPress={() => bottomSheetModalRef.current?.close()}>
-                    <XIcon/>
+                    <XIcon width={21} height={21} color={colors.Black}/>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -366,8 +394,17 @@ const GroupMain = ({navigation, route}) => {
                 <Pressable 
                   style={({pressed}) => [{backgroundColor:pressed ? '#F6FEFB' : colors.White, borderRadius:10, marginHorizontal:16, borderWidth:1, borderColor: pressed ? colors.Main_Green : colors.Gray02}]} 
                   key={index}
-                  onPress={() => {setSelectedStudent(student); setStep(1);}}
-                  >
+                  onPress={() => {
+                    setSelectedStudent(student)
+                    if (isMessage) {
+                      bottomSheetModalRef.current?.close();
+                      setMessageModalVisible(true);
+                    }
+                    if (!isMessage) {
+                      setStep(1)
+                    }
+                  }}
+                >
                   <View 
                     style={{paddingVertical:16, flexDirection:'row', alignItems:'center', gap:32, paddingHorizontal:32}}
                     > 
@@ -398,7 +435,7 @@ const GroupMain = ({navigation, route}) => {
                 <View style={{flex:1, flexDirection:'row'}}>
                   <View style={{flex:1}}/>
                   <TouchableOpacity onPress={() => bottomSheetModalRef.current?.close()}>
-                    <XIcon/>
+                  <XIcon width={21} height={21} color={colors.Black}/>
                   </TouchableOpacity>
                 </View>
               </View>

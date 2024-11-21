@@ -1,22 +1,17 @@
 import { useEffect, useRef, useCallback, useMemo, useState } from 'react';
 import {
-  Animated,
-  Dimensions,
-  PanResponder,
   View,
   Text,
   TouchableOpacity,
   Image,
 } from 'react-native';
-import useParentGroupInfo from '../../hooks/queries/useParentGroupInfo';
-import useWaypoints from '../../../src_guardian/hooks/queries/useWaypoints';
 import WebView from 'react-native-webview';
 import CustomHeader from '../../../components/CustomHeader';
 import { colors, textStyles } from '../../../styles/globalStyle';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useWebsocketStore from '../../../store/websocketStore';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import BottomSheet, { BottomSheetView, BottomSheetHandle } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import GuardianWoman from '../../../assets/icons/GuardianWoman.svg';
 import StudentBoy from '../../../assets/icons/StudentBoy.svg';
 import MyLocationIcon from '../../../assets/icons/MyLocationIcon.svg';

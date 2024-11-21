@@ -2,7 +2,9 @@ import {create} from 'zustand';
 
 const useShuttleStore = create(set => ({
   isGuideActive: null,
+  dutyGuardianId: null,
   setIsGuideActive: isGuideActive => set({isGuideActive}),
+  setDutyGuardianId: dutyGuardianId => set({dutyGuardianId}),
 }));
 
 
