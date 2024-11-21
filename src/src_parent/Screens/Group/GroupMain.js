@@ -208,8 +208,8 @@ const GroupMain = ({navigation, route}) => {
           },
           {
             onSuccess: () => {
-              bottomSheetModalRef.current?.close();
               setMessageModalVisible(false);
+              setMessage('');
             }
           }
         );

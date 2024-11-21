@@ -125,7 +125,10 @@ const ShuttleMain = ({navigation, route}) => {
                     key={index}
                     style={{width:60, height:60, borderRadius:35, backgroundColor:colors.Gray03, overflow:'hidden',  marginLeft: index === 0 ? 0 : -25,}}
                   >
-                    <Image src={student.imagePath} style={{flex:1}}/>
+                    {student.imagePath == null ?
+                    <StudentBoy width={60} height={60}/>
+                    :
+                    <Image src={student.imagePath} style={{flex:1}}/>}
                   </View>
                 ))}
                 </View>
