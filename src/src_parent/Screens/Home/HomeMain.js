@@ -14,10 +14,17 @@ import SmileIcon from '../../../assets/icons/SmileIcon.svg';
 import SchoolTimeComponent from '../../../components/SchoolTimeComponent';
 import MailBox from '../../../assets/icons/MailBox.svg';
 import ArrowIcon from '../../../assets/icons/ArrowIcon.svg';
+import useWaypoints from '../../../src_guardian/hooks/queries/useWaypoints';
+import useStudents from '../../hooks/queries/useStudents';
+import useParentGroupInfo from '../../hooks/queries/useParentGroupInfo';
 
 
 const Homemain = ({ navigation }) => {
   const [studentsList, setStudentsList] = useState([]);
+
+  const { data: groupInfo, isPending: groupInfoIsPending, isSuccess: groupInfoIsSuccess } = useParentGroupInfo();
+  const { data: waypoints, isPending: waypointsIsPending, isSuccess: waypointsIsSuccess } = useWaypoints();
+  const { data: students, isPending: studentsIsPending, isSuccess: studentsIsSuccess } = useStudents();
 
   const insets = useSafeAreaInsets();
 
@@ -37,7 +44,9 @@ const Homemain = ({ navigation }) => {
             paddingTop: insets.top,
           }}>
           <TextLogo />
-          <AlarmParentIcon width={24} height={24} />
+          <TouchableOpacity onPress={() => navigation.navigate('AlarmDetail')}>
+            <AlarmParentIcon width={24} height={24} />
+          </TouchableOpacity>
         </View>
       ),
     });
@@ -86,7 +95,7 @@ const Homemain = ({ navigation }) => {
         <View style={{height: 8}}/>
         <View style={{ padding: 32, backgroundColor: colors.White_Green, borderRadius: 10, elevation: 4, flexDirection: 'column', shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 10 }}>
           {studentsList.length > 0 && (
-            <View style={{ flex: 1, flexDirection: 'row', gap: 32 }}>
+            <View style={{ flex: 1, flexDirection: 'row', gap: 32, alignItems:'center' }}>
               {studentsList.length === 1 ? (
                 renderImage(studentsList[0].imagePath) 
               ) : (
@@ -133,8 +142,8 @@ const Homemain = ({ navigation }) => {
             <Text style={[textStyles.SB3]}>아이가 결석해야 한다면?</Text>
             <View style={{ height: 4 }} />
             <TouchableOpacity
-              onPress={() => navigation.navigate('GroupMain0')} 
-              style={{flexDirection:'row', gap:8}}
+              onPress={() => navigation.navigate('GroupMain0', {waypoints, groupInfo, students})} 
+              style={{flexDirection:'row', gap:8, alignItems:'center'}}
             >
               <Text style={[textStyles.M4, { color: colors.Gray07 }]}>결석 신청 바로가기</Text>
               <ArrowIcon style={{color:colors.Gray07}} />
