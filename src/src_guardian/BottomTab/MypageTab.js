@@ -12,6 +12,7 @@ import ShuttleStudentsList from '../Screens/Shuttle/ShuttleStudentsList';
 import StudentDetail from '../Screens/Shuttle/StudentDetail';
 import MessageList from '../Screens/Shuttle/MessageList';
 import NotiMain from '../Screens/Noitfication/NotiMain';
+import MypageDetail from '../Screens/Mypage/MypageDetail';
 
 const Stack = createStackNavigator();
 
@@ -32,17 +33,17 @@ const MypageTab = ({route}) => {
   return (
     <Stack.Navigator
       screenOptions={{
+        headerShown: false,
         headerBackImage: () => (
           <BackIcon width={24} height={24} /> // 사용자 정의 아이콘
         ),
       }}>
       <Stack.Screen name="MypageMain" component={MypageMain} />
-      <Stack.Screen name="ShuttleDetail3" component={ShuttleDetail} options={{headerShown:false}}/>
-      <Stack.Screen name="ShuttleMap" component={ShuttleMap} options={{headerShown:false}}/>
-      <Stack.Screen name="ShuttleStudentsList" component={ShuttleStudentsList} options={{headerShown:false}}/>
-      <Stack.Screen name="StudentDetail" component={StudentDetail} options={{headerShown:false}}/>
-      <Stack.Screen name="MessageList" component={MessageList} options={{headerShown:false}}/>
-      <Stack.Screen name="NotiMain3" component={NotiMain} options={{headerShown:false}}/>
+      <Stack.Screen
+        name="MypageDetail"
+        component={MypageDetail}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 };

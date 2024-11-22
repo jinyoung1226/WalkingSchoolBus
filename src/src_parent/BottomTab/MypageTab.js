@@ -8,6 +8,8 @@ import ShuttleDetail from '../Screens/Shuttle/ShuttleDetail';
 import useTabBarStore from '../../store/tabBarStore';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import BackIcon from '../../assets/icons/BackIcon.svg';
+import MypageDetail from '../Screens/Mypage/MypageDetail';
+import MypageStudentDetail from '../Screens/Mypage/MypageStudentDetail';
 
 const Stack = createStackNavigator();
 
@@ -32,11 +34,41 @@ const MypageTab = ({route}) => {
           <BackIcon width={24} height={24} /> // 사용자 정의 아이콘
         ),
       }}>
-      <Stack.Screen name="MypageMain" component={MypageMain} />
-      <Stack.Screen name="GroupMain3" component={GroupMain} options={{headerShown:false}}/>
-      <Stack.Screen name="GroupDetail" component={GroupDetail} options={{headerShown:false}}/>
-      <Stack.Screen name="ShuttleMain3" component={ShuttleMain} options={{headerShown:false}}/>
-      <Stack.Screen name="ShuttleDetail" component={ShuttleDetail} options={{headerShown:false}}/>
+      <Stack.Screen
+        name="MypageMain"
+        component={MypageMain}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="GroupMain3"
+        component={GroupMain}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="GroupDetail"
+        component={GroupDetail}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ShuttleMain3"
+        component={ShuttleMain}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ShuttleDetail"
+        component={ShuttleDetail}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="MypageDetail"
+        component={MypageDetail}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="MypageStudentDetail"
+        component={MypageStudentDetail}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 };

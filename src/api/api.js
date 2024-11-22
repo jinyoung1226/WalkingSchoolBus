@@ -74,7 +74,7 @@ authApi.interceptors.response.use(
     const originalRequest = error.config;
     //  토큰 만료 등의 조건을 확인하고 토큰 재발급 로직 실행
     if (error.response.status === 401 && !originalRequest._retry) {
-      console.log(error, '401');
+      console.log(error, 'aaaa401');
       originalRequest._retry = true; // 재시도 플래그 설정
       // 토큰 재발급 로직...
       const refreshToken = await EncryptedStorage.getItem('refreshToken');

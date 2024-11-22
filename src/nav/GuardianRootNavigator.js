@@ -6,11 +6,11 @@ import useWebsocketStore from '../store/websocketStore';
 
 const GuardianRootNavigator = () => {
   const {isAuthenticated} = useAuthStore();
-  const {connectWebSocket, disconnectWebSocket, isConnected} = useWebsocketStore();
+  const {connectWebSocket, disconnectWebSocket, isConnected} =
+    useWebsocketStore();
 
   // WebSocket 연결/해제 useEffect hook
   useEffect(() => {
-
     if (isAuthenticated) {
       connectWebSocket();
     }
@@ -26,11 +26,7 @@ const GuardianRootNavigator = () => {
     console.log('isConnected 상태 변경:', isConnected);
   }, [isConnected]);
 
-  return (isAuthenticated ? 
-    <MainNavigator /> 
-    : 
-    <AuthNavigator />
-  );
+  return isAuthenticated ? <MainNavigator /> : <AuthNavigator />;
 };
 
 export default GuardianRootNavigator;

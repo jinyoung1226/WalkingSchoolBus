@@ -5,6 +5,7 @@ import GroupMain from '../Screens/Group/GroupMain';
 import GroupDetail from '../Screens/Group/GroupDetail';
 import ShuttleMain from '../Screens/Shuttle/ShuttleMain';
 import ShuttleDetail from '../Screens/Shuttle/ShuttleDetail';
+import GroupNotice from '../Screens/Home/GroupNotice';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import useTabBarStore from '../../store/tabBarStore';
 import BackIcon from '../../assets/icons/BackIcon.svg';
@@ -33,12 +34,37 @@ const HomeTab = ({route}) => {
           <BackIcon width={24} height={24} /> // 사용자 정의 아이콘
         ),
       }}>
-      <Stack.Screen name="HomeMain" component={HomeMain} options={{headerShown:false}}/>
-      <Stack.Screen name="AlarmDetail" component={AlarmDetail} options={{headerShown:false}}/>
-      <Stack.Screen name="GroupMain0" component={GroupMain} options={{headerShown:false}}/>
-      <Stack.Screen name="GroupDetail" component={GroupDetail} options={{headerShown:false}}/>
-      <Stack.Screen name="ShuttleMain0" component={ShuttleMain} options={{headerShown:false}}/>
-      <Stack.Screen name="ShuttleDetail" component={ShuttleDetail} options={{headerShown:false}}/>
+      <Stack.Screen name="HomeMain" component={HomeMain} />
+      <Stack.Screen
+        name="AlarmDetail"
+        component={AlarmDetail}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="GroupMain0"
+        component={GroupMain}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="GroupDetail"
+        component={GroupDetail}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ShuttleMain0"
+        component={ShuttleMain}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ShuttleDetail"
+        component={ShuttleDetail}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="GroupNotice"
+        component={GroupNotice}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 };
