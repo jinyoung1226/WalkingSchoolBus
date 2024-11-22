@@ -4,8 +4,6 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {textStyles, colors} from '../../../styles/globalStyle';
 import CustomHeader from '../../../components/CustomHeader';
 import {getStudentInfo} from '../../../api/mypageApi';
-import {patchStudentImage} from '../../../api/mypageApi';
-import {patchStudentNote} from '../../../api/mypageApi';
 import {launchImageLibrary} from 'react-native-image-picker';
 import Mypagepencil from '../../../assets/icons/MypagePencil.svg';
 import Student from '../../../assets/icons/Student.svg';
@@ -15,7 +13,10 @@ import {refreshApi} from '../../../api/api';
 
 const MypageDetail = ({navigation}) => {
   const insets = useSafeAreaInsets();
-  const selectedStudentId = useStudentStore(state => state.selectedStudentId); // Zustand에서 선택된 studentId 가져오기
+
+  // Zustand에서 선택된 studentId 가져오기
+  const selectedStudentId = useStudentStore(state => state.selectedStudentId);
+
   const [studentInfo, setStudentInfo] = useState({
     imagePath: '',
     name: '',
@@ -52,6 +53,10 @@ const MypageDetail = ({navigation}) => {
     try {
       const formData = new FormData();
 
+      // 이미 컴포넌트 최상위 레벨에서 가져온 selectedStudentId를 사용합니다.
+      formData.append('studentId', selectedStudentId);
+
+      // imageFile을 formData에 추가합니다.
       formData.append('imageFile', {
         uri: tempImagePath,
         type: 'image/jpeg',
@@ -77,7 +82,7 @@ const MypageDetail = ({navigation}) => {
         throw new Error('이미지 업로드 실패');
       }
     } catch (error) {
-      console.error('이미지 업로드 중 오류 발생');
+      console.error('이미지 업로드 중 오류 발생', error);
       Alert.alert('오류', '이미지 업로드에 실패했습니다.');
     }
   };
