@@ -9,7 +9,7 @@ const CustomHeader = ({
   title, 
   subtitle, 
   onPressRightButton,
-  headerRight
+  headerRight,
 }) => {
 
   const navigation = useNavigation();

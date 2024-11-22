@@ -1,22 +1,17 @@
 import { useEffect, useRef, useCallback, useMemo, useState } from 'react';
 import {
-  Animated,
-  Dimensions,
-  PanResponder,
   View,
   Text,
   TouchableOpacity,
   Image,
 } from 'react-native';
-import useParentGroupInfo from '../../hooks/queries/useParentGroupInfo';
-import useWaypoints from '../../../src_guardian/hooks/queries/useWaypoints';
 import WebView from 'react-native-webview';
 import CustomHeader from '../../../components/CustomHeader';
 import { colors, textStyles } from '../../../styles/globalStyle';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import useWebsocketStore from '../../../store/websocketStore';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import BottomSheet, { BottomSheetView, BottomSheetHandle } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import GuardianWoman from '../../../assets/icons/GuardianWoman.svg';
 import StudentBoy from '../../../assets/icons/StudentBoy.svg';
 import MyLocationIcon from '../../../assets/icons/MyLocationIcon.svg';
@@ -112,7 +107,7 @@ const ShuttleMain = ({navigation, route}) => {
             {students.length === 1 ? (
               <View style={{flexDirection:'row', gap:16}}>
                 <View style={{width:70, height:70, borderRadius:35, backgroundColor:colors.Gray03, overflow:'hidden'}}>
-                  {students[0].imagePath == "" ?
+                  {students[0].imagePath == null ?
                   <StudentBoy width={70} height={70}/>
                   :
                   <Image src={students[0].imagePath} style={{flex:1}}/>}
@@ -130,7 +125,10 @@ const ShuttleMain = ({navigation, route}) => {
                     key={index}
                     style={{width:60, height:60, borderRadius:35, backgroundColor:colors.Gray03, overflow:'hidden',  marginLeft: index === 0 ? 0 : -25,}}
                   >
-                    <Image src={student.imagePath} style={{flex:1}}/>
+                    {student.imagePath == null ?
+                    <StudentBoy width={60} height={60}/>
+                    :
+                    <Image src={student.imagePath} style={{flex:1}}/>}
                   </View>
                 ))}
                 </View>

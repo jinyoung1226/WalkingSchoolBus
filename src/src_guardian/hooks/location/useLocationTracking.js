@@ -5,31 +5,21 @@ import useWebsocketStore from '../../../store/websocketStore';
 import useGroupInfo from '../queries/useGroupInfo';
 import useAuthStore from '../../../store/authStore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import useGuideStatus from '../queries/useGuideStatus';
 
 
-const useLocationTracking = () => {
-  const { isGuideActive: localIsGuideActive } = useShuttleStore();
-  const { data: groupInfo } = useGroupInfo();
+const useLocationTracking = ({userId, guideStatus, groupInfo}) => {
+  // const { data: groupInfo } = useGroupInfo();
   const { publishLocation } = useWebsocketStore();
-  const [isGuideActive, setIsGuideActive] = useState(false);
+
+  // const {userId} = useAuthStore();
+  // const { data: guideStatus, isLoading } = useGuideStatus();
 
   useEffect(() => {
-    const fetchIsGuideActive = async () => {
-      try {
-        const storedValue = await AsyncStorage.getItem('isGuideActive');
-        setIsGuideActive(storedValue === 'true');
-        console.log('Fetched isGuideActive from AsyncStorage:', storedValue);
-      } catch (error) {
-        console.error('Error fetching isGuideActive:', error);
-      }
-    };
-
-    fetchIsGuideActive();
-
     let intervalId = null;
-    console.log(isGuideActive, groupInfo, "@@@@@@@@");
-    if ((localIsGuideActive || isGuideActive) && groupInfo) {
-      
+
+    if (guideStatus.isGuideActive && userId === guideStatus.dutyGuardianId && groupInfo) {
+
       console.log('운행 시작: 위치 정보를 2초마다 전송합니다.');
 
       // 위치 정보를 2초마다 퍼블리싱
@@ -55,7 +45,7 @@ const useLocationTracking = () => {
         );
       }, 2000); // 2초마다 실행
     } else {
-      console.log('운행 종료: 위치 전송 중단');
+      console.log(userId, guideStatus, groupInfo, '운행 종료: 위치 전송 중단')
       if (intervalId !== null) {
         clearInterval(intervalId);
       }
@@ -67,7 +57,7 @@ const useLocationTracking = () => {
         clearInterval(intervalId);
       }
     };
-  }, [isGuideActive, groupInfo, localIsGuideActive]);
+  }, [guideStatus, groupInfo, userId]);
 };
 
 export default useLocationTracking;

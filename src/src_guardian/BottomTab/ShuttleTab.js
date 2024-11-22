@@ -1,6 +1,6 @@
 import React, {useLayoutEffect} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import ShuttleMain from '../Screens/Shuttle/ShuttleMain';
+
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import useTabBarStore from '../../store/tabBarStore';
 import ShuttleDetail from '../Screens/Shuttle/ShuttleDetail';
@@ -8,6 +8,7 @@ import {colors, textStyles} from '../../styles/globalStyle';
 import {Text, TouchableOpacity, View} from 'react-native';
 import BackIcon from '../../assets/icons/BackIcon.svg';
 import MapIcon from '../../assets/icons/MapIcon.svg';
+import ShuttleMain from '../Screens/Shuttle/ShuttleMain';
 import ShuttleMap from '../Screens/Shuttle/ShuttleMap';
 import ShuttleStudentsList from '../Screens/Shuttle/ShuttleStudentsList';
 import StudentDetail from '../Screens/Shuttle/StudentDetail';

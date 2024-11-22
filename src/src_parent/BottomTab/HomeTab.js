@@ -8,6 +8,7 @@ import ShuttleDetail from '../Screens/Shuttle/ShuttleDetail';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import useTabBarStore from '../../store/tabBarStore';
 import BackIcon from '../../assets/icons/BackIcon.svg';
+import AlarmDetail from '../Screens/Home/AlarmDetail';
 
 const Stack = createStackNavigator();
 
@@ -32,7 +33,8 @@ const HomeTab = ({route}) => {
           <BackIcon width={24} height={24} /> // 사용자 정의 아이콘
         ),
       }}>
-      <Stack.Screen name="HomeMain" component={HomeMain}/>
+      <Stack.Screen name="HomeMain" component={HomeMain} />
+      <Stack.Screen name="AlarmDetail" component={AlarmDetail} options={{headerShown:false}}/>
       <Stack.Screen name="GroupMain0" component={GroupMain} options={{headerShown:false}}/>
       <Stack.Screen name="GroupDetail" component={GroupDetail} options={{headerShown:false}}/>
       <Stack.Screen name="ShuttleMain0" component={ShuttleMain} options={{headerShown:false}}/>
