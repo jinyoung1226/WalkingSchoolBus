@@ -28,7 +28,7 @@ const SingleActionModal = ({
       onRequestClose={() => {
         modalClose();
       }}>
-      <View style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.8)'}}>
+      <View style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.7)'}}>
         <TouchableOpacity
           style={{flex: 1}}
           onPress={() => {

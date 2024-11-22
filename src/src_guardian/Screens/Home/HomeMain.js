@@ -46,7 +46,7 @@ const Homemain = ({navigation}) => {
               <HomeButton
                 title="출근하러 가기"
                 onPress={() => {
-                  Linking.openURL('donghang://shuttle/shuttleDetail');
+                  navigation.navigate('ShuttleDetail0');
                 }}
               />
               <View style={{flex: 1}} />

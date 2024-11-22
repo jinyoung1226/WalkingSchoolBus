@@ -77,3 +77,9 @@ export const sendMessage = async ({studentId, content}) => {
   console.log(response.data, '메시지 전송');
   return response.data;
 }
+
+export const getParentShuttleStatus = async () => {
+  const response = await authApi.get('parents/shuttle-status');
+  console.log(response.data, '셔틀 상태 불러오기');
+  return response.data;
+}
