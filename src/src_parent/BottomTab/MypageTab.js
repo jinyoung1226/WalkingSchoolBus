@@ -9,6 +9,7 @@ import useTabBarStore from '../../store/tabBarStore';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import BackIcon from '../../assets/icons/BackIcon.svg';
 import MypageDetail from '../Screens/Mypage/MypageDetail';
+import MypageStudentDetail from '../Screens/Mypage/MypageStudentDetail';
 
 const Stack = createStackNavigator();
 
@@ -65,7 +66,7 @@ const MypageTab = ({route}) => {
       />
       <Stack.Screen
         name="MypageStudentDetail"
-        component={MypageDetail}
+        component={MypageStudentDetail}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

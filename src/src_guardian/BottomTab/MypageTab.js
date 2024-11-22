@@ -39,6 +39,11 @@ const MypageTab = ({route}) => {
         ),
       }}>
       <Stack.Screen name="MypageMain" component={MypageMain} />
+      <Stack.Screen
+        name="MypageDetail"
+        component={MypageDetail}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 };

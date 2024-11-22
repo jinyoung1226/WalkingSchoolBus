@@ -8,11 +8,14 @@ import ConfirmModal from '../../../components/ConfirmModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import useAuthStore from '../../../store/authStore';
+import useStudentStore from '../../../store/mypageStudentStore';
 import {getParentsInfo, getStudentInfo} from '../../../api/mypageApi';
 import Student from '../../../assets/icons/Student.svg';
+import {colors, textStyles} from '../../../styles/globalStyle';
 
 const MypageMain = ({navigation}) => {
   const {setLogout} = useAuthStore();
+  const {setSelectedStudentId} = useStudentStore(); // Zustand 사용
   const [modalVisible, setModalVisible] = useState(false);
   const [userName, setUserName] = useState('');
   const [students, setStudents] = useState([]);
@@ -45,6 +48,7 @@ const MypageMain = ({navigation}) => {
     try {
       const data = await getStudentInfo();
       const formattedData = data.map(student => ({
+        studentId: student.studentId, // studentId 추가
         name: student.name,
         imagePath: student.imagePath || null,
         schoolName: student.schoolName,
@@ -69,51 +73,47 @@ const MypageMain = ({navigation}) => {
     <View
       style={{
         flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 16,
-        marginLeft: 16,
+        justifyContent: 'space-between',
       }}>
-      <View
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View
+          style={{
+            borderRadius: 25,
+            overflow: 'hidden',
+          }}>
+          {student.imagePath ? (
+            <Image
+              source={{uri: student.imagePath}}
+              style={{
+                width: 50,
+                height: 50,
+              }}
+              resizeMode="cover"
+            />
+          ) : (
+            <Student width={50} height={50} />
+          )}
+        </View>
+        <View style={{marginLeft: 32}}>
+          <Text
+            style={[textStyles.SB3, {color: colors.Black, marginBottom: 4}]}>
+            {student.name}
+          </Text>
+          <Text style={[textStyles.R2, {color: colors.Gray06}]}>
+            {student.schoolName} {student.grade}학년
+          </Text>
+        </View>
+      </View>
+      <TouchableOpacity
         style={{
-          width: 50,
-          height: 50,
-          borderRadius: 25,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: '#f0f0f0',
-          overflow: 'hidden',
+          padding: 24,
+        }}
+        onPress={() => {
+          setSelectedStudentId(student.studentId); // Zustand에 studentId 저장
+          navigation.navigate('MypageStudentDetail'); // 상세 페이지로 이동
         }}>
-        {student.imagePath ? (
-          <Image
-            source={{uri: student.imagePath}}
-            style={{
-              width: 50,
-              height: 50,
-            }}
-            resizeMode="cover" // 이미지를 부모 영역에 꽉 차게 조정
-          />
-        ) : (
-          <Student width={50} height={50} />
-        )}
-      </View>
-      <View style={{marginLeft: 32}}>
-        <Text
-          style={{
-            fontSize: 16,
-            fontWeight: '600',
-            color: '#000',
-            marginBottom: 4,
-          }}>
-          {student.name}
-        </Text>
-        <Text
-          style={{
-            fontSize: 14,
-            color: '#8a8a8a',
-          }}>
-          {student.schoolName} {student.grade}학년
-        </Text>
-      </View>
+        <NextIcon />
+      </TouchableOpacity>
     </View>
   );
 
@@ -134,12 +134,7 @@ const MypageMain = ({navigation}) => {
             alignItems: 'center',
           }}>
           <Parents width={70} height={70} style={{marginRight: 32}} />
-          <Text
-            style={{
-              fontSize: 18,
-              fontWeight: 'bold',
-              color: '#000',
-            }}>
+          <Text style={[textStyles.SB1, {color: colors.Black}]}>
             {userName} 님
           </Text>
           <TouchableOpacity
@@ -156,15 +151,7 @@ const MypageMain = ({navigation}) => {
 
       {/* 그룹 섹션 */}
       <View style={{marginBottom: 32, paddingHorizontal: 32}}>
-        <Text
-          style={{
-            fontSize: 16,
-            fontWeight: 'bold',
-            color: '#000',
-            marginBottom: 16,
-          }}>
-          나의 자녀
-        </Text>
+        <Text style={[textStyles.SB1, {color: colors.Black}]}>나의 자녀</Text>
         <View
           style={{
             backgroundColor: '#ffffff',
@@ -182,7 +169,6 @@ const MypageMain = ({navigation}) => {
         </View>
       </View>
 
-      {/* 로그아웃 */}
       <View
         style={{
           width: '100%',
@@ -199,14 +185,7 @@ const MypageMain = ({navigation}) => {
         }}
         onPress={handleLogoutPress}>
         <LogOut width={25} height={25} style={{marginRight: 8}} />
-        <Text
-          style={{
-            fontSize: 16,
-            fontWeight: 'bold',
-            color: '#000',
-          }}>
-          로그아웃
-        </Text>
+        <Text style={[textStyles.M2, {color: colors.Black}]}>로그아웃</Text>
       </TouchableOpacity>
 
       <ConfirmModal
@@ -215,11 +194,10 @@ const MypageMain = ({navigation}) => {
         title="로그아웃"
         subtitle={
           <Text
-            style={{
-              textAlign: 'center',
-              fontSize: 14,
-              color: '#000',
-            }}>
+            style={[
+              textStyles.R1,
+              {color: colors.Gray05, textAlign: 'center'},
+            ]}>
             정말 로그아웃하시나요?
           </Text>
         }

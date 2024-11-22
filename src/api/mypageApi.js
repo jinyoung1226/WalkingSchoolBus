@@ -22,12 +22,12 @@ export const getStudentInfo = async () => {
   return response.data;
 };
 
-export const fixStudentNote = async () => {
+export const patchStudentNote = async () => {
   const response = await authApi.patch(`/students/update/notes`);
   return response.data;
 };
 
-export const fixStudentImage = async () => {
+export const patchStudentImage = async () => {
   const response = await authApi.patch(`/students/update/imageFile`);
   return response.data;
 };

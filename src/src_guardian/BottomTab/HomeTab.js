@@ -13,7 +13,7 @@ import ShuttleStudentsList from '../Screens/Shuttle/ShuttleStudentsList';
 import StudentDetail from '../Screens/Shuttle/StudentDetail';
 import MessageList from '../Screens/Shuttle/MessageList';
 import NotiMain from '../Screens/Noitfication/NotiMain';
-import { colors, textStyles } from '../../styles/globalStyle';
+import {colors, textStyles} from '../../styles/globalStyle';
 const Stack = createStackNavigator();
 
 const HomeTab = ({route}) => {
@@ -33,22 +33,58 @@ const HomeTab = ({route}) => {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerTitleAlign:'center', 
-        headerTitleStyle: [textStyles.B1, {color:colors.Black}],
+        headerTitleAlign: 'center',
+        headerTitleStyle: [textStyles.B1, {color: colors.Black}],
         headerBackImage: () => (
           <BackIcon width={24} height={24} /> // 사용자 정의 아이콘
         ),
       }}>
       <Stack.Screen name="HomeMain" component={HomeMain} />
-      <Stack.Screen name="HomeSchedule" component={HomeSchedule} options={{title: '스케줄'}}/>
-      <Stack.Screen name="GroupNotice" component={GroupNotice} options={{headerShown: false}}/>
-      <Stack.Screen name="CreateNotice" component={CreateNotice} options={{title: '공지글 쓰기'}}/>
-      <Stack.Screen name="ShuttleDetail0" component={ShuttleDetail} options={{headerShown:false}}/>
-      <Stack.Screen name="ShuttleMap" component={ShuttleMap} options={{headerShown:false}}/>
-      <Stack.Screen name="ShuttleStudentsList" component={ShuttleStudentsList} options={{headerShown:false}}/>
-      <Stack.Screen name="StudentDetail" component={StudentDetail} options={{headerShown:false}}/>
-      <Stack.Screen name="MessageList" component={MessageList} options={{headerShown:false}}/>
-      <Stack.Screen name="NotiMain0" component={NotiMain} options={{headerShown:false}}/>
+      <Stack.Screen
+        name="HomeSchedule"
+        component={HomeSchedule}
+        options={{title: '스케줄'}}
+      />
+      <Stack.Screen
+        name="GroupNotice"
+        component={GroupNotice}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="CreateNotice"
+        component={CreateNotice}
+        options={{title: '공지글 쓰기'}}
+      />
+      <Stack.Screen
+        name="ShuttleDetail0"
+        component={ShuttleDetail}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ShuttleMap"
+        component={ShuttleMap}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ShuttleStudentsList"
+        component={ShuttleStudentsList}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="StudentDetail"
+        component={StudentDetail}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="MessageList"
+        component={MessageList}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="NotiMain0"
+        component={NotiMain}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 };
