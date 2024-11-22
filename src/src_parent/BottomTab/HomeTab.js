@@ -33,7 +33,7 @@ const HomeTab = ({route}) => {
           <BackIcon width={24} height={24} /> // 사용자 정의 아이콘
         ),
       }}>
-      <Stack.Screen name="HomeMain" component={HomeMain} />
+      <Stack.Screen name="HomeMain" component={HomeMain} options={{headerShown:false}}/>
       <Stack.Screen name="AlarmDetail" component={AlarmDetail} options={{headerShown:false}}/>
       <Stack.Screen name="GroupMain0" component={GroupMain} options={{headerShown:false}}/>
       <Stack.Screen name="GroupDetail" component={GroupDetail} options={{headerShown:false}}/>

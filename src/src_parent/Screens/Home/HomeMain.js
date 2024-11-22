@@ -28,33 +28,6 @@ const Homemain = ({ navigation }) => {
 
   const insets = useSafeAreaInsets();
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitle: '',
-      headerBackground: () => (
-        <View
-          style={{
-            justifyContent: 'center',
-            flexDirection: 'row',
-            flex: 1,
-            paddingHorizontal: 32,
-            backgroundColor: colors.White_Green,
-            paddingBottom: insets.bottom,
-            paddingTop: insets.top,
-          }}>
-          <View style={{paddingVertical:16}}>
-            <TextLogo />
-          </View>
-          <View style={{flex: 1}} />
-          <TouchableOpacity
-          onPress={() => {navigation.navigate('AlarmDetail')}}
-          style={{paddingVertical:16}}>
-          <AlarmParentIcon width={24} height={24} />
-        </TouchableOpacity>
-        </View>
-      ),
-    });
-  }, [navigation]);
   // 자녀 정보 불러오는 api (학부모 홈 화면 상단)
   useEffect(() => {
     const getStudentList = async () => {
@@ -93,8 +66,8 @@ const Homemain = ({ navigation }) => {
   };
 
   return (
-    <View style={{backgroundColor: colors.White_Green, paddingBottom:insets.bottom, paddingTop:insets.top}}>
-      {/* <View style={{flexDirection:'row', alignItems:'center'}}>
+    <View style={{flex:1, backgroundColor: colors.White_Green, paddingBottom:insets.bottom, paddingTop:insets.top}}>
+      <View style={{flexDirection:'row', alignItems:'center'}}>
         <View style={{padding:16}}>
           <TextLogo />
         </View>
@@ -104,7 +77,7 @@ const Homemain = ({ navigation }) => {
           style={{padding:16}}>
           <AlarmParentIcon width={24} height={24} />
         </TouchableOpacity>
-      </View> */}
+      </View>
       <ScrollView>
         <View style={{paddingHorizontal:16}}>
           <View style={{height: 8}}/>

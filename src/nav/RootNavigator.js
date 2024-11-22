@@ -15,6 +15,7 @@ import NavButton from '../components/NavButton';
 import NavGuardianIcon from '../../src/assets/icons/NavGuardianIcon';
 import NavParentIcon from '../../src/assets/icons/NavParentIcon';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import GlobalModal from '../components/GlobalModal';
 
 const RootNavigator = () => {
   const {
@@ -116,6 +117,7 @@ const RootNavigator = () => {
           ) : (
             <GuardianRootNavigator />
           )}
+          <GlobalModal/>
         </NavigationContainer>
       </QueryClientProvider>
     );
