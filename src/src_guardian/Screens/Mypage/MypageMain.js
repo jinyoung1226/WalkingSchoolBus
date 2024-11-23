@@ -11,6 +11,7 @@ import useAuthStore from '../../../store/authStore';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import ImageResizer from 'react-native-image-resizer';
 import {getGuardianInfo, getGroupInfo} from '../../../api/mypageApi';
+import { refreshApi } from '../../../api/api';
 
 const MypageMain = ({navigation}) => {
   const {setLogout} = useAuthStore();

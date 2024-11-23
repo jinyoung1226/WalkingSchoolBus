@@ -34,7 +34,11 @@ const HomeTab = ({route}) => {
           <BackIcon width={24} height={24} /> // 사용자 정의 아이콘
         ),
       }}>
-      <Stack.Screen name="HomeMain" component={HomeMain} />
+      <Stack.Screen 
+        name="HomeMain" 
+        component={HomeMain}
+        options={{headerShown: false}}
+      />
       <Stack.Screen
         name="AlarmDetail"
         component={AlarmDetail}

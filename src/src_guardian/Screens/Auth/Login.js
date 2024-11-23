@@ -83,13 +83,13 @@ const Login = ({navigation}) => {
           borderWidth: 1,
           borderColor: colors.Gray03,
           padding: 16,
-          
           borderRadius: 10,
         }}
         value={password}
         onChangeText={setPassword}
         placeholder="비밀번호를 입력해주세요"
         secureTextEntry={true}
+        autoCapitalize="none"
       />
       <View style={{height: 32}}/>
       <CustomButton title="로그인" onPress={login} />

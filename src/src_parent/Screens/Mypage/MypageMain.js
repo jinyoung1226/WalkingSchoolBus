@@ -12,6 +12,7 @@ import useStudentStore from '../../../store/mypageStudentStore';
 import {getParentsInfo, getStudentInfo} from '../../../api/mypageApi';
 import Student from '../../../assets/icons/Student.svg';
 import {colors, textStyles} from '../../../styles/globalStyle';
+import { refreshApi } from '../../../api/api';
 
 const MypageMain = ({navigation}) => {
   const {setLogout} = useAuthStore();

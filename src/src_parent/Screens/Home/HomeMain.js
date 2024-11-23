@@ -19,7 +19,7 @@ import useStudents from '../../hooks/queries/useStudents';
 import useParentGroupInfo from '../../hooks/queries/useParentGroupInfo';
 
 
-const Homemain = ({ navigation }) => {
+const HomeMain = ({ navigation }) => {
   const [studentsList, setStudentsList] = useState([]);
 
   const { data: groupInfo, isPending: groupInfoIsPending, isSuccess: groupInfoIsSuccess } = useParentGroupInfo();
@@ -154,4 +154,4 @@ const Homemain = ({ navigation }) => {
   );
 };
 
-export default Homemain;
+export default HomeMain;
