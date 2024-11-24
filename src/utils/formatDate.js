@@ -11,3 +11,8 @@ export function formatDate(date = new Date()) {
     
     return `${month}월 ${padZero(day)}일 ${weekday}`;
   }
+
+  export function formatTime(time) {
+    const [hours, minutes] = time.split(':').map(Number); // "08:20" -> [8, 20]
+    return `${hours}시 ${minutes}분`;
+  }
