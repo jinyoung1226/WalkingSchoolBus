@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Linking } from 'react-native';
 import SmileIcon from '../../../assets/icons/SmileIcon.svg';
 import { textStyles, colors } from '../../../styles/globalStyle';
 import CustomHeader from '../../../components/CustomHeader';
@@ -24,7 +24,6 @@ const StudentDetail = ({ navigation, route }) => {
   const { studentInfo } = route.params;
   const insets = useSafeAreaInsets();
   const {data: messagePreview, isSuccess} = useMessagePreview(studentInfo.studentId);  
-
 
   return (
     <View style={{flex:1, backgroundColor:colors.White_Green, paddingBottom: insets.bottom, paddingTop: insets.top}}>
@@ -75,7 +74,7 @@ const StudentDetail = ({ navigation, route }) => {
       </ScrollView>
       <View style={{padding:16}}>
         {/* 출근하기 이후 마지막 경유지 출석 완료시 퇴근하기 버튼 활성화, 완료 전까지는 운행중이라는 비활성화 버튼 제공 */}
-        <CustomButton title={'보호자에게 전화하기'} onPress={() => {}}/>
+        <CustomButton title={'보호자에게 전화하기'} onPress={() => {Linking.openURL(`tel:${studentInfo.parentPhone}`)}}/>
       </View>  
     </View>
   );
