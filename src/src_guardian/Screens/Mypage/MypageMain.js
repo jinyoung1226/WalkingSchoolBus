@@ -11,14 +11,19 @@ import useAuthStore from '../../../store/authStore';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import ImageResizer from 'react-native-image-resizer';
 import {getGuardianInfo, getGroupInfo} from '../../../api/mypageApi';
-import { refreshApi } from '../../../api/api';
+import {refreshApi} from '../../../api/api';
+import useGuardianInfo from '../../hooks/queries/useGuardianInfo';
+import useGroupInfo from '../../hooks/queries/useGroupInfo';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 const MypageMain = ({navigation}) => {
   const {setLogout} = useAuthStore();
+  const insets = useSafeAreaInsets();
   const [modalVisible, setModalVisible] = useState(false);
-  const [resizedImage, setResizedImage] = useState(null);
-  const [userName, setUserName] = useState('');
-  const [schoolGroupName, setSchoolGroupName] = useState('');
+
+  const {data: guardianInfo = {}, isSuccess: guardianInfoIsSuccess} =
+    useGuardianInfo();
+  const {data: groupInfo = {}, isSuccess: groupInfoIsSuccess} = useGroupInfo();
 
   const logout = async () => {
     try {
@@ -37,88 +42,93 @@ const MypageMain = ({navigation}) => {
     }
   };
 
-  const fetchGuardianInfo = async () => {
-    try {
-      const guardianInfo = await getGuardianInfo();
-      setUserName(guardianInfo.name);
+  // const fetchGuardianInfo = async () => {
+  //   try {
+  //     const guardianInfo = await getGuardianInfo();
+  //     setUserName(guardianInfo.name);
 
-      if (guardianInfo.imagePath) {
-        const resized = await ImageResizer.createResizedImage(
-          guardianInfo.imagePath,
-          800,
-          800,
-          'JPEG',
-          80,
-        );
-        setResizedImage({
-          uri: resized.uri,
-          type: 'image/jpeg',
-          name: resized.name || `resized_${Date.now()}.jpg`,
-        });
-      }
-    } catch (error) {
-      console.error('Guardian 정보 가져오기 오류:', error);
-    }
-  };
+  //     if (guardianInfo.imagePath) {
+  //       const resized = await ImageResizer.createResizedImage(
+  //         guardianInfo.imagePath,
+  //         800,
+  //         800,
+  //         'JPEG',
+  //         80,
+  //       );
+  //       setResizedImage({
+  //         uri: resized.uri,
+  //         type: 'image/jpeg',
+  //         name: resized.name || `resized_${Date.now()}.jpg`,
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error('Guardian 정보 가져오기 오류:', error);
+  //   }
+  // };
 
-  const fetchGroupInfo = async () => {
-    try {
-      const groupInfo = await getGroupInfo();
-      setSchoolGroupName(`${groupInfo.schoolName} ${groupInfo.groupName}`);
-    } catch (error) {
-      console.error('Group 정보 가져오기 오류:', error);
-    }
-  };
+  // const fetchGroupInfo = async () => {
+  //   try {
+  //     const groupInfo = await getGroupInfo();
+  //     setSchoolGroupName(`${groupInfo.schoolName} ${groupInfo.groupName}`);
+  //   } catch (error) {
+  //     console.error('Group 정보 가져오기 오류:', error);
+  //   }
+  // };
 
-  useFocusEffect(
-    useCallback(() => {
-      // 화면이 focus될 때마다 데이터를 fetch
-      fetchGuardianInfo();
-      fetchGroupInfo();
-    }, []),
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     fetchGuardianInfo();
+  //     fetchGroupInfo();
+  //   }, []),
+  // );
 
   const handleLogoutPress = () => {
     setModalVisible(true);
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: colors.White}}>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: colors.White,
+        paddingBottom: insets.bottom,
+        paddingTop: insets.top,
+      }}>
       {/* 상단 섹션 */}
       <View
         style={{
           marginBottom: 32,
           marginTop: 24,
-          backgroundColor: colors.White,
           paddingHorizontal: 32,
           height: 70,
         }}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          {resizedImage && (
-            <Image
-              source={{uri: resizedImage.uri}}
-              style={{
-                width: 70,
-                height: 70,
-                borderRadius: 100,
-                marginRight: 8,
-              }}
-            />
-          )}
-          <View>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('MypageDetail', {guardianInfo: guardianInfo})
+          }
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 32,
+          }}>
+          <Image
+            src={guardianInfo.imagePath}
+            style={{
+              width: 70,
+              height: 70,
+              borderRadius: 100,
+            }}
+          />
+
+          <View style={{flex: 1}}>
             <Text style={[textStyles.B1, {color: colors.Black}]}>
-              {userName} 님
+              {guardianInfo.name} 님
             </Text>
           </View>
-          <View
-            style={{
-              padding: 8,
-              position: 'absolute',
-              right: 0,
-            }}>
-            <NextIcon onPress={() => navigation.navigate('MypageDetail')} />
+          <View>
+            <NextIcon />
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
 
       {/* 그룹 섹션 */}
@@ -148,7 +158,7 @@ const MypageMain = ({navigation}) => {
               alignItems: 'center',
             }}>
             <Text style={[textStyles.SB3, {color: colors.Black}]}>
-              {schoolGroupName}
+              {groupInfo.schoolName} {groupInfo.groupName}
             </Text>
             <View
               style={{
