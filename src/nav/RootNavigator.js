@@ -10,7 +10,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {linking} from '../config/deepLinkConfig';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import MainLogo from '../../src/assets/icons/MainLogo';
-import {textStyles} from '../styles/globalStyle';
+import {colors, textStyles} from '../styles/globalStyle';
 import NavButton from '../components/NavButton';
 import NavGuardianIcon from '../../src/assets/icons/NavGuardianIcon';
 import NavParentIcon from '../../src/assets/icons/NavParentIcon';
@@ -73,20 +73,19 @@ const RootNavigator = () => {
   if (userType === null) {
     return (
       <View
-        style={{flex: 1, justifyContent: 'center', paddingTop: 32}}>
+        style={{flex: 1, justifyContent: 'center', paddingTop: 64, backgroundColor: colors.White}}>
         <View style={{paddingLeft: 32}}>
           <MainLogo width={39} height={69} />
           <View style={{height: 24}} />
-          <Text style={[textStyles.B1, {fontSize: 28}]}>
+          <Text style={[textStyles.B1, {fontSize: 28}, {color: colors.Black}]}>
             {'어떤 버전으로\n로그인 하시겠어요?'}
           </Text>
           <View style={{height: 16}} />
-          <Text style={[textStyles.M1]}>{'사용할 버전을 선택해주세요'}</Text>
+          <Text style={[textStyles.M1, {color: colors.Black}]}>{'사용할 버전을 선택해주세요'}</Text>
         </View>
         <View style={{height: 80}}/>
         <View
           style={{
-
             justifyContent: 'center',
             alignItems: 'center',
             flexDirection: 'row',

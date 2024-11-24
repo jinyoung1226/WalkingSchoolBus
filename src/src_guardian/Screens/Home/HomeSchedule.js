@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity } from "react-native";
+import { Text, View, TouchableOpacity, Image } from "react-native";
 import { useEffect, useState } from 'react';
 import { colors, textStyles } from "../../../styles/globalStyle";
 import { Calendar, LocaleConfig } from "react-native-calendars";
@@ -7,14 +7,18 @@ import { ScrollView } from "react-native-gesture-handler";
 import { getDailySchedule } from "../../../api/scheduleApi";
 import { useQuery } from "@tanstack/react-query";
 import { authApi } from "../../../api/api";
+import { formatDate, formatTime } from "../../../utils/formatDate";
+import useGroupInfo from "../../hooks/queries/useGroupInfo";
+import SchoolTimeComponent from "../../../components/SchoolTimeComponent";
+import CalendarIcon from "../../../assets/icons/CalendarIcon.svg";
 
 const HomeSchedule = ({ navigation }) => {
   const [selected, setSelected] = useState('');
   const [markedDates, setMarkedDates] = useState({});
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
-
-
+  const [daySchedule, setDaySchedule] = useState([]);
+  const {data: groupInfo, isPending: groupInfoIsPending, isSuccess: groupInfoIsSuccess} = useGroupInfo();
   const todayString = new Date().toISOString().split('T')[0];
   // 달력 언어 설정
   // const {data} = useQuery({
@@ -40,6 +44,36 @@ const HomeSchedule = ({ navigation }) => {
   };
 
   LocaleConfig.defaultLocale = 'kr';
+  
+
+  const addScheduleMark = async ({ year, month }) => {
+    try {
+      const response = await authApi.get(`schedules/month?year=${year}&month=${month}`);
+      let dates = {};
+      response.data.forEach((schedule) => {
+        const dateString = schedule.day; // 일정 날짜
+        if (!dates[dateString]) {
+          dates[dateString] = { dots: [] }; // 날짜 초기화
+        }
+        if (schedule.scheduleType === '등교') {
+          dates[dateString].dots.push({ key: 'event1', color: colors.Orange });
+        }
+        if (schedule.scheduleType === '하교') {
+          dates[dateString].dots.push({ key: 'event2', color: colors.Blue });
+        }
+      });
+  
+      // markedDates 상태 업데이트
+      setMarkedDates((prevDates) => ({
+        ...prevDates,
+        ...dates, // 기존 날짜와 새 날짜 병합
+      }));
+    } catch (error) {
+      console.error('Error fetching schedule marks:', error);
+    }
+  };
+
+
 
   useEffect(() => {
     const generateMarkedDates = async() => {
@@ -50,7 +84,7 @@ const HomeSchedule = ({ navigation }) => {
       setYear(today.getFullYear());
 
       const response = await authApi.get(`schedules/month?year=${today.getFullYear()}&month=${today.getMonth() + 1}`);
-
+      console.log(response.data);
       const oneYearAgo = new Date();
       oneYearAgo.setFullYear(today.getFullYear() - 1);
       const oneYearLater = new Date();
@@ -74,23 +108,14 @@ const HomeSchedule = ({ navigation }) => {
 
         response.data.forEach((schedule) => {
           if (dateString === schedule.day) {
-            if (schedule.scheduleType === '등교1') {
+            if (schedule.scheduleType === '등교') {
               dates[dateString].dots.push({ key: 'event1', color: colors.Orange });
             }
-            if (schedule.scheduleType === '하교1') {
+            if (schedule.scheduleType === '하교') {
               dates[dateString].dots.push({ key: 'event2', color: colors.Blue });
             }
           }
         });
-
-        // if (dateString === '2024-10-10') {
-        //   dates[dateString].dots.push({ key: 'event1', color: colors.Orange });
-        // } else if (dateString === '2024-10-15') {
-        //   dates[dateString].dots.push(
-        //     { key: 'event1', color: colors.Orange },
-        //     { key: 'event2', color: colors.Blue }
-        //   );
-        // }
 
         // 주말의 텍스트 색상 설정
         if (dayOfWeek === 0) {
@@ -114,12 +139,19 @@ const HomeSchedule = ({ navigation }) => {
     
   }, []);
 
-  const onDayPress = async(day) => {
+  const onDayPress = async (day) => {
     const dateString = day.dateString;
-
+    console.log(dateString);
+    try {
+      const response = await authApi.get(`schedules/day?date=${dateString}`);
+      console.log(response.data);
+      setDaySchedule(response.data);
+    } catch (error) {
+      console.error('Error fetching schedule marks:', error);
+    }
     // 선택된 날짜 업데이트
     setSelected(dateString);
-
+    
     // markedDates 상태 업데이트
     setMarkedDates((prevDates) => {
       const updatedDates = { ...prevDates };
@@ -217,7 +249,7 @@ const HomeSchedule = ({ navigation }) => {
   };
 
   return (
-    <View style={{ backgroundColor: colors.White_Green}}>
+    <View style={{ backgroundColor: colors.White_Green, flex:1}}>
       {/* 커스텀 헤더 */}
       <View style={{ paddingHorizontal: 32, position:'absolute', zIndex:1, top:16 }}>
         <Text style={[textStyles.SB1, { color: colors.Black, fontSize: 20 }]}>
@@ -301,16 +333,61 @@ const HomeSchedule = ({ navigation }) => {
           markedDates={markedDates}
           hideExtraDays={true}
           monthFormat={''}
-          onMonthChange={(monthData) => {
+          onMonthChange={async (monthData) => {
             console.log(monthData);
             setMonth(monthData.month);
             setYear(monthData.year);
+            await addScheduleMark({year: monthData.year, month: monthData.month});
           }}
           dayComponent={renderDay}
         />
       </View>
-      <ScrollView style={{ flex: 1, backgroundColor: colors.White_Green }}>
-        
+      <ScrollView style={{backgroundColor: colors.White_Green}}>
+        <View style={{ paddingHorizontal: 32, paddingVertical: 24, margin:16, elevation:3, backgroundColor:colors.White_Green, borderRadius:15 }}>
+          {selected &&
+          <Text style={[textStyles.M2, { color: colors.Black }]}>
+            {formatDate(new Date(selected))}
+          </Text>}
+          <View style={{ height: 8 }} />
+          {daySchedule.length == 0 ?
+          <View style={{alignItems:'center', paddingVertical:32}}>
+            <CalendarIcon />
+            <View style={{ height: 16 }} />
+            <Text style={[textStyles.R1, { color: colors.Gray06 }]}>
+              운행 스케줄이 없어요!
+            </Text>
+          </View>
+          :
+          <View>
+            {groupInfoIsSuccess  &&
+            <Text style={[textStyles.R3, { color: colors.Black }]}>
+            {groupInfo.schoolName} {groupInfo.groupName}
+            </Text>}
+            <View style={{ height: 24 }} />
+            {daySchedule.map((schedule, index) => (
+              <View key={index} style={{gap:16}}>
+                <View style={{ flexDirection: 'row', alignItems:'center', gap:16}}>
+                  <SchoolTimeComponent type={schedule.scheduleType === '등교' ? 'before' : 'after'} isSelected={true} title={schedule.scheduleType}/>
+                  <Text style={[textStyles.M3, { color: colors.Gray07 }]}>
+                    {schedule.scheduleType === '등교' ? '오전' : '오후'} {formatTime(schedule.time)}
+                  </Text>
+                </View>
+                <View style={{flexDirection:'row', alignItems:'center', gap:24}}>
+                  {schedule.guardians.map((guardian, index) => (
+                    <View key={index} style={{alignItems:'center', gap: 8}}>
+                      <View style={{ width:50, height: 50, borderRadius:25, overflow:'hidden' }}>
+                        <Image src={guardian.imagePath} style={{flex:1}}/>
+                      </View>
+                      <Text style={[textStyles.R2, {color:colors.Black}]}>
+                        {guardian.name} 지도사
+                      </Text>
+                    </View>
+                  ))}
+                </View>   
+              </View>
+            ))}
+          </View>}
+        </View>  
       </ScrollView>
     </View>
   );
