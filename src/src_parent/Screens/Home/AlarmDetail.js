@@ -73,10 +73,10 @@ const AlarmDetail = () => {
         <View style={{ flexDirection: 'row' }}>
           <IconComponent />
           <View style={{flex:1, marginHorizontal:16, gap:8}}>
-            <Text style={[textStyles.SB2]}>{item.title}</Text>
-            <Text style={[textStyles.R2]}>{item.content}</Text>
+            <Text style={[textStyles.SB2, {color:colors.Black}]}>{item.title}</Text>
+            <Text style={[textStyles.R2, {color:colors.Black}]}>{item.content}</Text>
           </View>
-          <Text style={{color:colors.Gray06}}>{formatDate(item.createdAt)}</Text>
+          <Text style={[textStyles.M4, {color:colors.Gray06}]}>{formatDate(item.createdAt)}</Text>
         </View>
         <View style={{height:8}} />
       </View>

@@ -110,6 +110,45 @@ const App = () => {
         },
       })
     }
+    if (message.data.type === 'POST') {
+      notifee.displayNotification({
+        title: message.notification.title,
+        body: message.notification.body,
+        data: { type: message.data.type },
+        android: {
+          channelId: channelId,
+          smallIcon: 'ic_launcher',
+          importance: AndroidImportance.HIGH,
+          visibility: AndroidVisibility.PUBLIC,
+        },
+      })
+    }
+    if (message.data.type === 'MESSAGE') {
+      notifee.displayNotification({
+        title: message.notification.title,
+        body: message.notification.body,
+        data: { type: message.data.type },
+        android: {
+          channelId: channelId,
+          smallIcon: 'ic_launcher',
+          importance: AndroidImportance.HIGH,
+          visibility: AndroidVisibility.PUBLIC,
+        },
+      })
+    }
+    if (message.data.type === 'PREABSENT_MESSAGE') {
+      notifee.displayNotification({
+        title: message.notification.title,
+        body: message.notification.body,
+        data: { type: message.data.type },
+        android: {
+          channelId: channelId,
+          smallIcon: 'ic_launcher',
+          importance: AndroidImportance.HIGH,
+          visibility: AndroidVisibility.PUBLIC,
+        },
+      })
+    }
     // if (message.data.type === 'FEEDBACK') {
     //   notifee.displayNotification({
     //     title: message.notification.title,
@@ -143,19 +182,20 @@ const App = () => {
     const foregroundEvent = notifee.onForegroundEvent(async ({ type, detail }) => {
       switch (type) {
         case EventType.PRESS:
-          if (detail.notification.data.type === 'JOIN_REQUEST') {
-            Linking.openURL('drivel://meet/applyDetail');
-          }
-          if (detail.notification.data.type === 'JOIN_ACCEPTED') {
-            Linking.openURL('drivel://meet/meetDetail/' + detail.notification.data.meetingId + '/' + detail.notification.data.courseId + '/' + detail.notification.data.meetingTitle);
-          }
-          if (detail.notification.data.type === 'JOIN_REJECTED') {
-            Linking.openURL('drivel://meet');
-          }
-          if (detail.notification.data.type === 'FEEDBACK') {
-            Linking.openURL('drivel://meet/meetDetail/' + detail.notification.data.meetingId + '/' + detail.notification.data.courseId + '/' + detail.notification.data.meetingTitle);
-          }
-          break;
+          // if (detail.notification.data.type === 'JOIN_REQUEST') {
+          //   Linking.openURL('drivel://meet/applyDetail');
+          // }
+          // if (detail.notification.data.type === 'JOIN_ACCEPTED') {
+          //   Linking.openURL('drivel://meet/meetDetail/' + detail.notification.data.meetingId + '/' + detail.notification.data.courseId + '/' + detail.notification.data.meetingTitle);
+          // }
+          // if (detail.notification.data.type === 'JOIN_REJECTED') {
+          //   Linking.openURL('drivel://meet');
+          // }
+          // if (detail.notification.data.type === 'FEEDBACK') {
+          //   Linking.openURL('drivel://meet/meetDetail/' + detail.notification.data.meetingId + '/' + detail.notification.data.courseId + '/' + detail.notification.data.meetingTitle);
+          // }
+          // break;
+          Linking.openURL('donghang://home');
         case EventType.DISMISSED:
           console.log('User dismissed notification');
           break;

@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useState} from 'react';
-import {Alert, PermissionsAndroid, Platform, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, Alert, Modal, PermissionsAndroid, Platform, Text, TouchableOpacity, View } from 'react-native';
 import {colors, textStyles} from '../../../styles/globalStyle';
 import {formatDate} from '../../../utils/formatDate';
 import {FlatList} from 'react-native-gesture-handler';
@@ -34,7 +34,7 @@ const ShuttleDetail = ({navigation}) => {
   const [warnModalVisible, setWarnModalVisible] = useState(false);
   const [startGuideModalVisible, setStartGuideModalVisible] = useState(false);
   const [stopGuideModalVisible, setStopGuideModalVisible] = useState(false);
-
+  const [isPending, setIsPending] = useState(false);
   const {userId} = useAuthStore();
   // today 날짜
   const formattedDate = formatDate();
@@ -128,6 +128,7 @@ const ShuttleDetail = ({navigation}) => {
   const useMutateGuideDeactive = useStopGuide(groupInfo?.id);
 
   const onGuideButtonPress = async() => {
+    setIsPending(true);
     if (guideStatus.isGuideActive) {
       setStopGuideModalVisible(true);
     }
@@ -135,8 +136,10 @@ const ShuttleDetail = ({navigation}) => {
       const hasLocationPermission = await checkLocationPermission();
       if (hasLocationPermission) {
         useMutateGuideActive.mutate(undefined, {
+
           onSuccess: () => {
             setStartGuideModalVisible(true);
+            setIsPending(false);
           },
         });
       } else {
@@ -151,8 +154,16 @@ const ShuttleDetail = ({navigation}) => {
 
   return (
     groupInfo && guideStatus &&
-    <View 
-      style={{backgroundColor: colors.White_Green, flex:1, paddingBottom: insets.bottom, paddingTop: insets.top}}>
+    <View style={{backgroundColor: colors.White_Green, flex:1, paddingBottom: insets.bottom, paddingTop: insets.top}}>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={useMutateGuideActive.isPending || useMutateGuideDeactive.isPending}
+      >
+        <View style={{flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.7)', alignItems:'center', justifyContent:'center'}}>
+          <ActivityIndicator size="large" color={colors.Main_Green} />
+        </View>
+      </Modal>        
       <SingleActionModal
         modalVisible={guideModalVisible}
         setModalVisible={setGuideModalVisible}
@@ -229,11 +240,13 @@ const ShuttleDetail = ({navigation}) => {
         onConfirm={() => {
           useMutateGuideDeactive.mutate(undefined, {
             onSuccess: () => {
+              setIsPending(false);
               setStopGuideModalVisible(false);
               queryClient.invalidateQueries('waypoints');
             },
           });
         }}
+        confirmDisabled={useMutateGuideDeactive.isPending}
         cancelTitle={'취소'}
         onCancel={() => {
           setStopGuideModalVisible(false);
@@ -296,7 +309,7 @@ const ShuttleDetail = ({navigation}) => {
         <CustomButton 
         title={guideStatus.isGuideActive ? (guideStatus.dutyGuardianId == userId ? (lastWaypointAttendanceComplete ? '운행 종료하기'  : '아직 운행중이에요'): '아직 운행중이에요') : guideStatus.shuttleStatus ? '오늘 운행이 종료되었어요' : '운행 시작하기'} 
         onPress={() => {onGuideButtonPress()}} 
-        disabled={guideStatus.isGuideActive ? (!lastWaypointAttendanceComplete || guideStatus.dutyGuardianId !== userId) : guideStatus.shuttleStatus}
+        disabled={guideStatus.isGuideActive ? (!lastWaypointAttendanceComplete || guideStatus.dutyGuardianId !== userId) : guideStatus.shuttleStatus || isPending}
         />
       </View>
     </View>

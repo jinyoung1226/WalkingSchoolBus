@@ -111,6 +111,7 @@ const MypageMain = ({navigation}) => {
             alignItems: 'center',
             gap: 32,
           }}>
+          {guardianInfo.imagePath &&
           <Image
             src={guardianInfo.imagePath}
             style={{
@@ -118,7 +119,7 @@ const MypageMain = ({navigation}) => {
               height: 70,
               borderRadius: 100,
             }}
-          />
+          />}
 
           <View style={{flex: 1}}>
             <Text style={[textStyles.B1, {color: colors.Black}]}>

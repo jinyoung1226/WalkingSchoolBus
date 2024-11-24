@@ -13,6 +13,7 @@ const ConfirmModal = ({
   confirmTitle,
   onCancel,
   onConfirm,
+  confirmDisabled = false,
 }) => {
   const modalClose = () => {
     setModalVisible(false);
@@ -75,6 +76,7 @@ const ConfirmModal = ({
                   onPress={onConfirm}
                   type="confirm"
                   textStyle={[textStyles.SB3]}
+                  disabled={confirmDisabled}
                 />
               </View>
             </View>
