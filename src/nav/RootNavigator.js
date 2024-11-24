@@ -73,7 +73,7 @@ const RootNavigator = () => {
   if (userType === null) {
     return (
       <View
-        style={{flex: 1, justifyContent: 'center', paddingTop: 32}}>
+        style={{flex: 1, justifyContent: 'center', paddingTop: 64}}>
         <View style={{paddingLeft: 32}}>
           <MainLogo width={39} height={69} />
           <View style={{height: 24}} />

@@ -61,8 +61,8 @@ const Login = ({navigation}) => {
   };
 
   return (
-    <View style={{flex: 1, justifyContent: 'center', padding: 16, backgroundColor: colors.White}}>
-      <LoginGuardianText />
+    <View style={{flex: 1, padding: 16, paddingTop: 128, backgroundColor: colors.White}}>
+      <LoginGuardianText style={{marginLeft: 16}}/>
       <View style={{height: 64}}/>
       <TextInput
         style={{
@@ -71,10 +71,12 @@ const Login = ({navigation}) => {
           padding: 16,
           marginBottom: 16,
           borderRadius: 10,
+          color: colors.Gray07
         }}
         value={email}
         onChangeText={setEmail}
         placeholder="아이디를 입력해주세요"
+        placeholderTextColor={colors.Gray05}
         keyboardType="email-address"
         autoCapitalize="none"
       />
@@ -84,10 +86,12 @@ const Login = ({navigation}) => {
           borderColor: colors.Gray03,
           padding: 16,
           borderRadius: 10,
+          color: colors.Gray07
         }}
         value={password}
         onChangeText={setPassword}
         placeholder="비밀번호를 입력해주세요"
+        placeholderTextColor={colors.Gray05}
         secureTextEntry={true}
         autoCapitalize="none"
       />
