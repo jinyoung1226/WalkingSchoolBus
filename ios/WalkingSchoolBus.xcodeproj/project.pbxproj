@@ -15,12 +15,11 @@
 		5866B116E2A04E7798C1E64D /* TTLaundryGothicR.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 69C7F59E5D71412897EDF22D /* TTLaundryGothicR.ttf */; };
 		5DE69B171D0E4759BF8AC48D /* Pretendard-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3A62A1BD75B84AC9AAA5A55B /* Pretendard-Regular.ttf */; };
 		68A23C6BE9DA69A9E5D5789E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A6F0DE08315454512744811F /* PrivacyInfo.xcprivacy */; };
+		6BAE13012CF31B5A00580629 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6BAE13002CF31B5A00580629 /* GoogleService-Info.plist */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		841E4E882815E9D7D4EFE8E7 /* Pods_WalkingSchoolBus.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC0B03EA6D92D937F834680E /* Pods_WalkingSchoolBus.framework */; };
 		8B05A6FA2CD1F7E90035C077 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B05A6F92CD1F7E90035C077 /* File.swift */; };
 		8BA3B0972CB019BA0077E77F /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 8BA3B0962CB019BA0077E77F /* main.jsbundle */; };
-		8BCB3E462CD6BED60013924A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8BCB3E452CD6BED60013924A /* GoogleService-Info.plist */; };
-		8BCB3E472CD6BED60013924A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8BCB3E452CD6BED60013924A /* GoogleService-Info.plist */; };
 		95C22085293D41D099811A17 /* TTLaundryGothicB.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2E2774FCE2A64D3285A21733 /* TTLaundryGothicB.ttf */; };
 		B36A7AD58AFF4E7384245BC2 /* Pretendard-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8404BE40B599437183E5E4FC /* Pretendard-SemiBold.ttf */; };
 		BB366F642F8D4F98A908EBD0 /* Pretendard-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 049E86281DA744B3A8D7DBD0 /* Pretendard-Medium.ttf */; };
@@ -59,6 +58,7 @@
 		5709B34CF0A7D63546082F79 /* Pods-WalkingSchoolBus.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WalkingSchoolBus.release.xcconfig"; path = "Target Support Files/Pods-WalkingSchoolBus/Pods-WalkingSchoolBus.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-WalkingSchoolBus-WalkingSchoolBusTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WalkingSchoolBus-WalkingSchoolBusTests.debug.xcconfig"; path = "Target Support Files/Pods-WalkingSchoolBus-WalkingSchoolBusTests/Pods-WalkingSchoolBus-WalkingSchoolBusTests.debug.xcconfig"; sourceTree = "<group>"; };
 		69C7F59E5D71412897EDF22D /* TTLaundryGothicR.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = TTLaundryGothicR.ttf; path = ../src/assets/fonts/TTLaundryGothicR.ttf; sourceTree = "<group>"; };
+		6BAE13002CF31B5A00580629 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../GoogleService-Info.plist"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = WalkingSchoolBus/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8404BE40B599437183E5E4FC /* Pretendard-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Pretendard-SemiBold.ttf"; path = "../src/assets/fonts/Pretendard-SemiBold.ttf"; sourceTree = "<group>"; };
 		84E580554CDB4AB9997FBE7E /* BootSplash.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = BootSplash.storyboard; path = WalkingSchoolBus/BootSplash.storyboard; sourceTree = "<group>"; };
@@ -67,7 +67,6 @@
 		8B05A6F92CD1F7E90035C077 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		8BA3B0962CB019BA0077E77F /* main.jsbundle */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		8BCA9DC72CD76BD2000E2A51 /* WalkingSchoolBus.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = WalkingSchoolBus.entitlements; path = WalkingSchoolBus/WalkingSchoolBus.entitlements; sourceTree = "<group>"; };
-		8BCB3E452CD6BED60013924A /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A6F0DE08315454512744811F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = WalkingSchoolBus/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		BC0B03EA6D92D937F834680E /* Pods_WalkingSchoolBus.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WalkingSchoolBus.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED0D8D306E8145D19FA0DC8A /* Pretendard-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Pretendard-Bold.ttf"; path = "../src/assets/fonts/Pretendard-Bold.ttf"; sourceTree = "<group>"; };
@@ -115,7 +114,7 @@
 			isa = PBXGroup;
 			children = (
 				8BCA9DC72CD76BD2000E2A51 /* WalkingSchoolBus.entitlements */,
-				8BCB3E452CD6BED60013924A /* GoogleService-Info.plist */,
+				6BAE13002CF31B5A00580629 /* GoogleService-Info.plist */,
 				8BA3B0962CB019BA0077E77F /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -286,7 +285,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8BCB3E462CD6BED60013924A /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -294,7 +292,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8BCB3E472CD6BED60013924A /* GoogleService-Info.plist in Resources */,
+				6BAE13012CF31B5A00580629 /* GoogleService-Info.plist in Resources */,
 				8BA3B0972CB019BA0077E77F /* main.jsbundle in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
