@@ -62,7 +62,7 @@ const MypageDetail = ({navigation, route}) => {
       </View>,
     );
   };
-  console.log(student);
+
   const [modalVisible, setModalVisible] = useState(false); // 모달 상태 관리
 
   const handleImagePicker = async () => {
