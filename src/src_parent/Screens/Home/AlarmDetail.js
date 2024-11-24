@@ -69,14 +69,17 @@ const AlarmDetail = () => {
     const IconComponent = item.category === 'POST' ? NoticeIcon : ShuttleIcon;
   
     return (
+      
       <View style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 32, justifyContent: 'center', backgroundColor: item.read ? 'transparent' : 'rgba(77, 237, 180, 0.06)'}}>
         <View style={{ flexDirection: 'row' }}>
           <IconComponent />
           <View style={{flex:1, marginHorizontal:16, gap:8}}>
-            <Text style={[textStyles.SB2, {color:colors.Black}]}>{item.title}</Text>
+            <View  style={{ flexDirection: 'row', alignItems:'center', justifyContent:'space-between'}}>
+              <Text style={[textStyles.SB2, {color:colors.Black}]}>{item.title}</Text>
+              <Text style={[textStyles.M4, {color:colors.Gray06}]}>{formatDate(item.createdAt)}</Text>
+            </View>
             <Text style={[textStyles.R2, {color:colors.Black}]}>{item.content}</Text>
           </View>
-          <Text style={[textStyles.M4, {color:colors.Gray06}]}>{formatDate(item.createdAt)}</Text>
         </View>
         <View style={{height:8}} />
       </View>
