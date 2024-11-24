@@ -17,7 +17,7 @@ const NavButton = ({ title, onPress, textStyle, image }) => {
       ]}
     >
       {image}
-      <Text style={[textStyles.M1, {paddingTop: 16}]}>{title}</Text>
+      <Text style={[textStyles.M1, {paddingTop: 16}, {color: colors.Black}]}>{title}</Text>
     </Pressable>
   );
 };
