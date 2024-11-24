@@ -3,6 +3,8 @@ import {authApi} from './api';
 // 인솔자 정보 가져오기
 export const getGuardianInfo = async () => {
   const response = await authApi.get(`/guardian`);
+  console.log(response.data, '지도사 정보');
+
   return response.data;
 };
 
