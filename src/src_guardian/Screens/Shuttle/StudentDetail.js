@@ -30,7 +30,7 @@ const StudentDetail = ({ navigation, route }) => {
     <View style={{flex:1, backgroundColor:colors.White_Green, paddingBottom: insets.bottom, paddingTop: insets.top}}>
       <CustomHeader title="학생 프로필" />
       <ScrollView>
-        <View style={{width:'100%', aspectRatio:1.8, backgroundColor:colors.Main_Green, marginBottom:-40}}>
+        <View style={{width:'100%', aspectRatio:1.8, backgroundColor:colors.BG_Green , marginBottom:-40}}>
         
         </View>
         <View style={{borderTopLeftRadius:40, borderTopRightRadius:40, backgroundColor:colors.White_Green}}>
@@ -58,13 +58,13 @@ const StudentDetail = ({ navigation, route }) => {
           <View style={{height:10, backgroundColor:colors.Gray02, marginBottom:16}} />
           <View style={{flexDirection:'row', padding:16, justifyContent:'space-between'}}>
             <Text style={[textStyles.SB3, { color: colors.Black }]}>보호자 메시지</Text>
-            <TouchableOpacity style={{flexDirection:'row', alignItems:'center', gap:8}} onPress={() => navigation.navigate('MessageList', {studentName: studentInfo.name, studentId: studentInfo.studentId})}>
+            <TouchableOpacity style={{flexDirection:'row', alignItems:'center', gap:8}} onPress={() => navigation.navigate('MessageList', {studentName: studentInfo.name, studentId: studentInfo.studentId, image: studentInfo.imagePath})}>
               <Text style={[textStyles.R2, { color: colors.Gray06 }]}>목록보기</Text>
               <ArrowIcon width={16} height={16} color={colors.Gray06}/>
             </TouchableOpacity>
           </View>
           {isSuccess && messagePreview.length > 0 ? 
-          <MessageItem name={`${studentInfo.name} 어머니`} imagePath={messagePreview[0].imagePath} receivedAt={messagePreview[0].transferredAt} content={messagePreview[0].content}/>
+          <MessageItem name={`${studentInfo.name} 어머니`} imagePath={studentInfo.imagePath} receivedAt={messagePreview[0].transferredAt} content={messagePreview[0].content}/>
           :
           <View style={{padding:16, justifyContent:'center', alignItems:'center', gap:16}}>
             <MessageIcon />

@@ -9,7 +9,7 @@ import useStudentMessages from '../../hooks/queries/useStudentMessages';
 import MessageItem from '../../../components/MessageItem';
 import MessageIcon from '../../../assets/icons/MessageIcon.svg';
 const MessageList = ({route}) => {
-  const { studentName, studentId } = route.params;
+  const { studentName, studentId, image } = route.params;
   const {data, isSuccess} = useStudentMessages(studentId)
 
   // const data = [{"content": "우리 아이가 나이가 많아오......", "isRead": false, "messageId": 15, "parent": {"id": 24, "imagePath": null, "name": "김수환"}, "transferredAt": "2024-11-15T05:42:46"}, {"content": "우리 아이가 잠이 많아요.", "isRead": false, "messageId": 14, "parent": {"id": 24, "imagePath": null, "name": "김수환"}, "transferredAt": "2024-11-15T05:42:30"}, {"content": "우리 아이가 잠이 많아요.", "isRead": false, "messageId": 13, "parent": {"id": 24, "imagePath": null, "name": "김수환"}, "transferredAt": "2024-11-15T05:42:28"}, {"content": "저희  아이가 오늘은 진짜 아파요. ㄹㅇㄹㅇㄹㅇ", "isRead": true, "messageId": 12, "parent": {"id": 24, "imagePath": null, "name": "김수환"}, "transferredAt": "2024-11-15T05:12:27"}]
@@ -29,7 +29,7 @@ const MessageList = ({route}) => {
         renderItem={({item, index}) => (
           <MessageItem 
             name={`${studentName} 어머니`} 
-            imagePath={item.imagePath}
+            imagePath={image}
             receivedAt={item.transferredAt}
             content={item.content}
             isLastMessage={item.isRead == false && data[index+1].isRead == true}

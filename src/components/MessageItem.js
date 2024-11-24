@@ -1,9 +1,10 @@
 import React from 'react';
 import {View, Text, Image} from 'react-native';
 import {colors, textStyles} from '../styles/globalStyle';
+import { formatDate } from '../utils/formatDateMessage';
 
 const MessageItem = ({ name, imagePath, receivedAt, content, isLastMessage, isRead }) => {
-
+  
   return (
     <View style={{paddingHorizontal: 16}}>
       <View
@@ -38,7 +39,7 @@ const MessageItem = ({ name, imagePath, receivedAt, content, isLastMessage, isRe
               {name}
             </Text>
             <Text style={[textStyles.M5, {color: colors.Gray05}]}>
-              {receivedAt}
+              {formatDate(receivedAt)}
             </Text>
           </View>
         </View>
