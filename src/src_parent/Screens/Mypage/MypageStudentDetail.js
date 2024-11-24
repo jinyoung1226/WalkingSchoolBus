@@ -22,6 +22,7 @@ const MypageDetail = ({navigation, route}) => {
   const { showModal, hideModal } = useModalStore();
   const queryClient = useQueryClient();
   const [profileImage, setProfileImage] = useState(student.imagePath);
+
   const handleShowModal = (selectedImage) => {
     showModal(
       <View style={{alignItems:'center', gap:32}}>
@@ -57,7 +58,7 @@ const MypageDetail = ({navigation, route}) => {
   // Zustand에서 선택된 studentId 가져오기
   console.log(student)
   const [modalVisible, setModalVisible] = useState(false); // 모달 상태 관리
-  const [selectedImage, setSelectedImage] = useState(null);
+
   const handleImagePicker = async () => {
     const result = await launchImageLibrary({
       mediaType: 'photo',
@@ -75,7 +76,6 @@ const MypageDetail = ({navigation, route}) => {
       'JPEG',               // 포맷 (JPEG, PNG)
       80                    // 품질 (1-100)
     );
-    setSelectedImage(resizedImage);
     handleShowModal(resizedImage);
     console.log(resizedImage);
   };

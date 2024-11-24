@@ -108,14 +108,13 @@ const HomeSchedule = ({ navigation }) => {
       }
 
       setMarkedDates(dates);
-    };
-    
-
+      onDayPress({ dateString: new Date().toISOString().split('T')[0] });
+    };  
     generateMarkedDates();
-    onDayPress({ dateString: new Date().toISOString().split('T')[0] });
+    
   }, []);
 
-  const onDayPress = (day) => {
+  const onDayPress = async(day) => {
     const dateString = day.dateString;
 
     // 선택된 날짜 업데이트
