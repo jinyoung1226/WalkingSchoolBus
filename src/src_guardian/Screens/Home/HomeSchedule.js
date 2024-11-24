@@ -6,6 +6,7 @@ import BackIcon from "../../../assets/icons/BackIcon.svg";
 import { ScrollView } from "react-native-gesture-handler";
 import { getDailySchedule } from "../../../api/scheduleApi";
 import { useQuery } from "@tanstack/react-query";
+import { authApi } from "../../../api/api";
 
 const HomeSchedule = ({ navigation }) => {
   const [selected, setSelected] = useState('');
@@ -41,12 +42,14 @@ const HomeSchedule = ({ navigation }) => {
   LocaleConfig.defaultLocale = 'kr';
 
   useEffect(() => {
-    const generateMarkedDates = () => {
+    const generateMarkedDates = async() => {
       let dates = {};
       
       const today = new Date();
       setMonth(today.getMonth() + 1);
       setYear(today.getFullYear());
+
+      const response = await authApi.get(`schedules/month?year=${today.getFullYear()}&month=${today.getMonth() + 1}`);
 
       const oneYearAgo = new Date();
       oneYearAgo.setFullYear(today.getFullYear() - 1);
@@ -69,15 +72,25 @@ const HomeSchedule = ({ navigation }) => {
           dates[dateString] = { dots: [] };
         }
 
-        // 더미 데이터로 이벤트 날짜 추가 (여러 개의 점 표시)
-        if (dateString === '2024-10-10') {
-          dates[dateString].dots.push({ key: 'event1', color: colors.Orange });
-        } else if (dateString === '2024-10-15') {
-          dates[dateString].dots.push(
-            { key: 'event1', color: colors.Orange },
-            { key: 'event2', color: colors.Blue }
-          );
-        }
+        response.data.forEach((schedule) => {
+          if (dateString === schedule.day) {
+            if (schedule.scheduleType === '등교1') {
+              dates[dateString].dots.push({ key: 'event1', color: colors.Orange });
+            }
+            if (schedule.scheduleType === '하교1') {
+              dates[dateString].dots.push({ key: 'event2', color: colors.Blue });
+            }
+          }
+        });
+
+        // if (dateString === '2024-10-10') {
+        //   dates[dateString].dots.push({ key: 'event1', color: colors.Orange });
+        // } else if (dateString === '2024-10-15') {
+        //   dates[dateString].dots.push(
+        //     { key: 'event1', color: colors.Orange },
+        //     { key: 'event2', color: colors.Blue }
+        //   );
+        // }
 
         // 주말의 텍스트 색상 설정
         if (dayOfWeek === 0) {
@@ -91,13 +104,12 @@ const HomeSchedule = ({ navigation }) => {
         // 오늘 날짜 마킹
         if (dateString === todayString) {
           dates[dateString].today = true;
-          // 오늘 날짜에 점을 추가하려면 아래 주석을 해제하세요
-          // dates[dateString].dots.push({ key: 'today', color: colors.Main_Green });
         }
       }
 
       setMarkedDates(dates);
     };
+    
 
     generateMarkedDates();
     onDayPress({ dateString: new Date().toISOString().split('T')[0] });

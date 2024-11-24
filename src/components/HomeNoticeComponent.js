@@ -38,7 +38,7 @@ const HomeNotices = () => {
     queryKey: ['mainNotices'],
     queryFn: () => fetchNotices({pageParam: 0, size: 3}),
   });
-  console.log(data);
+  // console.log(data);
   if (isLoading) {
     return (
       <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>

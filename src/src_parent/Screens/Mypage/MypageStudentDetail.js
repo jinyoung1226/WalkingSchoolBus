@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, Image, TouchableOpacity, Alert} from 'react-native';
+import {View, Text, Image, TouchableOpacity, Alert, ImageBackground} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {textStyles, colors} from '../../../styles/globalStyle';
 import CustomHeader from '../../../components/CustomHeader';
@@ -9,24 +9,55 @@ import Mypagepencil from '../../../assets/icons/MypagePencil.svg';
 import Student from '../../../assets/icons/Student.svg';
 import SingleActionModal from '../../../components/SingleActionModal';
 import useStudentStore from '../../../store/mypageStudentStore'; // Zustand 스토어
-import {refreshApi} from '../../../api/api';
+import {authApi, formDataApi, refreshApi} from '../../../api/api';
+import ImageResizer from 'react-native-image-resizer';
+import { useModalStore } from '../../../store/modalStore';
+import CustomButton from '../../../components/CustomButton';
+import { useQueryClient } from '@tanstack/react-query';
 
-const MypageDetail = ({navigation}) => {
+const MypageDetail = ({navigation, route}) => {
   const insets = useSafeAreaInsets();
+  const {student} = route.params;
 
+  const { showModal, hideModal } = useModalStore();
+  const queryClient = useQueryClient();
+  const [profileImage, setProfileImage] = useState(student.imagePath);
+  const handleShowModal = (selectedImage) => {
+    showModal(
+      <View style={{alignItems:'center', gap:32}}>
+        <Text style={[textStyles.SB1, {color:colors.Black}]}>
+          이미지 미리보기
+        </Text>
+        <Image
+          source={{uri: selectedImage.uri}}
+          style={{width:'100%', aspectRatio:1, borderRadius:10,}}
+        />
+        <View style={{flexDirection: 'row'}}>
+              <View style={{flex: 1}}>
+                <CustomButton
+                  title={'취소'}
+                  onPress={hideModal}
+                  type="cancel"
+                  textStyle={[textStyles.SB3]}
+                />
+              </View>
+              <View style={{width: 8}} />
+              <View style={{flex: 1}}>
+                <CustomButton
+                  title={'변경하기'}
+                  onPress={() => handleSave(selectedImage)}
+                  type="confirm"
+                  textStyle={[textStyles.SB3]}
+                />
+              </View>
+            </View>
+      </View>
+    );
+  };
   // Zustand에서 선택된 studentId 가져오기
-  const selectedStudentId = useStudentStore(state => state.selectedStudentId);
-
-  const [studentInfo, setStudentInfo] = useState({
-    imagePath: '',
-    name: '',
-    schoolName: '정보 없음',
-    grade: '정보 없음',
-    notes: '정보 없음',
-  });
-  const [tempImagePath, setTempImagePath] = useState(null); // 임시 이미지 경로
+  console.log(student)
   const [modalVisible, setModalVisible] = useState(false); // 모달 상태 관리
-
+  const [selectedImage, setSelectedImage] = useState(null);
   const handleImagePicker = async () => {
     const result = await launchImageLibrary({
       mediaType: 'photo',
@@ -37,49 +68,46 @@ const MypageDetail = ({navigation}) => {
       console.log('이미지 선택 취소');
       return;
     }
-
-    if (result.assets && result.assets.length > 0) {
-      const selectedImage = result.assets[0];
-      setTempImagePath(selectedImage.uri); // 임시 이미지 경로 저장
-    }
+    const resizedImage = await ImageResizer.createResizedImage(
+      result.assets[0].uri, // 원본 이미지 경로
+      900,                  // 너비 (원하는 크기로 설정)
+      900,                  // 높이 (원하는 크기로 설정)
+      'JPEG',               // 포맷 (JPEG, PNG)
+      80                    // 품질 (1-100)
+    );
+    setSelectedImage(resizedImage);
+    handleShowModal(resizedImage);
+    console.log(resizedImage);
   };
 
-  const handleSave = async () => {
-    if (!tempImagePath) {
+  const handleSave = async (selectedImage) => {
+    if (!selectedImage) {
       Alert.alert('알림', '변경된 이미지가 없습니다.');
       return;
     }
-
+    const formData = new FormData();
     try {
-      const formData = new FormData();
 
       // 이미 컴포넌트 최상위 레벨에서 가져온 selectedStudentId를 사용합니다.
-      formData.append('studentId', selectedStudentId);
-
+      formData.append('studentId', student.studentId);
       // imageFile을 formData에 추가합니다.
       formData.append('imageFile', {
-        uri: tempImagePath,
+        uri: selectedImage.uri,
         type: 'image/jpeg',
-        name: `profile_${Date.now()}.jpg`,
+        name: selectedImage.name,
       });
 
-      const response = await refreshApi.patch(
+      const response = await formDataApi.patch(
         '/students/update/imageFile',
         formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        },
       );
 
       if (response.status === 200) {
         console.log('이미지 업로드 성공');
-        setStudentInfo(prev => ({...prev, imagePath: tempImagePath})); // UI 업데이트
-        setTempImagePath(null); // 임시 이미지 초기화
         setModalVisible(true); // 성공 모달 표시
-      } else {
-        throw new Error('이미지 업로드 실패');
+        queryClient.invalidateQueries('students'); // 쿼리 다시 불러오기
+        setProfileImage(selectedImage.uri);
+        hideModal();
       }
     } catch (error) {
       console.error('이미지 업로드 중 오류 발생', error);
@@ -87,43 +115,17 @@ const MypageDetail = ({navigation}) => {
     }
   };
 
-  useEffect(() => {
-    const fetchStudentInfo = async () => {
-      if (!selectedStudentId) {
-        Alert.alert('오류', '학생 정보가 없습니다.');
-        navigation.goBack();
-        return;
-      }
-
-      try {
-        const allStudents = await getStudentInfo(); // 모든 학생 정보를 가져옴
-        const selectedStudent = allStudents.find(
-          student => student.studentId === selectedStudentId,
-        );
-
-        if (!selectedStudent) {
-          Alert.alert('오류', '학생 정보를 찾을 수 없습니다.');
-          navigation.goBack();
-          return;
-        }
-
-        // 데이터 매핑
-        setStudentInfo({
-          imagePath: selectedStudent.imagePath || '',
-          name: selectedStudent.name,
-          schoolName: selectedStudent.schoolName || '정보 없음',
-          grade: `${selectedStudent.grade}학년` || '정보 없음',
-          notes: selectedStudent.notes || '정보 없음',
-        });
-      } catch (error) {
-        console.error('학생 정보 가져오기 오류:', error);
-        Alert.alert('오류', '학생 정보를 불러오지 못했습니다.');
-        navigation.goBack();
-      }
-    };
-
-    fetchStudentInfo();
-  }, [selectedStudentId, navigation]);
+  const MyInfoItem = ({title, content}) => (
+    <View style={{gap:16}}>
+      <Text
+        style={[textStyles.M2, {color: colors.Black}]}>
+        {title}
+      </Text>
+      <Text style={[textStyles.M3, {color: colors.Gray07, margin:16}]}>
+        {content}
+      </Text>
+    </View>
+  );
 
   return (
     <View
@@ -137,13 +139,7 @@ const MypageDetail = ({navigation}) => {
       <CustomHeader
         title="자녀 프로필 수정"
         onBackPress={() => navigation.goBack()}
-        headerRight={
-          <TouchableOpacity onPress={handleSave}>
-            <Text style={{color: colors.Black, fontSize: 16}}>저장</Text>
-          </TouchableOpacity>
-        }
       />
-
       <View
         style={{
           alignItems: 'center',
@@ -154,37 +150,54 @@ const MypageDetail = ({navigation}) => {
           style={{
             position: 'relative',
           }}>
-          {tempImagePath || studentInfo.imagePath ? (
-            <Image
-              source={{uri: tempImagePath || studentInfo.imagePath}}
+            <TouchableOpacity
+              onPress={handleImagePicker}
               style={{
                 width: 100,
                 height: 100,
                 borderRadius: 50,
-                backgroundColor: colors.Gray03,
               }}
-            />
-          ) : (
-            <Student width={100} height={100} />
-          )}
-          <TouchableOpacity
-            style={{
-              position: 'absolute',
-              width: 25,
-              height: 25,
-              right: 5,
-              bottom: 0,
-            }}
-            onPress={handleImagePicker}>
-            <Mypagepencil width={20} height={20} />
-          </TouchableOpacity>
+            >
+              <View
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: 50,
+                  backgroundColor: colors.Gray03,
+                  overflow: 'hidden',
+                }}
+              >
+                {profileImage !== null ?
+                <Image
+                  source={{uri:profileImage}}
+                  style={{flex: 1}}
+                />:
+                <Student width={100} height={100} />
+                }
+              </View>
+                <TouchableOpacity
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  right: 5,
+                  width: 25,
+                  height: 25,
+                  backgroundColor: colors.Gray05,
+                  borderRadius: 12.5,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+                onPress={handleImagePicker}
+                >
+                  < Mypagepencil/>
+                </TouchableOpacity>
+            </TouchableOpacity>
+          
         </View>
-
         <Text style={[textStyles.SB2, {color: colors.Black, marginTop: 16}]}>
-          {studentInfo.name}
+          {student.name}
         </Text>
       </View>
-
       <View>
         <Text
           style={[
@@ -193,33 +206,12 @@ const MypageDetail = ({navigation}) => {
           ]}>
           지도사에게만 공개되는 정보입니다.
         </Text>
-        <View style={{marginBottom: 32, paddingHorizontal: 16}}>
-          <Text
-            style={[textStyles.M2, {color: colors.Black, marginVertical: 8}]}>
-            학교
-          </Text>
-          <Text style={[textStyles.M3, {color: colors.Gray07}]}>
-            {studentInfo.schoolName}
-          </Text>
-
-          <Text
-            style={[textStyles.M2, {color: colors.Black, marginVertical: 8}]}>
-            학년
-          </Text>
-          <Text style={[textStyles.M3, {color: colors.Gray07}]}>
-            {studentInfo.grade}
-          </Text>
-
-          <Text
-            style={[textStyles.M2, {color: colors.Black, marginVertical: 8}]}>
-            특이사항
-          </Text>
-          <Text style={[textStyles.M3, {color: colors.Gray07}]}>
-            {studentInfo.notes}
-          </Text>
+        <View style={{paddingHorizontal: 16, gap:32}}>
+          <MyInfoItem title="학교" content={student.schoolName} />
+          <MyInfoItem title="학년" content={`${student.grade}학년`} />
+          <MyInfoItem title="특이사항" content={student.notes} />
         </View>
       </View>
-
       <SingleActionModal
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}

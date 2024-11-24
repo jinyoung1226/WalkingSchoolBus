@@ -8,6 +8,7 @@ export const getGuardianInfo = async () => {
 
 export const getParentsInfo = async () => {
   const response = await authApi.get(`/parents`);
+  console.log(response.data, '부모 정보');
   return response.data;
 };
 

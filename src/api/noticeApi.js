@@ -1,10 +1,11 @@
 import {authApi} from './api';
 
 export const fetchNotices = async ({pageParam = 0, size = 10}) => {
-  console.log('aaaa');
+  
   const response = await authApi.get(
     `group-notices/group/notices?page=${pageParam}&size=${size}`,
   );
+  console.log(response.data, '그룹 공지 불러오기');
   return response.data;
 };
 

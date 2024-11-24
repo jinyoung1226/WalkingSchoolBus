@@ -8,6 +8,7 @@ import GuardianIcon from '../../../assets/icons/GuardianIcon.svg';
 import HomeComponent from '../../../components/HomeComponent';
 import HomeNoticeComponent from '../../../components/HomeNoticeComponent';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import SunIcon from '../../../assets/icons/SunIcon.svg';
 
 const Homemain = ({navigation}) => {
 
@@ -61,7 +62,20 @@ const Homemain = ({navigation}) => {
           onPress={() => {
             navigation.navigate('HomeSchedule');
           }}>
-          <View style={{height: 100}} />
+          <View style={{height:16}}/>
+          <View style={{flexDirection:'row', borderRadius:15, borderWidth:1, borderColor:colors.Gray04, paddingVertical:16, paddingHorizontal:32, alignItems:'center'}}>
+            <View style={{width:40, height:40, borderRadius:20, backgroundColor: '#FFFBF7', alignItems:'center', justifyContent:'center'}}>
+              <SunIcon color={colors.Orange} width={24} height={24}/>
+            </View>
+            <View style={{width:16}}/>
+            <Text style={[textStyles.SB3, {color:colors.Black}]}>
+              등교
+            </Text>
+            <View style={{width:8}}/>
+            <Text style={[textStyles.R2, {color:colors.Gray07}]}>
+              오전 8시 20분
+            </Text>
+          </View>
         </HomeComponent>
         <View style={{height: 32}} />
         <HomeComponent

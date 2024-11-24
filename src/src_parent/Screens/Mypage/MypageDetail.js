@@ -6,33 +6,16 @@ import CustomHeader from '../../../components/CustomHeader';
 import {getParentsInfo, getStudentInfo} from '../../../api/mypageApi';
 import Parents from '../../../assets/icons/Parents.svg';
 
-const MypageDetail = ({navigation}) => {
+const MypageDetail = ({navigation, route}) => {
   const insets = useSafeAreaInsets();
-  const [parentsInfo, setParentsInfo] = useState({
-    imagePath: '',
-    name: '',
-    phone: '정보 없음',
-    email: '정보 없음',
-  });
-
-  useEffect(() => {
-    const fetchParentsInfo = async () => {
-      const data = await getParentsInfo();
-      setParentsInfo({
-        name: data.name,
-        phone: data.phone || '정보 없음',
-        email: data.email || '정보 없음',
-      });
-    };
-    fetchParentsInfo();
-  }, []);
-
+  const {parentsInfo} = route.params;
+  
   return (
     <View
       style={{
         flex: 1,
         paddingTop: 16,
-        backgroundColor: '#feffff',
+        backgroundColor: colors.White_Green,
         paddingBottom: insets.bottom,
         paddingTop: insets.top,
       }}>
@@ -40,7 +23,6 @@ const MypageDetail = ({navigation}) => {
         title="프로필 설정"
         onBackPress={() => navigation.goBack()}
       />
-
       <View
         style={{
           alignItems: 'center',

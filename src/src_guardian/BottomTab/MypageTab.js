@@ -44,6 +44,36 @@ const MypageTab = ({route}) => {
         component={MypageDetail}
         options={{headerShown: false}}
       />
+      <Stack.Screen
+        name="ShuttleDetail3"
+        component={ShuttleDetail}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ShuttleMap"
+        component={ShuttleMap}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ShuttleStudentsList"
+        component={ShuttleStudentsList}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="StudentDetail"
+        component={StudentDetail}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="MessageList"
+        component={MessageList}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="NotiMain3"
+        component={NotiMain}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 };

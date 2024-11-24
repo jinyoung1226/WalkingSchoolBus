@@ -29,7 +29,7 @@ const Login = ({navigation}) => {
       const fcmToken = await AsyncStorage.getItem('fcmToken');
       console.log(fcmToken);
       const response = await api.post('/auth/signIn', {email, password, fcmToken});
-      console.log(response.status);
+      console.log(response.data, "로그인");
       if (response.status === 200) {
         const {accessToken, refreshToken, id: userId} = response.data;
         await AsyncStorage.setItem('accessToken', accessToken);
